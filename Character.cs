@@ -6,76 +6,83 @@ using System.Threading.Tasks;
 
 namespace game
 {   
-    enum STATE
+    public enum StateHealth
     {
-        NORMAL, WEAK, /*SICK, POISONED, PARALIZED,*/ DEAD
+        NORMAL, WEAK, DEAD
     }
 
-    enum RACE
+    public enum State
+    {
+        SICK, POISONED, PARALIZED
+    }
+
+    public enum Race
     {
         HUMAN, GNOME, ELF, ORC, GOBLIN
     }
 
-    enum SEX
+    public enum Sex
     {
         MALE, FEMALE
     }
 
-    class Character: IComparable
+    public class Character: IComparable
     {
-        private static int unic_ID = 0;
+        private static int unique_ID = 0;
 
         private readonly string name;
         private readonly int ID;
-        private readonly RACE race;
-        private readonly SEX sex;
+        private readonly Race race;
+        private readonly Sex sex;
               
         private int age;
-        private int health;
-        private STATE state;
-        private int maxHealth;
+        private double health;
+        private StateHealth stateHealth;
+        private double maxHealth;
         private int experience;
 
-        private bool isAbleToSpeakNow = false;
-        private bool isAbleToMoveNow = false;
+        private bool canSpeakNow = false;
+        private bool canMoveNow = false;
 
-        private readonly List<Artifact> inventary = new List<Artifact>(); 
+        private readonly List<Artifact> inventory = new List<Artifact>();        
         public int GetNumberOfArtifacts()
         {
-            return inventary.Count();
+            return inventory.Count();
         }
 
         public Artifact GetArtifactByIndex(int index)
         {
-            return inventary[index];
+            return inventory[index];
         }
 
-        public Character(string name, RACE race, SEX sex): this(name, race, sex, 0, 100, 0)
+        
+
+        public Character(string name, Race race, Sex sex): this(name, race, sex, 0, 100, 0)
         {
             
         }
 
         //optional
-        public Character(string name, RACE race, SEX sex, int age) : this(name, race, sex, age, 100, 0)
+        public Character(string name, Race race, Sex sex, int age) : this(name, race, sex, age, 100, 0)
         {
 
         }
         //optional
-        public Character(string name, RACE race, SEX sex, int age, int maxHealth) : this(name, race, sex, age, maxHealth, 0)
+        public Character(string name, Race race, Sex sex, int age, double maxHealth) : this(name, race, sex, age, maxHealth, 0)
         {
             
         }
         //optional
-        public Character(string name, RACE race, SEX sex, int age, int maxHealth, int experience)
+        public Character(string name, Race race, Sex sex, int age, double maxHealth, int experience)
         {
-            this.ID = ++unic_ID;
+            this.ID = ++unique_ID;
             this.name = name;
             this.race = race;
             this.sex = sex;
             this.age = age;
             this.maxHealth = maxHealth;
             this.health = maxHealth;
-            this.state = STATE.NORMAL;
+            this.stateHealth = StateHealth.NORMAL;
             this.experience = experience;
         }       
 
@@ -94,13 +101,13 @@ namespace game
             }
         }
 
-        public int Health
+        public double Health
         {
             get
             {
                 return health;
             }
-            private set
+            set
             {
                 if (value < 0 || value > maxHealth)
                 {
@@ -111,17 +118,26 @@ namespace game
             }
         }
 
-        public STATE State
+        public double MaxHealth
         {
             get
             {
-                return state;
+                return maxHealth;
+
+            }
+        }
+
+        public StateHealth State
+        {
+            get
+            {
+                return stateHealth;
             }
             private set
             {
-                if (state != STATE.DEAD)
+                if (stateHealth != StateHealth.DEAD)
                 {
-                    state = value;
+                    stateHealth = value;
                 }
                 else
                 {
@@ -130,21 +146,12 @@ namespace game
             }
         }
 
-        public SEX Sex
+        public Sex Sex
         {
             get
             {
                 return sex;
             }                
-        }
-
-        public int MaxHealth
-        {
-            get
-            {
-                return maxHealth;
-                    
-            }
         }
 
         public int Experience
@@ -162,27 +169,27 @@ namespace game
             }
         }
 
-        public bool IsAbleToSpeakeNow
+        public bool CanSpeakeNow
         {
             get
             {
-                return isAbleToSpeakNow;
+                return canSpeakNow;
             }
             set
             {
-                isAbleToSpeakNow = value;
+                canSpeakNow = value;
             }
         }
 
-        public bool IsAbleToMoveNow
+        public bool CanMoveNow
         {
             get
             {
-                return isAbleToSpeakNow;
+                return canSpeakNow;
             }
             set
             {
-                isAbleToMoveNow = value;
+                canMoveNow = value;
             }                
         }
 
@@ -199,15 +206,15 @@ namespace game
         {
             if (health <= 0.1 * maxHealth)
             {
-                state = STATE.WEAK;
+                stateHealth = StateHealth.WEAK;
             }
             else if (health >= 0.1 * maxHealth)
             {
-                state = STATE.NORMAL;
+                stateHealth = StateHealth.NORMAL;
             }
-            else if (health == 0)
+            else if (health <= 0)
             {
-                state = STATE.DEAD;
+                stateHealth = StateHealth.DEAD;
             }
         }
 
@@ -217,28 +224,28 @@ namespace game
         {
             string s1 = "ID: " + this.ID + "\n" + "Name: " + this.name + "\n" + "Race: " + this.race + "\n";
             string s2 = "Sex: " + this.race + "\n" + "Age:" + this.age + "\n" + "Health: " + this.health + "\n";
-            string s3 = "State: " + this.state + "\n" + "Max health: " + this.maxHealth + "\n";
-            string s4 = "Ability to speak now: " + this.isAbleToSpeakNow + "\n";
-            string s5 = "Ability to move now: " + this.isAbleToMoveNow;
+            string s3 = "State: " + this.stateHealth + "\n" + "Max health: " + this.maxHealth + "\n";
+            string s4 = "Ability to speak now: " + this.canSpeakNow + "\n";
+            string s5 = "Ability to move now: " + this.canMoveNow;
             return s1 + s2 + s3 + s4 + s5;   
         }
 
         public void PickUpArtifact(Artifact artifact)
         {
-            inventary.Add(artifact);
+            inventory.Add(artifact);
         }
 
         public bool RemoveArtifactFromInventary(Artifact artifact)
         {
-            return inventary.Remove(artifact);
+            return inventory.Remove(artifact);
         }
 
         public bool GiveArtifactToAnotherCharacter(Character another, Artifact artifact)
         {
-            bool wasInInventary = inventary.Remove(artifact);
+            bool wasInInventary = inventory.Remove(artifact);
             if (wasInInventary == true)
             {
-                another.inventary.Add(artifact);
+                another.inventory.Add(artifact);
                 return true;
             }
             return false;
@@ -246,7 +253,7 @@ namespace game
 
         public bool UseArtifact(Artifact artifact, Character another)
         {
-            bool wasInInventary = inventary.Remove(artifact);
+            bool wasInInventary = inventory.Remove(artifact);
             if (wasInInventary == true)
             {
                 artifact.MagicAction(this, another);
@@ -257,7 +264,7 @@ namespace game
 
         public bool UseArtifact(Artifact artifact)
         {
-            bool wasInInventary = inventary.Remove(artifact);
+            bool wasInInventary = inventory.Remove(artifact);
             if (wasInInventary == true)
             {
                 artifact.MagicAction(this);

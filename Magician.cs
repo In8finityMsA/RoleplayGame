@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace game
 {
-    class MagicUser : Character
+    public class Magician : Character
     {
-        private int mana;
-        private int maxMana;
-        private readonly List<Spell> spells = new List<Spell>();
+        private double mana;
+        private double maxMana;
+        private readonly Dictionary<short, Spell> spells = new Dictionary<short, Spell>();
 
-        public MagicUser(string name, RACE race, SEX sex, int age, int maxHealth, int experience, int maxMana): base(name, race, sex, age, maxHealth, experience)
+        public Magician(string name, Race race, Sex sex, int age, double maxHealth, int experience, double maxMana): base(name, race, sex, age, maxHealth, experience)
         {
             this.maxMana = maxMana;
             this.mana = maxMana;
         }
 
-        public int Mana
+        public double Mana
         {
             get
             {
@@ -26,16 +26,16 @@ namespace game
             }
             set
             {
-                if (value < 0)
+                if (value < 0 || value > MaxMana)
                 {
-                    throw new ArgumentException("Mana cannot be less then zero");
+                    throw new ArgumentException("Mana cannot be less then 0 or more than MaxMana");
                 }
                 mana = value;
             }
                 
         }
 
-        public int MaxMana
+        public double MaxMana
         {
             get
             {
@@ -45,20 +45,20 @@ namespace game
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException("Max Mana cannot be less then zero");
+                    throw new ArgumentException("Max mana cannot be less then zero");
                 }
                 maxMana = value;
             }
         }
 
-        public int NumberOfSpells()
+        public int GetNumberOfSpells()
         {
             return spells.Count();
         }
 
-        public Spell GetSpellByIndex(int index)
+        public Spell GetSpellById(short spellID)
         {
-            return spells[index];
+            return spells[spellID];
         }
 
         public bool LearnSpell(Spell spell)
@@ -90,7 +90,7 @@ namespace game
             {
                 return false;
             }
-            spell.MagicAction(this, another);
+            spell.MagicEffect(this, another);
             return true;
         }
 
@@ -101,7 +101,7 @@ namespace game
             {
                 return false;
             }
-            spell.MagicAction(this);
+            spell.MagicEffect(this);
             return true;
         }
     }
