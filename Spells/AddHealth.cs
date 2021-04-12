@@ -2,17 +2,19 @@
 {
     public class AddHealth : Spell, IMagicPowered
     {
-        private const double MANA_PER_HEALTH = 2.0f; //mana needed per one health point
+        public const short SpellID = 1;
+        private const double MANA_COST = 2.0; //mana needed per one health point
+
+        public double ManaPerPower { get; }
+
+        public AddHealth() : base(MANA_COST, false, true)
+        {
+        }
+
         public override void MagicEffect(Magician user, Character target)
         {
             MagicEffect(user, target, target.MaxHealth - target.Health);
         }
-
-        public override void MagicEffect(Magician user)
-        {
-            MagicEffect(user, user);
-        }
-
 
         public void MagicEffect(Magician user, Character target, double power)
         {
@@ -21,23 +23,17 @@
                 power = target.MaxHealth - target.Health;
             }
 
-            if (user.Mana > power * MANA_PER_HEALTH)
+            if (user.Mana >= power * ManaPerPower)
             {
-                user.Mana -= power * MANA_PER_HEALTH;
+                user.Mana -= power * ManaPerPower;
                 target.Health += power;
             }
             else
             {
-                target.Health = user.Mana * MANA_PER_HEALTH;
+                target.Health += user.Mana * ManaPerPower;
                 user.Mana = 0;
             }
         }
-        public void MagicEffect(Magician user, double power) 
-        {
-            MagicEffect(user, user, power);
-        }
-        
-
-        
+   
     }
 }
