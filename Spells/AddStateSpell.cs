@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace game
 {
-    class AddStateSpell : Spell
+    internal abstract class AddStateSpell : Spell
     {
         protected AddStateSpell(double minManaCost, bool hasMotionalComponent, bool hasVerbalComponent, State stateToAdd) : base(minManaCost, hasMotionalComponent, hasVerbalComponent)
         {
@@ -24,11 +24,6 @@ namespace game
                     user.Mana -= MinManaCost;
                 }
             }
-        }
-
-        public  void MagicEffect(Magician user)
-        {
-            MagicEffect(user, user);
         }
 
     }
