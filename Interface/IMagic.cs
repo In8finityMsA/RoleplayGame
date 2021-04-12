@@ -1,10 +1,13 @@
 ﻿namespace game
 {
     public interface IMagic
-    {        
+    {
         void MagicEffect(Magician user, Character target);        
 
-        void MagicEffect(Magician user);
+        void MagicEffect(Magician user)
+        {
+            MagicEffect(user, user);
+        }
         
     }
 }
