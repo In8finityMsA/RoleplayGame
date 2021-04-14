@@ -38,13 +38,14 @@ namespace game
         private int age;
         private double health;
         private StateHealth stateHealth;
+        private HashSet<State> states = new HashSet<State>();
         private double maxHealth;
         private int experience;
 
-        private bool canSpeakNow = false;
-        private bool canMoveNow = false;
+        private bool canSpeakNow = true;
+        private bool canMoveNow = true;
 
-        private readonly List<Artifact> inventory = new List<Artifact>();        
+        /*private readonly List<Artifact> inventory = new List<Artifact>();        
         public int GetNumberOfArtifacts()
         {
             return inventory.Count();
@@ -54,7 +55,7 @@ namespace game
         {
             return inventory[index];
         }
-
+*/
         
 
         public Character(string name, Race race, Sex sex): this(name, race, sex, 0, 100, 0)
@@ -87,12 +88,12 @@ namespace game
         }       
 
         public int Age 
-        { 
-          get
+        {
+            get
             {
                 return age;
             }
-          private set
+            private set
             {
                 if (value < 0)
                 {
@@ -127,7 +128,7 @@ namespace game
             }
         }
 
-        public StateHealth State
+        public StateHealth StateHealth
         {
             get
             {
@@ -144,6 +145,16 @@ namespace game
                     throw new Exception("State cannot be changed if character is already DEAD");
                 }
             }
+        }
+
+        public bool AddState(State state)
+        {
+            return states.Add(state);
+        }
+
+        public bool RemoveState(State state)
+        {
+            return states.Remove(state);
         }
 
         public Sex Sex
@@ -230,7 +241,7 @@ namespace game
             return s1 + s2 + s3 + s4 + s5;   
         }
 
-        public void PickUpArtifact(Artifact artifact)
+        /*public void PickUpArtifact(Artifact artifact)
         {
             inventory.Add(artifact);
         }
@@ -271,7 +282,7 @@ namespace game
                 return true;
             }
             return false;
-        }
+        }*/
 
 
     }

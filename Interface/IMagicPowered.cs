@@ -4,10 +4,7 @@
     {
         void MagicEffect(Magician user, Character target, double power);
 
-        void MagicEffect(Magician user, double power)
-        {
-            MagicEffect(user, user, power);
-        }
+        void MagicEffect(Magician user, double power) => MagicEffect(user, user, power);
 
         double ManaPerPower { get; }
     }

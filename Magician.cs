@@ -61,48 +61,88 @@ namespace game
             return spells[spellID];
         }
 
-        public bool LearnSpell(Spell spell)
+        public void LearnSpell(Spell spell)
         {
-            bool wasLearned = spells.Contains(spell);
-            if (wasLearned == true)
-            {
-                return false;
-            }
-            spells.Add(spell);
-            return true;
+            spells.Add(spell.GetClassID(), spell);
+            //bool wasLearned = spells.Contains(spell);
+            //if (wasLearned == true)
+            //{
+            //    return false;
+            //}
+            //spells.Add(spell);
+            //return true;
         }
 
-        public bool ForgetSpell(Spell spell)
+        public void ForgetSpell(Spell spell)
         {
-            bool wasLearned = spells.Contains(spell);
+            spells.Remove(spell.GetClassID());
+            /*bool wasLearned = spells.Contains(spell);
             if (wasLearned == true)
             {
                 spells.Remove(spell);
                 return true;
             }            
-            return false;
+            return false;*/
         }
 
         public bool UseSpell(Spell spell, Character another)
         {
-            bool wasLearned = spells.Contains(spell);
+            if (spells.ContainsKey(spell.GetClassID()))
+            {
+                spell.MagicEffect(this, another);
+                return true;
+            }
+            return false;
+            /*bool wasLearned = spells.Contains(spell);
             if (wasLearned == false)
             {
                 return false;
             }
             spell.MagicEffect(this, another);
-            return true;
+            return true;*/
         }
 
         public bool UseSpell(Spell spell)
         {
-            bool wasLearned = spells.Contains(spell);
+            if (spells.ContainsKey(spell.GetClassID()))
+            {
+                (spell as IMagic).MagicEffect(this);
+                return true;
+            }
+            return false;
+            /*bool wasLearned = spells.Contains(spell);
             if (wasLearned == false)
             {
                 return false;
             }
             spell.MagicEffect(this);
-            return true;
+            return true;*/
+        }
+
+        public bool UseSpell(Spell spell, Character another, double power)
+        {
+            if (spell is IMagicPowered)
+            {
+                if (spells.ContainsKey(spell.GetClassID()))
+                {
+                    (spell as IMagicPowered).MagicEffect(this, another, power);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool UseSpell(Spell spell, double power)
+        {
+            if (spell is IMagicPowered)
+            {
+                if (spells.ContainsKey(spell.GetClassID()))
+                {
+                    (spell as IMagicPowered).MagicEffect(this, power);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
