@@ -8,7 +8,12 @@ namespace game
 {
     class Revive : Spell
     {
-        public const short SpellID = 4;
+        public static readonly short SpellID = SpellIDManager.GetNextID();
+        public override short GetClassID()
+        {
+            return SpellID;
+        }
+
         private const double MANA_COST = 150.0;
 
         public Revive() : base(MANA_COST, true, true)
@@ -25,11 +30,6 @@ namespace game
                     user.Health = 1;
                 }
             }
-        }
-
-        public override void MagicEffect(Magician user)
-        {
-            MagicEffect(user, user); //Is it even possible??
         }
     }
 }
