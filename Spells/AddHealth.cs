@@ -9,11 +9,11 @@
         }
 
         private const double MANA_COST = 2.0; //mana needed per one health point
-        public double ManaPerPower { get; }
+        public double ConsumptionPerPower { get; }
 
         public AddHealth() : base(MANA_COST, false, true)
         {
-            ManaPerPower = MANA_COST;
+            ConsumptionPerPower = MANA_COST;
         }
 
         public override void MagicEffect(Magician user, Character target)
@@ -30,14 +30,14 @@
                     power = target.MaxHealth - target.Health;
                 }
 
-                if (user.Mana >= power * ManaPerPower)
+                if (user.Mana >= power * ConsumptionPerPower)
                 {
-                    user.Mana -= power * ManaPerPower;
+                    user.Mana -= power * ConsumptionPerPower;
                     target.Health += power;
                 }
                 else
                 {
-                    target.Health += user.Mana / ManaPerPower;
+                    target.Health += user.Mana / ConsumptionPerPower;
                     user.Mana = 0;
                 }
             }

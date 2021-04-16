@@ -6,6 +6,6 @@
 
         void MagicEffect(Magician user, double power) => MagicEffect(user, user, power);
 
-        double ManaPerPower { get; }
+        double ConsumptionPerPower { get; }
     }
 }
