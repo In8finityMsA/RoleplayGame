@@ -39,11 +39,12 @@ namespace Artifacts
         }
 
         public void MagicEffect(Character user, Character target, double power)
-        {                          
-            if (power <= Charge)
+        {
+            double fee = power * ConsumptionPerPower;
+            if (fee <= Charge)
             {
-                target.Health -= power;
-                Charge -= power;
+                target.Health -= fee;
+                Charge -= fee;
                 ActionsWithState(target);
              }
             else if (Charge != 0)

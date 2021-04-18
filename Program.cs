@@ -27,8 +27,8 @@ namespace KashTask
             Console.WriteLine(Kenarius.Mana);
 
             Unfreeze rev = new Unfreeze();
-            Artas.LearnSpell((Spell)rev);
-            Artas.UseSpell(rev, Kenarius);
+            Artas.LearnSpell(typeof(Unfreeze));
+            Artas.UseSpell(typeof(Unfreeze), Kenarius);
             Console.WriteLine("----------------------------------------------");
             Console.WriteLine(Kenarius.ToString());
             Console.WriteLine("----------------------------------------------");

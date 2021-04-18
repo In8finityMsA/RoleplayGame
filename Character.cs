@@ -51,10 +51,7 @@ namespace game
         private bool canSpeakNow = true;
         private bool canMoveNow = true;
 
-
         private readonly List<Artifact> inventory = new List<Artifact>();        
-        
-
 
         public Character(string name, Race race, Sex sex) : this(name, race, sex, 0, 100, 0) { }
 
@@ -70,7 +67,7 @@ namespace game
             this.sex = sex;
             Age = age;
             MaxHealth = maxHealth;
-            Health = maxHealth;
+            health = maxHealth;
             StateHealth = StateHealth.NORMAL;
             Experience = experience;
         }       
@@ -150,7 +147,6 @@ namespace game
             return false;
         }
             
-
         public bool RemoveState(State state)
         {
             if (Health != 0)
@@ -163,8 +159,7 @@ namespace game
         public bool CanSpeakNow { get => canSpeakNow; set => canSpeakNow = value; }
         
         public bool CanMoveNow { get => canMoveNow; set => canMoveNow = value; }
-
-        
+       
         public int CompareTo(object obj)
         {
             if (obj is Character character)
@@ -187,16 +182,9 @@ namespace game
             else if (health <= 0)
             {
                 stateHealth = StateHealth.DEAD;
+                canMoveNow = false;
+                canSpeakNow = false;
             }
-        }
-
-        public override string ToString()
-        {
-            return "ID: " + ID + "\n" + "Name: " + Name + "\n" + "Race: " + Race + "\n" +
-            "Sex: " + Sex + "\n" + "Age: " + Age + "\n" + "Health: " + Health + "\n" +
-            "State: " + StateHealth + "\n" + "Max health: " + MaxHealth + "\n" +
-            "Ability to speak now: " + CanSpeakNow + "\n" +
-            "Ability to move now: " + CanMoveNow + "\n" + "States: " + String.Join(", ", States);
         }
 
         public void PickUpArtifact(Artifact artifact)
@@ -210,10 +198,8 @@ namespace game
         /// </summary>
         /// <param name="artifact"></param>
         /// <returns> True if artifact was successfully removed, otherwise returns False</returns>
-        public bool RemoveArtifact(Artifact artifact)
-        {
-            return inventory.Remove(artifact);
-        }
+        public bool RemoveArtifact(Artifact artifact) => inventory.Remove(artifact);
+   
 
         /// <summary>
         /// Removes artifact to the inventory of other Character.
@@ -245,16 +231,10 @@ namespace game
             return false;
         }
 
-        public int GetNumberOfArtifacts()
-        {
-            return inventory.Count();
-        }
+        public int GetNumberOfArtifacts() => inventory.Count;
 
-        public Artifact GetArtifactByIndex(int index)
-        {
-            return inventory[index];
-        }
-
+        public Artifact GetArtifactByIndex(int index) => inventory[index];
+       
         public bool UseArtifact(Artifact artifact, Character another)
         {
             CheckIfDeadTryAct();
@@ -308,14 +288,23 @@ namespace game
         {
             if (StateHealth == StateHealth.DEAD)
             {
-                throw new DeadTryToactException("Dead character can't act");
+                throw new DeadTryToactException("Dead character can't act.");
             }
         }
 
         public void Revive()
         {
             health = 1;
-            StateHealth = StateHealth.WEAK;
-        }        
+            ManageState();
+        }
+
+        public override string ToString()
+        {
+            return "ID: " + ID + "\n" + "Name: " + Name + "\n" + "Race: " + Race + "\n" +
+            "Sex: " + Sex + "\n" + "Age: " + Age + "\n" + "Health: " + Health + "\n" +
+            "State: " + StateHealth + "\n" + "Max health: " + MaxHealth + "\n" +
+            "Ability to speak now: " + CanSpeakNow + "\n" +
+            "Ability to move now: " + CanMoveNow + "\n" + "States: " + String.Join(", ", States);
+        }
     }  
 }

@@ -45,7 +45,7 @@ namespace game
             }
         }
 
-        public int GetNumberOfSpells() => spells.Count();
+        public int GetNumberOfSpells() => spells.Count;
 
         public Spell GetSpellById(Type type) => spells[type];
 
@@ -57,7 +57,7 @@ namespace game
 
         public void LearnSpell(Type type)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             Spell spell = Activator.CreateInstance(type) as Spell;
             if (spell != null)
             {
@@ -68,7 +68,7 @@ namespace game
 
         public void ForgetSpell(Type type) 
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             spells.Remove(type);
         }
 
@@ -91,7 +91,7 @@ namespace game
 
         public bool UseSpell(Type type, Character another)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             Spell spell = Activator.CreateInstance(type) as Spell;
             if (spell != null)
             {
@@ -113,7 +113,7 @@ namespace game
 
         public bool UseSpell(Type type)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             Spell spell = Activator.CreateInstance(type) as Spell;
             if (spell != null)
             {
@@ -138,7 +138,7 @@ namespace game
 
         public bool UseSpell(Type type, Character another, double power)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             Spell spell = Activator.CreateInstance(type) as Spell;
             if (spell != null)
             {
@@ -163,7 +163,7 @@ namespace game
 
         public bool UseSpell(Type type, double power)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             Spell spell = Activator.CreateInstance(type) as Spell;
             if (spell != null)
             {
@@ -174,7 +174,7 @@ namespace game
 
         public override string ToString()
         {
-            return base.ToString() +
+            return base.ToString() + "\n" +
                 "Mana: " + Mana + "\n" + "Maximal mana: " + MaxMana + "\n" +
                 "Spells: " + String.Join(", ", spells.Keys);
         }
