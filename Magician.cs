@@ -10,7 +10,7 @@ namespace game
     {
         private double mana;
         private double maxMana;
-        private readonly Dictionary<short, Spell> spells = new Dictionary<short, Spell>();
+        private readonly Dictionary<Type, Spell> spells = new Dictionary<Type, Spell>();
 
         public Magician(string name, Race race, Sex sex, int age, double maxHealth, int experience, double maxMana): base(name, race, sex, age, maxHealth, experience)
         {
@@ -20,10 +20,7 @@ namespace game
 
         public double Mana
         {
-            get
-            {
-                return mana;
-            }
+            get => mana;          
             set
             {
                 if (value < 0 || value > MaxMana)
@@ -31,16 +28,12 @@ namespace game
                     throw new ArgumentException("Mana cannot be less then 0 or more than MaxMana");
                 }
                 mana = value;
-            }
-                
+            }                
         }
 
         public double MaxMana
         {
-            get
-            {
-                return maxMana;
-            }
+            get => maxMana;           
             set
             {
                 if (value < 0)
@@ -51,98 +44,112 @@ namespace game
             }
         }
 
-        public int GetNumberOfSpells()
-        {
-            return spells.Count();
-        }
+        public int GetNumberOfSpells() => spells.Count();
 
-        public Spell GetSpellById(short spellID)
-        {
-            return spells[spellID];
-        }
+        public Spell GetSpellById(Type type) => spells[type];
 
         public void LearnSpell(Spell spell)
         {
-            spells.Add(spell.GetClassID(), spell);
-            //bool wasLearned = spells.Contains(spell);
-            //if (wasLearned == true)
-            //{
-            //    return false;
-            //}
-            //spells.Add(spell);
-            //return true;
+            CheckIfDeadTryAct();
+            spells.Add(spell.GetType(), spell);
+        }
+
+        //public void LearnSpell(Type type)
+        //{
+        //    if ()
+        //    {
+
+        //    }
+        //}
+
+
+        public void ForgetSpell(Type type) 
+        {
+            CheckIfDeadTryAct();
+            spells.Remove(type);
         }
 
         public void ForgetSpell(Spell spell)
         {
-            spells.Remove(spell.GetClassID());
-            /*bool wasLearned = spells.Contains(spell);
-            if (wasLearned == true)
-            {
-                spells.Remove(spell);
-                return true;
-            }            
-            return false;*/
+            CheckIfDeadTryAct();
+            spells.Remove(spell.GetType());
         }
 
         public bool UseSpell(Spell spell, Character another)
         {
-            if (spells.ContainsKey(spell.GetClassID()))
+            CheckIfDeadTryAct();
+            if (spells.ContainsKey(spell.GetType()))
             {
                 spell.MagicEffect(this, another);
                 return true;
             }
-            return false;
-            /*bool wasLearned = spells.Contains(spell);
-            if (wasLearned == false)
-            {
-                return false;
-            }
-            spell.MagicEffect(this, another);
-            return true;*/
+            return false;         
         }
+
+        //public bool UseSpell(Type type, Character another)
+        //{
+        //    
+        //}
 
         public bool UseSpell(Spell spell)
         {
-            if (spells.ContainsKey(spell.GetClassID()))
+            CheckIfDeadTryAct();
+            if (spells.ContainsKey(spell.GetType()))
             {
                 (spell as IMagic).MagicEffect(this);
                 return true;
             }
-            return false;
-            /*bool wasLearned = spells.Contains(spell);
-            if (wasLearned == false)
-            {
-                return false;
-            }
-            spell.MagicEffect(this);
-            return true;*/
+            return false;            
         }
+
+        //public bool UseSpell(Type type)
+        //{
+            
+        //}
 
         public bool UseSpell(Spell spell, Character another, double power)
         {
-            if (spell is IMagicPowered)
+            CheckIfDeadTryAct();
+            if (spell is IMagicPowered castedSpell)
             {
-                if (spells.ContainsKey(spell.GetClassID()))
+                if (spells.ContainsKey(spell.GetType()))
                 {
-                    (spell as IMagicPowered).MagicEffect(this, another, power);
+                    castedSpell.MagicEffect(this, another, power);
                     return true;
                 }
             }
             return false;
         }
 
+        //public bool UseSpell(Type type, Character another, double power)
+        //{
+           
+        //}
+
         public bool UseSpell(Spell spell, double power)
         {
-            if (spell is IMagicPowered)
+            CheckIfDeadTryAct();
+            if (spell is IMagicPowered castedSpell)
             {
-                if (spells.ContainsKey(spell.GetClassID()))
+                if (spells.ContainsKey(spell.GetType()))
                 {
-                    (spell as IMagicPowered).MagicEffect(this, power);
+                    castedSpell.MagicEffect(this, power);
                     return true;
                 }
             }
             return false;
+        }
+
+        //public bool UseSpell(Type type, double power)
+        //{
+        //    
+        //}
+
+        public override string ToString()
+        {
+            return base.ToString() +
+                "Mana: " + Mana + "\n" + "Maximal mana: " + MaxMana + "\n" +
+                "Spells: " + String.Join(", ", spells.Keys);
         }
     }
 }

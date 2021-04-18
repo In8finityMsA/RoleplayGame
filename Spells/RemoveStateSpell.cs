@@ -15,13 +15,13 @@ namespace game
 
         public State StateToRemove { get; }
 
-        public override void MagicEffect(Magician user, Character target)
+        public override void MagicEffect(Character user, Character target)
         {
             if (base.CheckCastRequirements(user))
             {
                 if (target.RemoveState(StateToRemove))
                 {
-                    user.Mana -= MinManaCost;
+                    ((Magician)user).Mana -= MinManaCost;
                 }
             }
         }

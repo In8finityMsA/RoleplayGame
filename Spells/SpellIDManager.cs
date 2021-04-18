@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace game
 {
-    class SpellIDManager
-    {
-        private static short nextID = 1;
+    //class SpellIDManager
+    //{
+    //    private static short nextID = 1;
 
-        public static short GetNextID()
-        {
-            return nextID++;
-        }
-    }
+    //    public static short GetNextID()
+    //    {
+    //        return nextID++;
+    //    }
+    //}
 }

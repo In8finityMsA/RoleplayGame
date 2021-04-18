@@ -15,13 +15,13 @@ namespace game
 
         public State StateToAdd { get; }
 
-        public override void MagicEffect(Magician user, Character target)
+        public override void MagicEffect(Character user, Character target)
         {
             if (base.CheckCastRequirements(user))
             {
                 if (target.AddState(StateToAdd))
                 {
-                    user.Mana -= MinManaCost;
+                    ((Magician)user).Mana -= MinManaCost;
                 }
             }
         }
