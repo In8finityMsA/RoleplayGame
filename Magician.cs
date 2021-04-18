@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Artifacts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,7 @@ namespace game
             {
                 if (value < 0 || value > MaxMana)
                 {
-                    throw new ArgumentException("Mana cannot be less then 0 or more than MaxMana");
+                    throw new ArgumentException("Mana cannot be less then 0 or more than MaxMana.");
                 }
                 mana = value;
             }                
@@ -38,7 +39,7 @@ namespace game
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException("Max mana cannot be less then zero");
+                    throw new ArgumentException("Max mana cannot be less then zero.");
                 }
                 maxMana = value;
             }
@@ -50,17 +51,19 @@ namespace game
 
         public void LearnSpell(Spell spell)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             spells.Add(spell.GetType(), spell);
         }
 
-        //public void LearnSpell(Type type)
-        //{
-        //    if ()
-        //    {
-
-        //    }
-        //}
+        public void LearnSpell(Type type)
+        {
+            CheckIfDeadTryAct();
+            Spell spell = Activator.CreateInstance(type) as Spell;
+            if (spell != null)
+            {
+                LearnSpell(spell);
+            }
+        }
 
 
         public void ForgetSpell(Type type) 
@@ -71,13 +74,13 @@ namespace game
 
         public void ForgetSpell(Spell spell)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             spells.Remove(spell.GetType());
         }
 
         public bool UseSpell(Spell spell, Character another)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             if (spells.ContainsKey(spell.GetType()))
             {
                 spell.MagicEffect(this, another);
@@ -86,14 +89,20 @@ namespace game
             return false;         
         }
 
-        //public bool UseSpell(Type type, Character another)
-        //{
-        //    
-        //}
+        public bool UseSpell(Type type, Character another)
+        {
+            CheckIfDeadTryAct();
+            Spell spell = Activator.CreateInstance(type) as Spell;
+            if (spell != null)
+            {
+                return UseSpell(spell, another);
+            }
+            return false;
+        }
 
         public bool UseSpell(Spell spell)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             if (spells.ContainsKey(spell.GetType()))
             {
                 (spell as IMagic).MagicEffect(this);
@@ -102,14 +111,20 @@ namespace game
             return false;            
         }
 
-        //public bool UseSpell(Type type)
-        //{
-            
-        //}
+        public bool UseSpell(Type type)
+        {
+            CheckIfDeadTryAct();
+            Spell spell = Activator.CreateInstance(type) as Spell;
+            if (spell != null)
+            {
+                return UseSpell(spell);
+            }
+            return false;
+        }
 
         public bool UseSpell(Spell spell, Character another, double power)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             if (spell is IMagicPowered castedSpell)
             {
                 if (spells.ContainsKey(spell.GetType()))
@@ -121,14 +136,20 @@ namespace game
             return false;
         }
 
-        //public bool UseSpell(Type type, Character another, double power)
-        //{
-           
-        //}
+        public bool UseSpell(Type type, Character another, double power)
+        {
+            CheckIfDeadTryAct();
+            Spell spell = Activator.CreateInstance(type) as Spell;
+            if (spell != null)
+            {
+                return UseSpell(spell, another, power);
+            }
+            return false;
+        }
 
         public bool UseSpell(Spell spell, double power)
         {
-            CheckIfDeadTryAct();
+            base.CheckIfDeadTryAct();
             if (spell is IMagicPowered castedSpell)
             {
                 if (spells.ContainsKey(spell.GetType()))
@@ -140,16 +161,37 @@ namespace game
             return false;
         }
 
-        //public bool UseSpell(Type type, double power)
-        //{
-        //    
-        //}
+        public bool UseSpell(Type type, double power)
+        {
+            CheckIfDeadTryAct();
+            Spell spell = Activator.CreateInstance(type) as Spell;
+            if (spell != null)
+            {
+                return UseSpell(spell, power);
+            }
+            return false;
+        }
 
         public override string ToString()
         {
             return base.ToString() +
                 "Mana: " + Mana + "\n" + "Maximal mana: " + MaxMana + "\n" +
                 "Spells: " + String.Join(", ", spells.Keys);
+        }
+
+        public void ChargeArtifact(PoweredRenewableArtifact artifact, int power)
+        {
+            CheckIfDeadTryAct();
+            if (power <= Mana)
+            {
+                Mana -= power;
+                artifact.Charge += power;
+            }
+            else
+            {
+                artifact.Charge += Mana;
+                Mana = 0;
+            }
         }
     }
 }
