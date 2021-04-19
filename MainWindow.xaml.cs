@@ -22,11 +22,13 @@ namespace KashTaskWPF
     public partial class MainWindow : Window
     {
         IAdapter adapter;
-        
-        
+
+        public static MainWindow mainwindow;
+
         public MainWindow()
         {
             InitializeComponent();
+            mainwindow = this;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -39,14 +41,19 @@ namespace KashTaskWPF
         {
             textBlock.Text = text;
         }
-        
-        public void StartFight() {}
-        
-        public void EndFight(bool hasWon) {}
+
+        public void StartFight() { }
+
+        public void EndFight(bool hasWon) { }
 
         public void ChangeAdapter(IAdapter adapter)
         {
             this.adapter = adapter;
+        }
+
+        public void GetInfo(string text, int variantsAmount)
+        {
+
         }
     }
 }
