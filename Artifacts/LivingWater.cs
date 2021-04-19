@@ -1,27 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Artifacts;
 
 namespace game
 {
-    public class LivingWater : Artifact
+    public sealed class LivingWater : Water
     {
-        public static readonly short SpellID = SpellIDManager.GetNextID();
-        public override short GetClassID()
-        {
-            return SpellID;
-        }
+        public LivingWater(BottleSize size) : base(size) { }
 
-        public LivingWater() : base(false, 1)
+        protected sealed override void ActionsWithHealth(Character target)
         {
-        }
-
-        public override void MagicEffect(Magician user, Character target)
-        {
-            Charge--;
-            
+            target.Health += (int)Size;
         }
     }
 }

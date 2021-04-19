@@ -8,7 +8,7 @@ namespace game
         {
             if (minManaCost < 0)
             {
-                throw new ArgumentException("MinManaCost cannot be less than zero");
+                throw new ArgumentException("MinManaCost cannot be less than zero.");
             }
 
             MinManaCost = minManaCost;
@@ -16,7 +16,7 @@ namespace game
             HasVerbalComponent = hasVerbalComponent;            
         }
 
-        public abstract short GetClassID();
+        //public abstract short GetClassID();
 
         public bool HasMotionalComponent { get; }
         public bool HasVerbalComponent { get; }
@@ -24,13 +24,13 @@ namespace game
 
         //Pavel: Definition for MagicEffect(user) is in interface default implementation.
         //Pavel: Maybe move it here to not abstract method. But that will be not consistent with IMagicPowered
-        public abstract void MagicEffect(Magician user, Character target);
+        public abstract void MagicEffect(Character user, Character target);
 
         //Pavel: Does it need to be public? To check possibility to cast a spell from other classes.
-        protected bool CheckCastRequirements(Magician user) 
+        protected bool CheckCastRequirements(Character user) 
         {
-            if ((!HasMotionalComponent || user.CanMoveNow) && (!HasVerbalComponent || user.CanSpeakeNow)) {
-                if (user.Mana >= MinManaCost)
+            if ((!HasMotionalComponent || user.CanMoveNow) && (!HasVerbalComponent || user.CanSpeakNow) && (user is Magician magicUser)) {
+                if (magicUser.Mana >= MinManaCost)
                 {
                     return true;
                 }

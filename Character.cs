@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Artifacts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace game
-{   
+{
     public enum StateHealth
     {
         NORMAL, WEAK, DEAD
@@ -26,12 +27,17 @@ namespace game
         MALE, FEMALE
     }
 
+    public class DeadTryToactException: Exception
+    {
+        public DeadTryToactException(string message = "") : base(message) { }
+    }
+        
     public class Character: IComparable
     {
         private static int unique_ID = 0;
 
         private readonly string name;
-        private readonly int ID;
+        private readonly int id;
         private readonly Race race;
         private readonly Sex sex;
               
@@ -45,172 +51,122 @@ namespace game
         private bool canSpeakNow = true;
         private bool canMoveNow = true;
 
-        /*private readonly List<Artifact> inventory = new List<Artifact>();        
-        public int GetNumberOfArtifacts()
-        {
-            return inventory.Count();
-        }
+        private readonly List<Artifact> inventory = new List<Artifact>();        
 
-        public Artifact GetArtifactByIndex(int index)
-        {
-            return inventory[index];
-        }
-*/
-        
+        public Character(string name, Race race, Sex sex) : this(name, race, sex, 0, 100, 0) { }
 
-        public Character(string name, Race race, Sex sex): this(name, race, sex, 0, 100, 0)
-        {
-            
-        }
+        public Character(string name, Race race, Sex sex, int age) : this(name, race, sex, age, 100, 0) { }
 
-        //optional
-        public Character(string name, Race race, Sex sex, int age) : this(name, race, sex, age, 100, 0)
-        {
+        public Character(string name, Race race, Sex sex, int age, double maxHealth) : this(name, race, sex, age, maxHealth, 0) { }
 
-        }
-        //optional
-        public Character(string name, Race race, Sex sex, int age, double maxHealth) : this(name, race, sex, age, maxHealth, 0)
-        {
-            
-        }
-        //optional
         public Character(string name, Race race, Sex sex, int age, double maxHealth, int experience)
         {
-            this.ID = ++unique_ID;
+            this.id = ++unique_ID;
             this.name = name;
             this.race = race;
             this.sex = sex;
-            this.age = age;
-            this.maxHealth = maxHealth;
-            this.health = maxHealth;
-            this.stateHealth = StateHealth.NORMAL;
-            this.experience = experience;
+            Age = age;
+            MaxHealth = maxHealth;
+            health = maxHealth;
+            StateHealth = StateHealth.NORMAL;
+            Experience = experience;
         }       
+        
+        public int ID { get => id; }
+        public string Name { get => name; }
+        public Race Race { get => race; }
+        public Sex Sex { get => sex; }
 
-        public int Age 
+        public int Age
         {
-            get
-            {
-                return age;
-            }
-            private set
+            get => age;
+            set  
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException("Age cannot be less than zero");
+                    throw new ArgumentException("Age cannot be less than zero.");
                 }
+                age = value;
             }
         }
 
         public double Health
         {
-            get
-            {
-                return health;
-            }
+            get => health;            
             set
             {
-                if (value < 0 || value > maxHealth)
+                if (health != 0)
                 {
-                    throw new ArgumentException("Health cannot be less than 0 or more than maxHealth");
-                }
-                health = value;
-                ManageState();
+                    if (value < 0 || value > maxHealth)
+                    {
+                        throw new ArgumentException("Health cannot be less than 0 or more than maximal health.");
+                    }
+                    health = value;
+                    ManageState();
+                }              
             }
         }
 
         public double MaxHealth
         {
-            get
-            {
-                return maxHealth;
-
-            }
-        }
-
-        public StateHealth StateHealth
-        {
-            get
-            {
-                return stateHealth;
-            }
-            private set
-            {
-                if (stateHealth != StateHealth.DEAD)
-                {
-                    stateHealth = value;
-                }
-                else
-                {
-                    throw new Exception("State cannot be changed if character is already DEAD");
-                }
-            }
-        }
-
-        public bool AddState(State state)
-        {
-            return states.Add(state);
-        }
-
-        public bool RemoveState(State state)
-        {
-            return states.Remove(state);
-        }
-
-        public Sex Sex
-        {
-            get
-            {
-                return sex;
-            }                
-        }
-
-        public int Experience
-        {
-            get
-            {
-                return experience;
-            }
-            private set
+            get => maxHealth;            
+            set
             {
                 if (value < 0)
                 {
-                    throw new ArgumentException("Experience cannot be less than 0");
+                    throw new ArgumentException("Maximal health cannot be less than 0.");
                 }
+                maxHealth = value;
             }
         }
 
-        public bool CanSpeakeNow
+        public StateHealth StateHealth { get => stateHealth; private set => stateHealth = value; }
+
+        public int Experience
         {
-            get
-            {
-                return canSpeakNow;
-            }
+            get => experience;
             set
             {
-                canSpeakNow = value;
+                if (value < 0)
+                {
+                    throw new ArgumentException("Experience cannot be less than 0.");
+                }
+                experience = value;
             }
         }
 
-        public bool CanMoveNow
+        public HashSet<State> States { get => states; }
+
+
+        public bool AddState(State state)
         {
-            get
+            if (Health != 0)
             {
-                return canSpeakNow;
+                return states.Add(state);
             }
-            set
+            return false;
+        }
+            
+        public bool RemoveState(State state)
+        {
+            if (Health != 0)
             {
-                canMoveNow = value;
-            }                
+                return states.Remove(state);
+            }
+            return false;
         }
 
+        public bool CanSpeakNow { get => canSpeakNow; set => canSpeakNow = value; }
+        
+        public bool CanMoveNow { get => canMoveNow; set => canMoveNow = value; }
+       
         public int CompareTo(object obj)
         {
-            if (obj is Character)
+            if (obj is Character character)
             {
-                return experience.CompareTo(((Character)obj).experience);
+                return experience.CompareTo(character.experience);
             }
-            throw new ArgumentException("obj is not type of Character");
+            throw new ArgumentException("obj is not type of Character.");
         }
 
         public void ManageState()
@@ -226,109 +182,129 @@ namespace game
             else if (health <= 0)
             {
                 stateHealth = StateHealth.DEAD;
+                canMoveNow = false;
+                canSpeakNow = false;
             }
         }
 
-        
-
-        public override string ToString()
+        public void PickUpArtifact(Artifact artifact)
         {
-            string s1 = "ID: " + this.ID + "\n" + "Name: " + this.name + "\n" + "Race: " + this.race + "\n";
-            string s2 = "Sex: " + this.race + "\n" + "Age:" + this.age + "\n" + "Health: " + this.health + "\n";
-            string s3 = "State: " + this.stateHealth + "\n" + "Max health: " + this.maxHealth + "\n";
-            string s4 = "Ability to speak now: " + this.canSpeakNow + "\n";
-            string s5 = "Ability to move now: " + this.canMoveNow;
-            return s1 + s2 + s3 + s4 + s5;   
-        }
-
-        /*public void PickUpArtifact(Artifact artifact)
-        {
+            CheckIfDeadTryAct();
             inventory.Add(artifact);
         }
 
-        public bool RemoveArtifactFromInventary(Artifact artifact)
-        {
-            return inventory.Remove(artifact);
-        }
+        /// <summary>
+        /// Removes artifact from the inventory of a character.
+        /// </summary>
+        /// <param name="artifact"></param>
+        /// <returns> True if artifact was successfully removed, otherwise returns False</returns>
+        public bool RemoveArtifact(Artifact artifact) => inventory.Remove(artifact);
+   
 
+        /// <summary>
+        /// Removes artifact to the inventory of other Character.
+        /// </summary>
+        /// <param name="another"></param>
+        /// <param name="artifact"></param>
+        /// <returns> True if succeed, otherwise False.</returns>
         public bool GiveArtifactToAnotherCharacter(Character another, Artifact artifact)
         {
+            CheckIfDeadTryAct();
             bool wasInInventary = inventory.Remove(artifact);
-            if (wasInInventary == true)
+            if (wasInInventary)
+            {                
+                 another.inventory.Add(artifact);
+                 return true;
+            }
+            return false;
+        }
+
+        public bool StealArtifact(Character another, Artifact artifact)
+        {
+            CheckIfDeadTryAct();
+            bool wasInInventary = another.inventory.Remove(artifact);
+            if (wasInInventary)
             {
-                another.inventory.Add(artifact);
+                inventory.Add(artifact);
                 return true;
             }
             return false;
         }
 
+        public int GetNumberOfArtifacts() => inventory.Count;
+
+        public Artifact GetArtifactByIndex(int index) => inventory[index];
+       
         public bool UseArtifact(Artifact artifact, Character another)
         {
-            bool wasInInventary = inventory.Remove(artifact);
-            if (wasInInventary == true)
+            CheckIfDeadTryAct();
+            int index = inventory.IndexOf(artifact);
+            if (index != -1)
             {
-                artifact.MagicAction(this, another);
+                artifact.MagicEffect(this, another);
                 return true;
             }
-            return false;
+            return false;           
         }
 
         public bool UseArtifact(Artifact artifact)
         {
-            bool wasInInventary = inventory.Remove(artifact);
-            if (wasInInventary == true)
+            CheckIfDeadTryAct();
+            int index = inventory.IndexOf(artifact);
+            if (index != -1)
             {
-                artifact.MagicAction(this);
+                (artifact as IMagic).MagicEffect(this);
                 return true;
             }
             return false;
-        }*/
+        }
 
+        public bool UseArtifact(PoweredRenewableArtifact artifact, Character target, double power)
+        {
+            CheckIfDeadTryAct();
+            int index = inventory.IndexOf(artifact);
+            if (index != -1)
+            {
+                artifact.MagicEffect(this, target, power);
+                return true;
+            }
+            return false;
+                        
+        }
 
-    }
-    //interface IMagic
-    //{
-    //    void MagicAction();
-    //    void MagicAction(Character from, Character to);
-    //    void MagicAction(Character from);
-    //}
+        public bool UseArtifact(PoweredRenewableArtifact artifact, double power)
+        {
+            CheckIfDeadTryAct();
+            int index = inventory.IndexOf(artifact);
+            if (index != -1)
+            {
+                (artifact as IMagicPowered).MagicEffect(this, power);
+                return true;
+            }
+            return false;
+        }
 
+        public void CheckIfDeadTryAct()
+        {
+            if (StateHealth == StateHealth.DEAD)
+            {
+                throw new DeadTryToactException("Dead character can't act.");
+            }
+        }
 
+        public void Revive()
+        {
+            health = 1;
+            ManageState();
+        }
 
-    //class Spell : IMagic
-    //{
-    //    public void MagicAction()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public void MagicAction(Character from, Character to)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public void MagicAction(Character from)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
-
-
-
-    //class Artifact : IMagic
-    //{
-    //    public void MagicAction(Character from)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //    public void MagicAction(Character from, Character to)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public void MagicAction()
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
+        public override string ToString()
+        {
+            return "ID: " + ID + "\n" + "Name: " + Name + "\n" + "Race: " + Race + "\n" +
+            "Sex: " + Sex + "\n" + "Age: " + Age + "\n" + "Health: " + Health + "\n" +
+            "State: " + StateHealth + "\n" + "Max health: " + MaxHealth + "\n" +
+            "Ability to speak now: " + CanSpeakNow + "\n" +
+            "Ability to move now: " + CanMoveNow + "\n" + "States: " + String.Join(", ", States);
+        }
+    }  
 }
