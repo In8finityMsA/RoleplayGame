@@ -51,6 +51,10 @@ namespace game
         private bool canSpeakNow = true;
         private bool canMoveNow = true;
 
+        private readonly double HitPower = 15;
+
+
+
         private readonly List<Artifact> inventory = new List<Artifact>();        
 
         public Character(string name, Race race, Sex sex) : this(name, race, sex, 0, 100, 0) { }
@@ -305,6 +309,11 @@ namespace game
             "State: " + StateHealth + "\n" + "Max health: " + MaxHealth + "\n" +
             "Ability to speak now: " + CanSpeakNow + "\n" +
             "Ability to move now: " + CanMoveNow + "\n" + "States: " + String.Join(", ", States);
+        }
+
+        public void Hit(Character target)
+        {
+            target.Health -= HitPower;
         }
     }  
 }

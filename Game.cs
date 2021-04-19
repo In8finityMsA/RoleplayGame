@@ -4,7 +4,7 @@ namespace KashTaskWPF
 {
     public class Game
     {
-        private Magician hero;
+        public Magician hero;
         
         public Game(Magician hero)
         {

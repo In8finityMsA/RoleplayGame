@@ -14,7 +14,7 @@ namespace KashTask
         private List<Stage> stages;
         private int currentStageIndex;
         private int checkpointStageIndex;
-        private Game game;
+        public Game game;
         private MainWindow ui;
         private const string FILENAME = @"game.json";
         public Stager(MainWindow window)

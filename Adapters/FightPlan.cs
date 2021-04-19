@@ -9,10 +9,7 @@ namespace KashTaskWPF.Adapters
 {
     class FightPlan
     {
-        public FightPlan()
-        {
-
-        }
+        public FightPlan() { }
 
         public List<Magician> enemyM { get; set; }
         public List<Character> enemyNonM { get; set; }

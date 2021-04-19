@@ -45,6 +45,8 @@ namespace game
             }
         }
 
+        public Dictionary<Type, Spell> Spells { get => spells; }
+
         public int GetNumberOfSpells() => spells.Count;
 
         public Spell GetSpellById(Type type) => spells[type];
