@@ -26,7 +26,7 @@ namespace game
             Charge -= charge;
             if (Charge <= 0 && !IsRechargable)
             {
-                this.
+                //this.
             }
         }
 
