@@ -22,8 +22,8 @@ namespace KashTaskWPF
     public partial class MainWindow : Window
     {
         IAdapter adapter;
-
-
+        
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -42,7 +42,7 @@ namespace KashTaskWPF
         
         public void StartFight() {}
         
-        public void EndFight() {}
+        public void EndFight(bool hasWon) {}
 
         public void ChangeAdapter(IAdapter adapter)
         {

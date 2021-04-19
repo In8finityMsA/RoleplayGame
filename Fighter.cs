@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using KASHGAMEWPF;
+using KashTaskWPF.Adapters;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace KASHGAMEWPF

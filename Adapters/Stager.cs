@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using game;
+using KASHGAMEWPF;
+using KashTaskWPF;
 using KashTaskWPF.Adapters;
 
 namespace KashTask
@@ -12,10 +14,14 @@ namespace KashTask
         private List<Stage> stages;
         private int currentStageIndex;
         private int checkpointStageIndex;
+        private Game game;
+        private MainWindow ui;
         private const string FILENAME = @"game.json";
-        public Stager()
+        public Stager(MainWindow window)
         {
             JsonInit(FILENAME);
+            ui = window;
+            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 50));
         }
 
         public void GetInput(int index)
@@ -46,13 +52,30 @@ namespace KashTask
             string command = actionName.Substring(0, actionName.Length - actionName.IndexOf(' '));
             switch (command)
             {
-                case "fight": break;
+                case "fight":
+                {
+                    StartFight();
+                    string filename = "";
+                    Fighter fighter = new Fighter(filename, this);
+                    ui.ChangeAdapter(fighter);
+                    break;
+                }
                 case "get": break;
                 case "learn": break;
                 default:
                     throw new ArgumentException($"There is no action with specified name - {actionName}. " +
                                                 $"StageIndex:{currentStageIndex}");
             }
+        }
+
+        public void StartFight()
+        {
+            ui.StartFight();
+        }
+
+        public void EndFight(bool hasWon)
+        {
+            ui.EndFight(hasWon);
         }
 
         public Stage GetCurrentStage()
