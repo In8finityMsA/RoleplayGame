@@ -31,9 +31,10 @@ namespace KASHGAMEWPF
     {
         private readonly string fileName;
         private FightPlan plan;
-
+        private const string StandardString = "1. Удар" + "\n" + "2. Заклинание" + "\n" + "3. Артефакт" + "\n" + "4. Бежать" + "\n" + "5. Поговорить";
         private List<Character> enemies;
         List<KeyValuePair<Type, Spell>> listOfSpells;
+        List<Artifact> artifacts;
 
         private Stager parent;
 
@@ -51,6 +52,7 @@ namespace KASHGAMEWPF
             this.parent = parent;
             JsonInit();
             JoinLists();
+            ui.GetInfo(StandardString, 5);
         }
 
         private void JoinLists()
@@ -93,6 +95,18 @@ namespace KASHGAMEWPF
             return result;
         }
 
+        public string ArtifactNamesToString()
+        {
+
+            string result = "";
+            artifacts = parent.game.hero.Inventory;
+            for (int i = 0; i < artifacts.Count; i++)
+            {
+                result += i + ". " + artifacts[i].GetType().ToString() + "\n";
+            }
+            return result;
+        }
+
         public void GetInput(int index)
         {
             if (chooseParams == FightStatus.ChooseAction)
@@ -120,23 +134,27 @@ namespace KASHGAMEWPF
                                 else
                                 {
                                     chooseParams = FightStatus.ChooseAction;
+                                    ui.GetInfo(StandardString, 5);
                                 }                                
                             }                         
                         }                       
                         break;
                     case 2: //SPELL
                         {                  
-                            string text = SpellNamesToString(); 
                             if (listOfSpells.Count >= 1)
                             {
                                 chooseParams = FightStatus.ChooseSpell;
-                                ui.GetInfo(text, listOfSpells.Count);                             
+                                ui.GetInfo(SpellNamesToString(), listOfSpells.Count);                             
                             }
                         }
                         break;
                     case 3:  //ARTIFACT
-                        {
-                            
+                        {                            
+                            if (artifacts.Count >= 1)
+                            {
+                                chooseParams = FightStatus.ChooseArtifact;
+                                ui.GetInfo(ArtifactNamesToString(), artifacts.Count);
+                            }
                         }
                         break;
                     case 4:  //TALK
@@ -182,13 +200,44 @@ namespace KASHGAMEWPF
                         else
                         {
                             chooseParams = FightStatus.ChooseAction;
+                            ui.GetInfo(StandardString, 5);
                         }
                     }
                 }
             }
             else if (chooseParams == FightStatus.ChooseArtifact)
             {
+                artifact = artifacts[index];
 
+                if (artifact is IMagicPowered)
+                {
+                    chooseParams = FightStatus.ChoosePower;
+                }
+                else
+                {
+                    if (enemies.Count != 1)
+                    {
+                        chooseParams = FightStatus.ChooseTarget;
+                        ui.GetInfo(EnemyNamesToString(), enemies.Count);
+                    }
+                    else if (enemies.Count == 1)
+                    {
+                        target = enemies[0];
+                        ((Magician)parent.game.hero).UseArtifact(artifact, target);
+                        //enemy action? Are you alive?
+                        if (enemies[0].StateHealth == StateHealth.DEAD)
+                        {
+                            enemies.RemoveAt(0);
+                            parent.EndFight(FightResult.WON);
+                            return;
+                        }
+                        else
+                        {
+                            chooseParams = FightStatus.ChooseAction;
+                            ui.GetInfo(StandardString, 5);
+                        }
+                    }
+                }
             }
             else if (chooseParams == FightStatus.ChooseTarget)
             {
@@ -209,6 +258,7 @@ namespace KASHGAMEWPF
                         }
                     }
                     chooseParams = FightStatus.ChooseAction;
+                    ui.GetInfo(StandardString, 5);
                 }
                 else if (whatNow == FightAction.SPELL)
                 {
@@ -227,6 +277,7 @@ namespace KASHGAMEWPF
                             }
                         }
                         chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandardString, 5);
                     }
                     else
                     {
@@ -243,12 +294,46 @@ namespace KASHGAMEWPF
                             }
                         }
                         chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandardString, 5);
                     }
 
                 }
                 else if (whatNow == FightAction.ARTIFACT)
                 {
-
+                    if (artifact is IMagicPowered)
+                    {
+                        parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, target, power);
+                        //enemy actions? are you alive?
+                        if (target.StateHealth == StateHealth.DEAD)
+                        {
+                            enemies.Remove(target);
+                            //tell UI about murder?
+                            if (enemies.Count == 0)
+                            {
+                                parent.EndFight(FightResult.WON);
+                                return;
+                            }
+                        }
+                        chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandardString, 5);
+                    }
+                    else
+                    {
+                        parent.game.hero.UseArtifact(artifact, target);
+                        //enemy actions? are you alive?
+                        if (target.StateHealth == StateHealth.DEAD)
+                        {
+                            enemies.Remove(target);
+                            //tell UI about murder?
+                            if (enemies.Count == 0)
+                            {
+                                parent.EndFight(FightResult.WON);
+                                return;
+                            }
+                        }
+                        chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandardString, 5);
+                    }
                 }
                 else if (whatNow == FightAction.TALK)
                 {
@@ -282,6 +367,7 @@ namespace KASHGAMEWPF
                             return;
                         }
                         chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandardString, 5);
                     }
                     else if (whatNow == FightAction.ARTIFACT)
                     {
@@ -295,6 +381,7 @@ namespace KASHGAMEWPF
                             return;                            
                         }
                         chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandardString, 5);
                     }
                 }           
             }
