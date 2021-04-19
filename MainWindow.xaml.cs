@@ -1,4 +1,5 @@
-﻿using KashTaskWPF.Adapters;
+﻿using KASHGAMEWPF;
+using KashTaskWPF.Adapters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +45,7 @@ namespace KashTaskWPF
 
         public void StartFight() { }
 
-        public void EndFight(bool hasWon) { }
+        public void EndFight(FightResult result) { }
 
         public void ChangeAdapter(IAdapter adapter)
         {

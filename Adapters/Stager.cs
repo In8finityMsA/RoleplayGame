@@ -79,9 +79,9 @@ namespace KashTask
             ui.StartFight();
         }
 
-        public void EndFight(bool hasWon)
+        public void EndFight(FightResult result)
         {
-            ui.EndFight(hasWon);
+            ui.EndFight(result);
         }
 
         public Stage GetCurrentStage()
