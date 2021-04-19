@@ -62,6 +62,12 @@ namespace KashTask
                 }
                 case "get": break;
                 case "learn": break;
+                case "repeat": break; //метод о выписывании инфы по персонажу выписывает инфу в окно
+                case "damage": break; // наносит урон игроку
+                case "getexp": break; //дать игроку опыт
+                case "camp": break; // то самое окно, где можно учить спеллы и открыть инвентарь
+                case "compexp": break; //сравнивает экспу игрока и гнома
+                case "end": break; //конец игры
                 default:
                     throw new ArgumentException($"There is no action with specified name - {actionName}. " +
                                                 $"StageIndex:{currentStageIndex}");
