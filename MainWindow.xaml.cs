@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KashTaskWPF.Adapters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,32 @@ namespace KashTaskWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        IAdapter adapter;
+
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            int index = Int32.Parse((sender as Button).Tag.ToString());
+            adapter.GetInput(index);
+        }
+
+        public void ChangeText(string text)
+        {
+            textBlock.Text = text;
+        }
+        
+        public void StartFight() {}
+        
+        public void EndFight() {}
+
+        public void ChangeAdapter(IAdapter adapter)
+        {
+            this.adapter = adapter;
         }
     }
 }

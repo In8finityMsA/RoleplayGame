@@ -3,20 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using game;
+using KashTaskWPF.Adapters;
 
 namespace KashTask
 {
-    public class Stager
+    public class Stager : IAdapter
     {
         private List<Stage> stages;
         private int currentStageIndex;
         private int checkpointStageIndex;
-        private Magician player;
         private const string FILENAME = @"game.json";
         public Stager()
         {
             JsonInit(FILENAME);
         }
+
+        public void GetInput(int index)
+        {
+            ChangeStage(index);
+        }
+
 
         public void ChangeStage(int answerIndex)
         {
@@ -36,8 +42,9 @@ namespace KashTask
 
         private void DoAction(string actionName)
         {
-            actionName = actionName.ToLower();
-            switch (actionName)
+            actionName = actionName.ToLower().Trim();
+            string command = actionName.Substring(0, actionName.Length - actionName.IndexOf(' '));
+            switch (command)
             {
                 case "fight": break;
                 case "get": break;
