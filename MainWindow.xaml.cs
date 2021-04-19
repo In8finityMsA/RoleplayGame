@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using KashTask;
 
 namespace KashTaskWPF
 {
@@ -25,17 +26,38 @@ namespace KashTaskWPF
         IAdapter adapter;
 
         public static MainWindow mainwindow;
+        private const int Number_Of_Buttons = 5;
 
         public MainWindow()
         {
             InitializeComponent();
             mainwindow = this;
+            adapter = new Stager(this);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            int index = Int32.Parse((sender as Button).Tag.ToString());
+            int index = Int32.Parse((e.Source as Button).Tag.ToString());
             adapter.GetInput(index);
+        }
+
+        public void ChangeNumberOfButtons(int number)
+        {
+            if (number > Number_Of_Buttons)
+            {
+                throw new ArgumentException("Too much buttons were requested. Do smth with that!");
+            }
+            foreach (UIElement child in grid.Children)
+            {
+                if (number > 0)
+                {
+                    number--;
+                }
+                else
+                {
+                    child.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         public void ChangeText(string text)

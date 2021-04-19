@@ -19,9 +19,10 @@ namespace KashTask
         private const string FILENAME = @"game.json";
         public Stager(MainWindow window)
         {
-            JsonInit(FILENAME);
+            stages = JsonInit(FILENAME);
             ui = window;
-            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 50));
+            currentStageIndex = 0;
+            //game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 50));
         }
 
         public void GetInput(int index)
@@ -33,7 +34,7 @@ namespace KashTask
         public void ChangeStage(int answerIndex)
         {
             Stage currentStage = GetCurrentStage();
-            if (currentStage.Answers.Count > answerIndex && currentStage.Next.Count > answerIndex)
+            if (currentStage != null && currentStage.Answers.Count > answerIndex && currentStage.Next.Count > answerIndex)
             {
                 if (currentStage.Actions.ContainsKey(answerIndex.ToString()))
                 {
@@ -42,7 +43,13 @@ namespace KashTask
                         DoAction(action);
                     }
                 }
-                currentStageIndex = currentStage.Next[answerIndex];
+                currentStageIndex = currentStage.Next[answerIndex] - 1;
+                Stage newStage = GetCurrentStage();
+                if (newStage != null)
+                {
+                    ui.ChangeText(stages[currentStageIndex].Text);
+                    ui.ChangeNumberOfButtons(stages[currentStageIndex].Answers.Count);
+                }
             }
         }
 
@@ -86,7 +93,12 @@ namespace KashTask
 
         public Stage GetCurrentStage()
         {
-            return stages[currentStageIndex];
+            if (currentStageIndex < stages.Count)
+            {
+                return stages[currentStageIndex];
+            }
+
+            return null;
         }
             
         private List<Stage> JsonInit(string filename)
