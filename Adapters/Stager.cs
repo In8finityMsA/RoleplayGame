@@ -67,6 +67,7 @@ namespace KashTask
                 case "getexp": break; //дать игроку опыт
                 case "camp": break; // то самое окно, где можно учить спеллы и открыть инвентарь
                 case "compexp": break; //сравнивает экспу игрока и гнома
+                case "end": break; //конец игры
                 default:
                     throw new ArgumentException($"There is no action with specified name - {actionName}. " +
                                                 $"StageIndex:{currentStageIndex}");
