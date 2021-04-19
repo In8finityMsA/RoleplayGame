@@ -81,6 +81,8 @@ namespace game
         public Race Race { get => race; }
         public Sex Sex { get => sex; }
 
+        public List<Artifact> Inventory { get => inventory; }
+
         public int Age
         {
             get => age;
