@@ -25,6 +25,9 @@ namespace KASHGAMEWPF
     {
         private readonly string fileName;
         private FightPlan plan;
+
+        private List<Character> enemies;
+
         private Stager parent;
 
         private FightAction whatNow;
@@ -35,6 +38,18 @@ namespace KASHGAMEWPF
             this.fileName = fileName;
             this.parent = parent;
             JsonInit();
+            JoinLists();
+        }
+
+        private void JoinLists()
+        {
+            List<Character> magaschar = new List<Character>();
+            for (int i = 0; i < plan.enemyM.Count; i++)
+            {
+                magaschar[i] = (Character)plan.enemyM[i];
+            }
+            enemies.AddRange(magaschar);
+            enemies.AddRange(plan.enemyNonM);
         }
 
         public void JsonInit()
@@ -54,18 +69,29 @@ namespace KASHGAMEWPF
                 {
                     case 1:
                         {
-                            int enemyAmount = plan.enemyM.Count + plan.enemyNonM.Count;
-                            if ( enemyAmount > 1)
+                            if ( enemies.Count > 1)
                             {
                                 chooseParams = FightStatus.ChooseTarget;
+
+                                string str = "";//form string to UI
+                                for (int i = 0; i < enemies.Count; i++)
+                                {
+                                    str += i + ". " + enemies[i].Name + '\n';
+                                }
+                                
                             }
-                            else if (enemyAmount == 0)
+                            else if (enemies.Count == 0)
                             {
                                 parent.EndFight(true);
                             }
                             else
                             {
-                                parent.game.hero.Hit();
+                                parent.game.hero.Hit(enemies[0]);
+                                if (enemies[0].StateHealth == StateHealth.DEAD)
+                                {
+                                    enemies.RemoveAt(0);
+                                    parent.EndFight(true);
+                                }                                
                             }                         
                         }                       
                         break;
