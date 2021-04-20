@@ -27,91 +27,99 @@ namespace KASHGAMEWPF
     {
         HIT = 1, SPELL = 2, ARTIFACT = 3, TALK = 4, RUN = 5
     }
-    class Fighter: IAdapter
+    public class Fighter: IAdapter
     {
-        private readonly string fileName;
+        //private readonly string fileName;
         private FightPlan plan;
-        private const string StandardString = "1. Удар" + "\n" + "2. Заклинание" + "\n" + "3. Артефакт" + "\n" + "4. Бежать" + "\n" + "5. Поговорить";
-        private List<Character> enemies;
-        List<KeyValuePair<Type, Spell>> listOfSpells;
+        private List<string> StandartList = new List<string>() { "Удар", "Заклинание", "Артефакт", "Бежать", "Поговорить" };
+        private List<Character> enemies = new List<Character>();
+        List<KeyValuePair<Type, Spell>> spells;
         List<Artifact> artifacts;
 
         private Stager parent;
+        private MainWindow ui = KashTaskWPF.MainWindow.mainwindow;
 
         private FightAction whatNow;
         private FightStatus chooseParams = FightStatus.ChooseAction;
+
         private Character target;
         private Spell spell;
         private double power;
         private Artifact artifact;
-        private MainWindow ui = KashTaskWPF.MainWindow.mainwindow;
 
-        public Fighter(string fileName, Stager parent)
+
+
+        public Fighter(/*string fileName,*/ Stager parent, FightPlan plan)
         {
-            this.fileName = fileName;
+            //this.fileName = fileName;
             this.parent = parent;
-            JsonInit();
+            this.plan = plan;
+            
+            spells = ((Magician)parent.game.hero).Spells.ToList<KeyValuePair<Type, Spell>>();
+            artifacts = parent.game.hero.Inventory;
+
+            //JsonInit();
             JoinLists();
-            ui.GetInfo(StandardString, 5);
+            ui.GetInfo(StandartList, 5);
         }
 
         private void JoinLists()
         {
-            List<Character> magaschar = new List<Character>();
+            List<Character> magaschar = new List<Character>(plan.enemyM.Count);
             for (int i = 0; i < plan.enemyM.Count; i++)
             {
-                magaschar[i] = (Character)plan.enemyM[i];
+                magaschar.Add((Character)plan.enemyM[i]);
             }
             enemies.AddRange(magaschar);
             enemies.AddRange(plan.enemyNonM);
         }
 
-        public void JsonInit()
-        {
-            var reader = new StreamReader(fileName);
-            var jsonString = reader.ReadToEnd();
-            reader.Close();
-            plan = JsonSerializer.Deserialize<FightPlan>(jsonString);
-        }
+        //public void JsonInit()
+        //{
+        //    var reader = new StreamReader(fileName);
+        //    var jsonString = reader.ReadToEnd();
+        //    reader.Close();
+        //    plan = JsonSerializer.Deserialize<FightPlan>(jsonString);
+        //}
 
-        public string EnemyNamesToString()
+        public List<string> EnemyNamesToList()
         {
-            string result = "";//form string to UI
+            List<string> enemiesNames = new List<string>();
+
             for (int i = 0; i < enemies.Count; i++)
             {
-                result += i + ". " + enemies[i].Name + '\n';
+                enemiesNames.Add(enemies[i].Name);
             }
-            return result;
+            return enemiesNames;
         }
 
-        public string SpellNamesToString()
+        public List<string> SpellNamesToList()
         {
-            string result = "";
-            listOfSpells = ((Magician)parent.game.hero).Spells.ToList<KeyValuePair<Type, Spell>>();
-            for (int i = 0; i < listOfSpells.Count; i++)
+            List<string> spellsNames = new List<string>();
+            for (int i = 0; i < spells.Count; i++)
             {
-                result += i + ". " + listOfSpells[i].Key.ToString() + "\n";
+                spellsNames.Add(spells[i].Value.NAME);
             }
-            return result;
+            return spellsNames;
         }
 
-        public string ArtifactNamesToString()
+        public List<string> ArtifactNamesToList()
         {
-
-            string result = "";
             artifacts = parent.game.hero.Inventory;
-            for (int i = 0; i < artifacts.Count; i++)
+            List<string> artifactNames = new List<string>();
+            for (int i = 0; i <= artifacts.Count; i++)
             {
-                result += i + ". " + artifacts[i].GetType().ToString() + "\n";
+                artifactNames.Add(artifacts[i].NAME);
             }
-            return result;
+            return artifactNames;
         }
 
         public void GetInput(int index)
         {
             if (chooseParams == FightStatus.ChooseAction)
             {
-                whatNow = (FightAction)index;
+                index += 1;
+                whatNow = (FightAction)(index);
                 switch (index)
                 {
                     case 1: //HIT
@@ -119,12 +127,11 @@ namespace KASHGAMEWPF
                             if ( enemies.Count > 1)
                             {
                                 chooseParams = FightStatus.ChooseTarget;
-                                ui.GetInfo(EnemyNamesToString(), enemies.Count);
+                                ui.GetInfo(EnemyNamesToList(), enemies.Count);
                             }                           
                             else if (enemies.Count == 1)
                             {
                                 parent.game.hero.Hit(enemies[0]);
-                                //your enemy action?
                                 if (enemies[0].StateHealth == StateHealth.DEAD)
                                 {
                                     enemies.RemoveAt(0);
@@ -133,18 +140,26 @@ namespace KASHGAMEWPF
                                 }
                                 else
                                 {
-                                    chooseParams = FightStatus.ChooseAction;
-                                    ui.GetInfo(StandardString, 5);
-                                }                                
+                                    YourEnemyReaction();
+                                    if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                                    {
+                                        //You are died                           
+                                        parent.EndFight(FightResult.DIED);
+                                        return;
+                                    }
+                                }                               
+                                chooseParams = FightStatus.ChooseAction;
+                                ui.GetInfo(StandartList, 5);
+                                                                
                             }                         
                         }                       
                         break;
                     case 2: //SPELL
                         {                  
-                            if (listOfSpells.Count >= 1)
+                            if (spells.Count >= 1)
                             {
                                 chooseParams = FightStatus.ChooseSpell;
-                                ui.GetInfo(SpellNamesToString(), listOfSpells.Count);                             
+                                ui.GetInfo(SpellNamesToList(), spells.Count);                             
                             }
                         }
                         break;
@@ -153,7 +168,7 @@ namespace KASHGAMEWPF
                             if (artifacts.Count >= 1)
                             {
                                 chooseParams = FightStatus.ChooseArtifact;
-                                ui.GetInfo(ArtifactNamesToString(), artifacts.Count);
+                                ui.GetInfo(ArtifactNamesToList(), artifacts.Count);
                             }
                         }
                         break;
@@ -174,7 +189,7 @@ namespace KASHGAMEWPF
             }
             else if (chooseParams == FightStatus.ChooseSpell)
             {
-                spell = listOfSpells[index].Value;
+                spell = spells[index].Value;
                 if (spell is IMagicPowered)
                 {
                     chooseParams = FightStatus.ChoosePower;
@@ -184,13 +199,12 @@ namespace KASHGAMEWPF
                     if (enemies.Count != 1)
                     {
                         chooseParams = FightStatus.ChooseTarget;
-                        ui.GetInfo(EnemyNamesToString(), enemies.Count);
+                        ui.GetInfo(EnemyNamesToList(), enemies.Count);
                     }
                     else if (enemies.Count == 1)
                     {
                         target = enemies[0];
                         ((Magician)parent.game.hero).UseSpell(spell, target);
-                        //enemy action? Are you alive?
                         if (enemies[0].StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
@@ -199,9 +213,17 @@ namespace KASHGAMEWPF
                         }
                         else
                         {
-                            chooseParams = FightStatus.ChooseAction;
-                            ui.GetInfo(StandardString, 5);
+                            YourEnemyReaction();
+                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                            {
+                                //You are died                           
+                                parent.EndFight(FightResult.DIED);
+                                return;
+                            }
                         }
+                        chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandartList, 5);
+                        
                     }
                 }
             }
@@ -218,24 +240,31 @@ namespace KASHGAMEWPF
                     if (enemies.Count != 1)
                     {
                         chooseParams = FightStatus.ChooseTarget;
-                        ui.GetInfo(EnemyNamesToString(), enemies.Count);
+                        ui.GetInfo(EnemyNamesToList(), enemies.Count);
                     }
                     else if (enemies.Count == 1)
                     {
                         target = enemies[0];
                         ((Magician)parent.game.hero).UseArtifact(artifact, target);
-                        //enemy action? Are you alive?
                         if (enemies[0].StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
+                            //tell about murder?
                             parent.EndFight(FightResult.WON);
                             return;
                         }
                         else
                         {
-                            chooseParams = FightStatus.ChooseAction;
-                            ui.GetInfo(StandardString, 5);
-                        }
+                            YourEnemyReaction();
+                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                            {
+                                //You are died                           
+                                parent.EndFight(FightResult.DIED);
+                                return;
+                            }
+                        }                       
+                        chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandartList, 5);                      
                     }
                 }
             }
@@ -246,7 +275,6 @@ namespace KASHGAMEWPF
                 if (whatNow == FightAction.HIT)
                 {
                     parent.game.hero.Hit(target);
-                    //your enemy action? are you alive?
                     if (target.StateHealth == StateHealth.DEAD)
                     {
                         enemies.Remove(target);
@@ -257,15 +285,24 @@ namespace KASHGAMEWPF
                             return;
                         }
                     }
+                    else
+                    {
+                        YourEnemyReaction();
+                        if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                        {
+                            //You are died                           
+                            parent.EndFight(FightResult.DIED);
+                            return;
+                        }
+                    }
                     chooseParams = FightStatus.ChooseAction;
-                    ui.GetInfo(StandardString, 5);
+                    ui.GetInfo(StandartList, 5);
                 }
                 else if (whatNow == FightAction.SPELL)
                 {
                     if (spell is IMagicPowered)
                     {
                         ((Magician)parent.game.hero).UseSpell(spell, target, power);
-                        //enemy actions? are you alive?
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
@@ -276,13 +313,22 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        else
+                        {
+                            YourEnemyReaction();
+                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                            {
+                                //You are died                           
+                                parent.EndFight(FightResult.DIED);
+                                return;
+                            }
+                        }
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandardString, 5);
+                        ui.GetInfo(StandartList, 5);
                     }
                     else
                     {
                         ((Magician)parent.game.hero).UseSpell(spell, target);
-                        //enemy actions? are you alive?
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
@@ -293,8 +339,18 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        else
+                        {
+                            YourEnemyReaction();
+                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                            {
+                                //You are died                           
+                                parent.EndFight(FightResult.DIED);
+                                return;
+                            }
+                        }
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandardString, 5);
+                        ui.GetInfo(StandartList, 5);
                     }
 
                 }
@@ -303,7 +359,6 @@ namespace KASHGAMEWPF
                     if (artifact is IMagicPowered)
                     {
                         parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, target, power);
-                        //enemy actions? are you alive?
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
@@ -314,13 +369,22 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        else
+                        {
+                            YourEnemyReaction();
+                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                            {
+                                //You are died                           
+                                parent.EndFight(FightResult.DIED);
+                                return;
+                            }
+                        }
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandardString, 5);
+                        ui.GetInfo(StandartList, 5);
                     }
                     else
                     {
                         parent.game.hero.UseArtifact(artifact, target);
-                        //enemy actions? are you alive?
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
@@ -331,8 +395,18 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        else
+                        {
+                            YourEnemyReaction();
+                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                            {
+                                //You are died                           
+                                parent.EndFight(FightResult.DIED);
+                                return;
+                            }
+                        }
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandardString, 5);
+                        ui.GetInfo(StandartList, 5);
                     }
                 }
                 else if (whatNow == FightAction.TALK)
@@ -351,14 +425,13 @@ namespace KASHGAMEWPF
                 if (enemies.Count > 1)
                 {
                     chooseParams = FightStatus.ChooseTarget;
-                    ui.GetInfo(EnemyNamesToString(), enemies.Count);
+                    ui.GetInfo(EnemyNamesToList(), enemies.Count);
                 }
                 else if (enemies.Count == 1)
                 {
                     if (whatNow == FightAction.SPELL)
                     {                      
                         ((Magician)parent.game.hero).UseSpell(spell, enemies[0], power);                                   
-                        //enemy actions? Are you alive?
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
@@ -366,8 +439,19 @@ namespace KASHGAMEWPF
                             parent.EndFight(FightResult.WON);
                             return;
                         }
+                        else
+                        {
+                            YourEnemyReaction();
+                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                            {
+                                //You are died                           
+                                parent.EndFight(FightResult.DIED);
+                                return;
+                            }
+                        }
+
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandardString, 5);
+                        ui.GetInfo(StandartList, 5);
                     }
                     else if (whatNow == FightAction.ARTIFACT)
                     {
@@ -380,10 +464,45 @@ namespace KASHGAMEWPF
                             parent.EndFight(FightResult.WON);
                             return;                            
                         }
+                        else
+                        {
+                            YourEnemyReaction();
+                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+                            {
+                                //You are died                           
+                                parent.EndFight(FightResult.DIED);
+                                return;
+                            }
+                        }
+
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandardString, 5);
+                        ui.GetInfo(StandartList, 5);
                     }
                 }           
+            }
+        }
+
+        public void YourEnemyReaction()
+        {
+            Random rnd = new Random();
+            Character whoIsOnDuty = enemies[rnd.Next(0, enemies.Count - 1)];
+            Artifact art;
+
+            if (whoIsOnDuty.Inventory.Count != 0)
+            {
+                if (rnd.Next(0, 1) == 0)
+                {
+                    art = whoIsOnDuty.Inventory[rnd.Next(0, whoIsOnDuty.Inventory.Count - 1)];
+                    whoIsOnDuty.UseArtifact(art, parent.game.hero);
+                }
+                else
+                {
+                    whoIsOnDuty.Hit(parent.game.hero);
+                }
+            }
+            else
+            {
+                whoIsOnDuty.Hit(parent.game.hero);
             }
         }
     }
