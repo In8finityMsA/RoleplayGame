@@ -1,4 +1,5 @@
-﻿using game;
+﻿using System;
+using game;
 
 namespace Artifacts
 {
@@ -14,6 +15,10 @@ namespace Artifacts
         public Water(BottleSize size) : base(false)
         {
             this.size = size;
+        }
+
+        public Water(int size) : this( (BottleSize) size)
+        {
         }
 
         public BottleSize Size { get => size; }

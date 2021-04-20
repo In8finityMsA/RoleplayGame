@@ -14,6 +14,10 @@ namespace Artifacts
         {
             NAME = "Мертвая вода " + Size.ToString();
         }
+        
+        public DeadWater(int size) : this( (BottleSize) size)
+        {
+        }
 
         protected sealed override void DrinkAction(Character target)
         {
