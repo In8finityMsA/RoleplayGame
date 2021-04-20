@@ -13,14 +13,17 @@ namespace game
 
             MinManaCost = minManaCost;
             HasMotionalComponent = hasMotionalComponent;
-            HasVerbalComponent = hasVerbalComponent;            
+            HasVerbalComponent = hasVerbalComponent;  
+       
         }
 
         //public abstract short GetClassID();
 
         public bool HasMotionalComponent { get; }
         public bool HasVerbalComponent { get; }
-        public double MinManaCost { get; }      
+        public double MinManaCost { get; }
+
+        public string NAME { get; protected set; }
 
         //Pavel: Definition for MagicEffect(user) is in interface default implementation.
         //Pavel: Maybe move it here to not abstract method. But that will be not consistent with IMagicPowered

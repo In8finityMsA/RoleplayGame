@@ -10,7 +10,10 @@ namespace game
     {
         private const double MANA_COST = 150.0;
 
-        public Revive() : base(MANA_COST, true, true) {  }
+        public Revive() : base(MANA_COST, true, true) 
+        {
+            NAME = "Оживить";
+        }
 
         public override void MagicEffect(Character user, Character target)
         {

@@ -10,7 +10,10 @@ namespace Artifacts
 {
     public sealed class DeadWater: Water
     {
-        public DeadWater(BottleSize size) : base(size) { }
+        public DeadWater(BottleSize size) : base(size) 
+        {
+            NAME = "Мертвая вода" + Size.ToString();
+        }
 
         protected sealed override void ActionsWithHealth(Character target)
         {

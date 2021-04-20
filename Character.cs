@@ -103,11 +103,18 @@ namespace game
             {
                 if (health != 0)
                 {
-                    if (value < 0 || value > maxHealth)
+                    if (value < 0)
                     {
-                        throw new ArgumentException("Health cannot be less than 0 or more than maximal health.");
+                        health = 0;
                     }
-                    health = value;
+                    else if (value > maxHealth)
+                    {
+                        health = maxHealth;
+                    }
+                    else
+                    {
+                        health = value;
+                    }                
                     ManageState();
                 }              
             }
@@ -177,7 +184,13 @@ namespace game
 
         public void ManageState()
         {
-            if (health <= 0.1 * maxHealth)
+            if (health <= 0)
+            {
+                stateHealth = StateHealth.DEAD;
+                canMoveNow = false;
+                canSpeakNow = false;
+            }
+            else if (health <= 0.1 * maxHealth)
             {
                 stateHealth = StateHealth.WEAK;
             }
@@ -185,12 +198,7 @@ namespace game
             {
                 stateHealth = StateHealth.NORMAL;
             }
-            else if (health <= 0)
-            {
-                stateHealth = StateHealth.DEAD;
-                canMoveNow = false;
-                canSpeakNow = false;
-            }
+            
         }
 
         public void PickUpArtifact(Artifact artifact)

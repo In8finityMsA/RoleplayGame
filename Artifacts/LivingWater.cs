@@ -9,6 +9,7 @@ namespace game
         protected sealed override void ActionsWithHealth(Character target)
         {
             target.Health += (int)Size;
+            NAME = "Живая вода " + Size.ToString();
         }
     }
 }

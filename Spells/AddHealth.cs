@@ -8,6 +8,7 @@
         public AddHealth() : base(MANA_COST, false, true)
         {
             ConsumptionPerPower = MANA_COST;
+            NAME = "Добавить здоровье";
         }
 
         public override void MagicEffect(Character user, Character target)

@@ -9,6 +9,8 @@
 
         public bool IsRechargable { get; }
 
+        public string NAME { get; protected set; }
+
         public abstract void MagicEffect(Character user, Character target);
     }
 }

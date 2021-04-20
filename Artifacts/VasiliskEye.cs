@@ -9,7 +9,8 @@ namespace Artifacts
         public override sealed void MagicEffect(Character user, Character target)
         {            
             target.AddState(State.PARALIZED);
-            user.RemoveArtifact(this);                       
+            user.RemoveArtifact(this);
+            NAME = "Глаз василиска";
         }
     }
 }
