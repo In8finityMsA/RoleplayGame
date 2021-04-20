@@ -42,7 +42,7 @@ namespace KashTask
                 {
                     foreach (var action in currentStage.Actions[answerIndex.ToString()])
                     {
-                        //DoAction(action);
+                        DoAction(action);
                         Console.WriteLine("Action");
                     }
                 }
