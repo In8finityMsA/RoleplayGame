@@ -32,11 +32,12 @@ namespace KashTaskWPF
         {
             InitializeComponent();
             mainwindow = this;
-            adapter = new Stager(this);
+            adapter = new Stager(this);         
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            
             int index = Int32.Parse((e.Source as Button).Tag.ToString());
             adapter.GetInput(index);
         }
@@ -88,9 +89,10 @@ namespace KashTaskWPF
             this.adapter = adapter;
         }
 
-        public void GetInfo(string text, int variantsAmount)
+        public void GetInfo(List<string> answers, int variantsAmount)
         {
-
+            ChangeButtonsText(answers);
+            ChangeNumberOfButtons(variantsAmount);
         }
     }
 }

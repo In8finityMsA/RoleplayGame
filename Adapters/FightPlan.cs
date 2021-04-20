@@ -7,13 +7,20 @@ using System.Threading.Tasks;
 
 namespace KashTaskWPF.Adapters
 {
-    class FightPlan
+    public class FightPlan
     {
         public FightPlan() { }
-
+        public FightPlan(List<Magician> magicEnemyList, List<Character> usualEnemyList, List<string> yourWord, List<string> enemiesWord)
+        {
+            enemyM = magicEnemyList;
+            enemyNonM = usualEnemyList;
+            this.yourWord = yourWord;
+            this.enemiesWord = enemiesWord;
+        }
         public List<Magician> enemyM { get; set; }
         public List<Character> enemyNonM { get; set; }
-        public List<Dictionary<string, List<string>>> dialog;
+        public List<string> yourWord { get; set; }
+        public List<string> enemiesWord { get; set; }
 
     }
 }

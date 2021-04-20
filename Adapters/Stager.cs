@@ -19,10 +19,11 @@ namespace KashTask
         private const string FILENAME = @"game.json";
         public Stager(MainWindow window)
         {
-            stages = JsonInit(FILENAME);
             ui = window;
+            stages = JsonInit(FILENAME);
+
             currentStageIndex = 0;
-            //game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 50));
+            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 50));
         }
 
         public void GetInput(int index)
@@ -64,12 +65,13 @@ namespace KashTask
             switch (command)
             {
                 case "fight":
-                {
-                    StartFight();
-                    string filename = "";
-                    Fighter fighter = new Fighter(filename, this);
-                    ui.ChangeAdapter(fighter);
-                    break;
+                {                  
+                        StartFight();
+                        List<FightPlan> fightplans = game.fightPlans;
+                        Fighter fighter = new Fighter(this, fightplans[0]);
+                        fightplans.RemoveAt(0);
+                        ui.ChangeAdapter(fighter);
+                        break;
                 }
                 case "get": break;
                 case "learn": break;
