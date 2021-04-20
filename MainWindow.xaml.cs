@@ -1,5 +1,4 @@
-﻿using KASHGAMEWPF;
-using KashTaskWPF.Adapters;
+﻿using KashTaskWPF.Adapters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using KASHGAMEWPF;
 using KashTask;
 
 namespace KashTaskWPF
@@ -52,10 +52,24 @@ namespace KashTaskWPF
                 if (number > 0)
                 {
                     number--;
+                    child.Visibility = Visibility.Visible;
                 }
                 else
                 {
                     child.Visibility = Visibility.Collapsed;
+                }
+            }
+        }
+
+        public void ChangeButtonsText(List<string> answers)
+        {
+            int i = 0;
+            foreach (Button child in grid.Children)
+            {
+                if (i < answers.Count)
+                {
+                    child.Content = answers[i];
+                    i++;
                 }
             }
         }

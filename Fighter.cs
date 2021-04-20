@@ -60,8 +60,8 @@ namespace KASHGAMEWPF
                             }
                             else if (enemyAmount == 0)
                             {
-                                parent.WonTheFight();
-                                KASHGAMEWPF.MainWindow.mainWindow.FightResults(true);
+                                //parent.WonTheFight();
+                                //KASHGAMEWPF.MainWindow.mainWindow.FightResults(true);
                                 //Application.Current.MainWindow._frameCounter.FightResults(true);
                             }
                             else

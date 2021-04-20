@@ -34,21 +34,24 @@ namespace KashTask
         public void ChangeStage(int answerIndex)
         {
             Stage currentStage = GetCurrentStage();
-            if (currentStage != null && currentStage.Answers.Count > answerIndex && currentStage.Next.Count > answerIndex)
+            //if (currentStage != null && currentStage.Answers.Count > answerIndex && currentStage.Next.Count > answerIndex)
+            if (currentStage != null && currentStage.Next.Count > answerIndex)
             {
                 if (currentStage.Actions.ContainsKey(answerIndex.ToString()))
                 {
                     foreach (var action in currentStage.Actions[answerIndex.ToString()])
                     {
-                        DoAction(action);
+                        //DoAction(action);
+                        Console.WriteLine("Action");
                     }
                 }
                 currentStageIndex = currentStage.Next[answerIndex] - 1;
                 Stage newStage = GetCurrentStage();
                 if (newStage != null)
                 {
-                    ui.ChangeText(stages[currentStageIndex].Text);
-                    ui.ChangeNumberOfButtons(stages[currentStageIndex].Answers.Count);
+                    ui.ChangeText(newStage.Text );
+                    ui.ChangeNumberOfButtons(newStage.Next.Count);
+                    ui.ChangeButtonsText(newStage.Answers);
                 }
             }
         }
@@ -56,7 +59,8 @@ namespace KashTask
         private void DoAction(string actionName)
         {
             actionName = actionName.ToLower().Trim();
-            string command = actionName.Substring(0, actionName.Length - actionName.IndexOf(' '));
+            var actionsWords = actionName.Split(' ');
+            string command = actionsWords[0];
             switch (command)
             {
                 case "fight":
