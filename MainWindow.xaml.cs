@@ -1,6 +1,7 @@
 ﻿using KashTaskWPF.Adapters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace KashTaskWPF
         IAdapter adapter;
 
         public static MainWindow mainwindow;
-        private const int Number_Of_Buttons = 5;
+        private const int Max_Number_Of_Buttons = 5;
 
         public MainWindow()
         {
@@ -43,7 +44,7 @@ namespace KashTaskWPF
 
         public void ChangeNumberOfButtons(int number)
         {
-            if (number > Number_Of_Buttons)
+            if (number > Max_Number_Of_Buttons)
             {
                 throw new ArgumentException("Too much buttons were requested. Do smth with that!");
             }
@@ -66,11 +67,13 @@ namespace KashTaskWPF
             int i = 0;
             foreach (Button child in grid.Children)
             {
-                if (i < answers.Count)
+                if (i >= answers.Count)
                 {
-                    child.Content = answers[i];
-                    i++;
+                    break;
                 }
+                
+                child.Content = answers[i];
+                i++;
             }
         }
 
@@ -83,9 +86,16 @@ namespace KashTaskWPF
 
         public void EndFight(FightResult result) { }
 
-        public void ChangeAdapter(IAdapter adapter)
+        public void ChangeAdapter([NotNull] IAdapter adapter)
         {
-            this.adapter = adapter;
+            if (adapter != null)
+            {
+                this.adapter = adapter;
+            }
+            else
+            {
+                throw new NullReferenceException("Adapter can't be null. You've lost link between ui and logic.");
+            }
         }
 
         public void GetInfo(List<string> answers, int variantsAmount)

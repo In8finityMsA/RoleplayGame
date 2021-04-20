@@ -84,7 +84,7 @@ namespace KashTaskWPF.Adapters
                 {                  
                         ui.StartFight();
                         List<FightPlan> fightplans = game.fightPlans;
-                        Fighter fighter = new Fighter(this, new FightPlan());
+                        Fighter fighter = new Fighter(this, fightplans[0]);
                         fightplans.RemoveAt(0);
                         ui.ChangeAdapter(fighter);
                         break;
