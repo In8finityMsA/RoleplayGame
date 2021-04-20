@@ -130,6 +130,7 @@ namespace KashTaskWPF.Adapters
                             else if (enemies.Count == 1)
                             {
                                 parent.game.hero.Hit(enemies[0]);
+                                ui.GetInfoEnemies(enemies);
                                 if (enemies[0].StateHealth == StateHealth.DEAD)
                                 {
                                     enemies.RemoveAt(0);
@@ -203,6 +204,7 @@ namespace KashTaskWPF.Adapters
                     {
                         target = enemies[0];
                         ((Magician)parent.game.hero).UseSpell(spell, target);
+                        ui.GetInfoEnemies(enemies);
                         if (enemies[0].StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
@@ -244,6 +246,7 @@ namespace KashTaskWPF.Adapters
                     {
                         target = enemies[0];
                         ((Magician)parent.game.hero).UseArtifact(artifact, target);
+                        ui.GetInfoEnemies(enemies);
                         if (enemies[0].StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
@@ -273,6 +276,7 @@ namespace KashTaskWPF.Adapters
                 if (whatNow == FightAction.HIT)
                 {
                     parent.game.hero.Hit(target);
+                    ui.GetInfoEnemies(enemies);
                     if (target.StateHealth == StateHealth.DEAD)
                     {
                         enemies.Remove(target);
@@ -301,6 +305,7 @@ namespace KashTaskWPF.Adapters
                     if (spell is IMagicPowered)
                     {
                         ((Magician)parent.game.hero).UseSpell(spell, target, power);
+                        ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
@@ -327,6 +332,7 @@ namespace KashTaskWPF.Adapters
                     else
                     {
                         ((Magician)parent.game.hero).UseSpell(spell, target);
+                        ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
@@ -357,6 +363,7 @@ namespace KashTaskWPF.Adapters
                     if (artifact is IMagicPowered)
                     {
                         parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, target, power);
+                        ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
@@ -383,6 +390,7 @@ namespace KashTaskWPF.Adapters
                     else
                     {
                         parent.game.hero.UseArtifact(artifact, target);
+                        ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
@@ -429,7 +437,8 @@ namespace KashTaskWPF.Adapters
                 {
                     if (whatNow == FightAction.SPELL)
                     {                      
-                        ((Magician)parent.game.hero).UseSpell(spell, enemies[0], power);                                   
+                        ((Magician)parent.game.hero).UseSpell(spell, enemies[0], power);
+                        ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
@@ -453,7 +462,8 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (whatNow == FightAction.ARTIFACT)
                     {
-                        parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, enemies[0], power);                        
+                        parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, enemies[0], power);
+                        ui.GetInfoEnemies(enemies);
                         //enemy actions? Are you alive?
                         if (target.StateHealth == StateHealth.DEAD)
                         {
@@ -502,6 +512,7 @@ namespace KashTaskWPF.Adapters
             {
                 whoIsOnDuty.Hit(parent.game.hero);
             }
+            ui.GetInfoCharacter(parent.game.hero);
         }
     }
 }

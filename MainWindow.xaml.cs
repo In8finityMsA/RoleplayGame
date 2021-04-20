@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using game;
 
 namespace KashTaskWPF
 {
@@ -91,6 +92,16 @@ namespace KashTaskWPF
         {
             ChangeButtonsText(answers);
             ChangeNumberOfButtons(variantsAmount);
+        }
+
+        public void GetInfoEnemies(List<Character> enemies)
+        {
+            
+        }
+
+        public void GetInfoCharacter(Character hero)
+        {
+            ChangeText(hero.Name + " " + hero.Health + " " + hero.MaxHealth);
         }
     }
 }
