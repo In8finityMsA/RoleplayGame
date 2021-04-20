@@ -1,5 +1,4 @@
 ﻿using game;
-using KashTask;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,13 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using KASHGAMEWPF;
 using static System.Net.Mime.MediaTypeNames;
 using KashTaskWPF.Adapters;
 using KashTaskWPF;
 using Artifacts;
 
-namespace KASHGAMEWPF
+namespace KashTaskWPF.Adapters
 {
     public enum FightResult
     {

@@ -20,7 +20,7 @@
             </Border>
             <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,10">
                 <UniformGrid x:Name="grid" Rows="1" Columns="5">
-                    <Button Height="50" Width="50" Tag="0" Click="Button_Click">1</Button>
+                    <Button MinHeight="50" MinWidth="50" Tag="0" Click="Button_Click">1</Button>
                     <Button Tag="1" Click="Button_Click">2</Button>
                     <Button Tag="2" Click="Button_Click">3</Button>
                     <Button Tag="3" Click="Button_Click">4</Button>

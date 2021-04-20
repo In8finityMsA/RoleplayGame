@@ -1,6 +1,6 @@
-﻿using Artifacts;
+﻿using game;
 
-namespace game
+namespace Artifacts
 {
     public sealed class LivingWater : Water
     {

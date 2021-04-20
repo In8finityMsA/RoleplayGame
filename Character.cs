@@ -101,22 +101,26 @@ namespace game
             get => health;            
             set
             {
-                if (health != 0)
+                if (StateHealth != StateHealth.DEAD)
                 {
-                    if (value < 0)
+                    if (health != 0)
                     {
-                        health = 0;
+                        if (value < 0)
+                        {
+                            health = 0;
+                        }
+                        else if (value > maxHealth)
+                        {
+                            health = maxHealth;
+                        }
+                        else
+                        {
+                            health = value;
+                        }
+
+                        ManageState();
                     }
-                    else if (value > maxHealth)
-                    {
-                        health = maxHealth;
-                    }
-                    else
-                    {
-                        health = value;
-                    }                
-                    ManageState();
-                }              
+                }
             }
         }
 
