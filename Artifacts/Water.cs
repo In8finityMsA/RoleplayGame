@@ -20,9 +20,9 @@ namespace Artifacts
 
         public sealed override void MagicEffect(Character user, Character target)
         {            
-            ActionsWithHealth(target);
+            DrinkAction(target);
             user.RemoveArtifact(this);                      
         }
-        protected abstract void ActionsWithHealth(Character target);
+        protected abstract void DrinkAction(Character target);
     }
 }
