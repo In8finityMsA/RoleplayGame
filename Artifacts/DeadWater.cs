@@ -12,12 +12,23 @@ namespace Artifacts
     {
         public DeadWater(BottleSize size) : base(size) 
         {
-            NAME = "Мертвая вода" + Size.ToString();
+            NAME = "Мертвая вода " + Size.ToString();
+        }
+        
+        public DeadWater(int size) : this( (BottleSize) size)
+        {
         }
 
-        protected sealed override void ActionsWithHealth(Character target)
+        protected sealed override void DrinkAction(Character target)
         {
-            target.Health -= (int)Size;
+            if (target is Magician)
+            {
+                (target as Magician).Mana += (int) Size;
+            }
+            else
+            {
+                target.Health -= (int) Size;
+            }
         }
     }
 }

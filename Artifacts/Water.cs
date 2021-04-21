@@ -1,4 +1,5 @@
-﻿using game;
+﻿using System;
+using game;
 
 namespace Artifacts
 {
@@ -16,13 +17,17 @@ namespace Artifacts
             this.size = size;
         }
 
+        public Water(int size) : this( (BottleSize) size)
+        {
+        }
+
         public BottleSize Size { get => size; }
 
         public sealed override void MagicEffect(Character user, Character target)
         {            
-            ActionsWithHealth(target);
+            DrinkAction(target);
             user.RemoveArtifact(this);                      
         }
-        protected abstract void ActionsWithHealth(Character target);
+        protected abstract void DrinkAction(Character target);
     }
 }

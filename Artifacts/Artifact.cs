@@ -1,4 +1,6 @@
-﻿namespace game
+﻿using game;
+
+namespace Artifacts
 { 
     public abstract class Artifact : IMagic
     {
