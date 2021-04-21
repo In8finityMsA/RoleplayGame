@@ -79,7 +79,7 @@ namespace KashTaskWPF
 
         public void ChangeText(string text)
         {
-            textBlock.Text = text;
+            MainText.Text = text;
         }
 
         public void StartFight() { }

@@ -23,16 +23,16 @@
             <RowDefinition Height="0.35*"/>
             <RowDefinition Height="0.150*"/>
         </Grid.RowDefinitions>
-        <Image Grid.Row="0" >
+        <Image x:Name="MainImage" Grid.Row="0" >
             <Image.Source>
-                <BitmapImage UriSource="C:\Users\Pavel\RiderProjects\KashTaskWPF\Resources\belka.png"></BitmapImage>
+                <BitmapImage UriSource="Resources\belka.png"></BitmapImage>
             </Image.Source>
         </Image>
         <Border Grid.Row="1" BorderBrush="Black" BorderThickness="5" 
                 VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
                 Margin="10,0,10,5" Padding="10" CornerRadius="10">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <TextBlock x:Name="textBlock" TextWrapping="Wrap" FontFamily="JetBrains Mono NL Medium" FontSize="14" FontWeight="Bold" FontStretch="SemiExpanded">
+                <TextBlock x:Name="MainText" TextWrapping="Wrap" FontFamily="JetBrains Mono NL Medium" FontSize="14" FontWeight="Bold" FontStretch="SemiExpanded">
                         1) Hit <LineBreak/>
                         2) Spell <LineBreak/>
                         3) Artifact <LineBreak/>
