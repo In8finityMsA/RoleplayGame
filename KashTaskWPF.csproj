@@ -11,4 +11,8 @@
       <Compile Remove="Fighter.cs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resourses" />
+    </ItemGroup>
+
 </Project>
