@@ -31,6 +31,8 @@ namespace KASHGAMEWPF
     {
         //private readonly string fileName;
         private FightPlan plan;
+        private List<string> prevList;
+        private int prevVariantsAmount;
         private List<string> StandartList = new List<string>() { "Удар", "Заклинание", "Артефакт", "Бежать", "Поговорить" };
         private List<Character> enemies = new List<Character>();
         List<KeyValuePair<Type, Spell>> spells;
@@ -40,6 +42,7 @@ namespace KASHGAMEWPF
         private MainWindow ui = KashTaskWPF.MainWindow.mainwindow;
 
         private FightAction whatNow;
+        private FightStatus prevStatus = FightStatus.ChooseAction;
         private FightStatus chooseParams = FightStatus.ChooseAction;
 
         private Character target;
@@ -114,6 +117,13 @@ namespace KASHGAMEWPF
             return artifactNames;
         }
 
+        private void WritePrevInfo(List<string> list, int amount)
+        {
+            prevList = list;
+            prevVariantsAmount = amount;
+
+        }
+
         public void GetInput(int index)
         {
             if (chooseParams == FightStatus.ChooseAction)
@@ -126,8 +136,15 @@ namespace KASHGAMEWPF
                         {
                             if ( enemies.Count > 1)
                             {
+                                prevStatus = chooseParams;
                                 chooseParams = FightStatus.ChooseTarget;
+
+                                //List<string> list = EnemyNamesToList();
+                                //int variants = enemies.Count;
+
                                 ui.GetInfo(EnemyNamesToList(), enemies.Count);
+
+                                
                             }                           
                             else if (enemies.Count == 1)
                             {
@@ -148,7 +165,8 @@ namespace KASHGAMEWPF
                                         parent.EndFight(FightResult.DIED);
                                         return;
                                     }
-                                }                               
+                                }
+                                prevStatus = chooseParams;
                                 chooseParams = FightStatus.ChooseAction;
                                 ui.GetInfo(StandartList, 5);
                                                                 
@@ -159,6 +177,7 @@ namespace KASHGAMEWPF
                         {                  
                             if (spells.Count >= 1)
                             {
+                                prevStatus = chooseParams;
                                 chooseParams = FightStatus.ChooseSpell;
                                 ui.GetInfo(SpellNamesToList(), spells.Count);                             
                             }
@@ -168,6 +187,7 @@ namespace KASHGAMEWPF
                         {                            
                             if (artifacts.Count >= 1)
                             {
+                                prevStatus = chooseParams;
                                 chooseParams = FightStatus.ChooseArtifact;
                                 ui.GetInfo(ArtifactNamesToList(), artifacts.Count);
                             }
@@ -193,12 +213,14 @@ namespace KASHGAMEWPF
                 spell = spells[index].Value;
                 if (spell is IMagicPowered)
                 {
+                    prevStatus = chooseParams;
                     chooseParams = FightStatus.ChoosePower;
                 }
                 else
                 {
                     if (enemies.Count != 1)
                     {
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseTarget;
                         ui.GetInfo(EnemyNamesToList(), enemies.Count);
                     }
@@ -223,6 +245,7 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);
                         
@@ -235,12 +258,14 @@ namespace KASHGAMEWPF
 
                 if (artifact is IMagicPowered)
                 {
+                    prevStatus = chooseParams;
                     chooseParams = FightStatus.ChoosePower;
                 }
                 else
                 {
                     if (enemies.Count != 1)
                     {
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseTarget;
                         ui.GetInfo(EnemyNamesToList(), enemies.Count);
                     }
@@ -265,7 +290,8 @@ namespace KASHGAMEWPF
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
-                        }                       
+                        }
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);                      
                     }
@@ -299,6 +325,7 @@ namespace KASHGAMEWPF
                             return;
                         }
                     }
+                    prevStatus = chooseParams;
                     chooseParams = FightStatus.ChooseAction;
                     ui.GetInfo(StandartList, 5);
                 }
@@ -328,6 +355,7 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);
                     }
@@ -355,6 +383,7 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);
                     }
@@ -386,6 +415,7 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);
                     }
@@ -413,6 +443,7 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);
                     }
@@ -432,6 +463,7 @@ namespace KASHGAMEWPF
                 power = index;
                 if (enemies.Count > 1)
                 {
+                    prevStatus = chooseParams;
                     chooseParams = FightStatus.ChooseTarget;
                     ui.GetInfo(EnemyNamesToList(), enemies.Count);
                 }
@@ -458,7 +490,7 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
-
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);
                     }
@@ -484,7 +516,7 @@ namespace KASHGAMEWPF
                                 return;
                             }
                         }
-
+                        prevStatus = chooseParams;
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);
                     }
