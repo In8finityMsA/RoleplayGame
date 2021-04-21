@@ -48,7 +48,7 @@ namespace KashTaskWPF
             {
                 throw new ArgumentException("Too much buttons were requested. Do smth with that!");
             }
-            foreach (UIElement child in grid.Children)
+            foreach (UIElement child in AnswerPanel.Children)
             {
                 if (number > 0)
                 {
@@ -65,7 +65,7 @@ namespace KashTaskWPF
         public void ChangeButtonsText(List<string> answers)
         {
             int i = 0;
-            foreach (Button child in grid.Children)
+            foreach (Button child in AnswerPanel.Children)
             {
                 if (i >= answers.Count)
                 {
