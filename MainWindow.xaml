@@ -10,7 +10,7 @@
         <StackPanel DockPanel.Dock="Bottom" VerticalAlignment="Bottom" Orientation="Vertical">
             <Border BorderBrush="Black" BorderThickness="5" VerticalAlignment="Top"
                 Padding="10" CornerRadius="10">
-                <TextBlock x:Name="textBlock">
+                <TextBlock x:Name="textBlock" TextWrapping="Wrap">
                         1) Hit <LineBreak/>
                         2) Spell <LineBreak/>
                         3) Artifact <LineBreak/>
