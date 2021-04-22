@@ -130,7 +130,7 @@ namespace KashTaskWPF
             Me.Text = hero.ToString();
         }
 
-        public void InfoAboutPunches(string text)
+        public void InfoAboutCurrentConditions(string text)
         {
             ChangeText(text);
         }

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using KashTaskWPF.Artifacts;
+using KashTaskWPF.Adapters;
 using game;
 using KashTaskWPF.Spells;
 
