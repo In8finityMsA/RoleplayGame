@@ -317,8 +317,8 @@ namespace game
 
         public override string ToString()
         {
-            return "ID: " + ID + "\n" + "Name: " + Name + "\n" + "Race: " + Race + "\n" +
-            "Sex: " + Sex + "\n" + "Age: " + Age + "\n" + "Health: " + Health + "\n" +
+            return "ID: " + ID + "\n" + "Name: " + Name + "\n" + "Race: " + Race + "\n" + "Sex: " + Sex + "\n" +
+            "Age: " + Age + "\n" + "Health: " + Health + "\n" + "Experience: " + Experience + "\n" +
             "State: " + StateHealth + "\n" + "Max health: " + MaxHealth + "\n" +
             "Ability to speak now: " + CanSpeakNow + "\n" +
             "Ability to move now: " + CanMoveNow + "\n" + "States: " + String.Join(", ", States);

@@ -90,7 +90,6 @@ namespace KashTaskWPF.Adapters
                 }
                 case "get":
                 {
-                    //var ctorInfo = Type.GetType(actionsWords[1]).GetConstructor();
                     object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
 
                     if (createdObject is Artifact)
@@ -111,7 +110,11 @@ namespace KashTaskWPF.Adapters
                     
                     break;
                 }
-                case "repeat": break; //метод о выписывании инфы по персонажу выписывает инфу в окно
+                case "info": {
+                    ui.ChangeText(ui.MainText.Text + "\n" + game.hero.ToString());
+                    
+                    break; //метод о выписывании инфы по персонажу выписывает инфу в окно
+                }
                 case "damage":
                 {
                     if (Int32.TryParse(actionsWords[1], out var amountDamage))

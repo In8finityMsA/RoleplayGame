@@ -40,11 +40,11 @@ namespace KashTaskWPF.Adapters
         List<string> answers;
 
         private string CHOOSETARGET = "Вы можете выбрать цель, на которую хотите направить свое действие!";
-        private string CHOOSEACTION = "Выберете действие, которое хотите направить на врагов!";
-        private string CHOOSEPOWER = "Выберете силу действия";
-        private string CHOOSESPELL = "Выберете заклинание!";
-        private string CHOOSEARTIFACT = "Выберете артефакт!";
-        private string CHOOSEANOTHERACTION = "Выберете другое действие!";
+        private string CHOOSEACTION = "Выберите действие, которое хотите направить на врагов!";
+        private string CHOOSEPOWER = "Выберите силу действия";
+        private string CHOOSESPELL = "Выберите заклинание!";
+        private string CHOOSEARTIFACT = "Выберите артефакт!";
+        private string CHOOSEANOTHERACTION = "Выберите другое действие!";
         private string NOMANA = "У вас нет маны!";
         private string NOARTIFACTS = "У вас нет артефактов!";
         private string NOSPELLS = " У вас нет выученных заклинаний!";
