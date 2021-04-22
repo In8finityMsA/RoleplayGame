@@ -31,7 +31,7 @@ namespace KashTaskWPF.Adapters
         private FightPlan plan;
         private List<string> prevList;
         private int prevVariantsAmount;
-        private List<string> StandartList = new List<string>() { "Удар", "Заклинание", "Артефакт", "Бежать", "Поговорить" };
+        private List<string> StandartList = new List<string>() { "Удар", "Заклинание", "Артефакт", "Поговорить", "Бежать" };
         private List<Character> enemies = new List<Character>();
         List<KeyValuePair<Type, Spell>> spells;
         List<Artifact> artifacts;
@@ -108,6 +108,11 @@ namespace KashTaskWPF.Adapters
                 enemiesNames.Add(enemies[i].Name);
             }
             return enemiesNames;
+        }
+
+        public List<string> PowerToList()
+        {
+            return new List<string>() { "10", "20", "30" , "40", "50"};
         }
 
         public List<string> SpellNamesToList()
@@ -246,6 +251,7 @@ namespace KashTaskWPF.Adapters
                     prevStatus = chooseParams;
                     ui.InfoAboutPunches(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
+                    ui.GetInfo(PowerToList(), 5);
                 }
                 else
                 {
@@ -293,6 +299,7 @@ namespace KashTaskWPF.Adapters
                     prevStatus = chooseParams;
                     ui.InfoAboutPunches(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
+                    ui.GetInfo(PowerToList(), 5);
                 }
                 else
                 {
@@ -492,15 +499,16 @@ namespace KashTaskWPF.Adapters
             {
 
             }
-            else if (chooseParams == FightStatus.ChoosePower)
+            else if (chooseParams == FightStatus.ChoosePower)/////////////////////////////////////////////////////////////////////////////
             {
-                power = index;
+                power = index * 10;
                 if (enemies.Count > 1)
                 {
                     prevStatus = chooseParams;
                     ui.InfoAboutPunches(CHOOSETARGET);
                     chooseParams = FightStatus.ChooseTarget;
                     ui.GetInfo(EnemyNamesToList(), enemies.Count);
+                    //ui.GetInfo(PowerToList(), 5);
                 }
                 else if (enemies.Count == 1)
                 {
