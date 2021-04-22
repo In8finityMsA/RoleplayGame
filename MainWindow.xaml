@@ -65,13 +65,16 @@
                 </TextBlock>
             </ScrollViewer>
         </Border>
-        <WrapPanel x:Name="AnswerPanel" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
-            <Button Tag="0" Style="{StaticResource AnswerButton}">1</Button>
-            <Button Tag="1" Style="{StaticResource AnswerButton}">2</Button>
-            <Button Tag="2" Style="{StaticResource AnswerButton}">3</Button>
-            <Button Tag="3" Style="{StaticResource AnswerButton}">4</Button>
-            <Button Tag="4" Style="{StaticResource AnswerButton}">5</Button>
-        </WrapPanel>
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <WrapPanel x:Name="AnswerPanel" VerticalAlignment="Center" HorizontalAlignment="Center"
+                       Orientation="Horizontal">
+                <Button Tag="0" Style="{StaticResource AnswerButton}">1</Button>
+                <Button Tag="1" Style="{StaticResource AnswerButton}">2</Button>
+                <Button Tag="2" Style="{StaticResource AnswerButton}">3</Button>
+                <Button Tag="3" Style="{StaticResource AnswerButton}">4</Button>
+                <Button Tag="4" Style="{StaticResource AnswerButton}">5</Button>
+            </WrapPanel>
+        </ScrollViewer>
         <Label Content="Enemies" HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.278,-0.519" Height="38" Width="97"/>
         <Label Content="You" HorizontalAlignment="Left" Margin="618,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.278,-0.519" Height="38" Width="97"/>
 

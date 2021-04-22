@@ -136,11 +136,9 @@ namespace KashTaskWPF.Adapters
                 case "camp": break; // то самое окно, где можно учить спеллы и открыть инвентарь
                 case "compexp":
                 {
-                    string stageIndexString;
-                    stageIndexString = game.hero.CompareTo(/* change */ game.hero) >= 0 ? actionsWords[1] : actionsWords[2]; //TODO: change game.hero with a character to compare to
+                    string stageIndexString = game.hero.CompareTo(/* change */ game.hero) >= 0 ? actionsWords[1] : actionsWords[2];
 
-                    int stageIndex;
-                    if (Int32.TryParse(stageIndexString, out stageIndex))
+                    if (Int32.TryParse(stageIndexString, out var stageIndex))
                     {
                         ChangeStage(stageIndex);    
                     }
@@ -221,23 +219,7 @@ namespace KashTaskWPF.Adapters
             var jsonString = reader.ReadToEnd();
             reader.Close();
             var deserialize = JsonSerializer.Deserialize<List<Stage>>(jsonString);
-            /*Console.WriteLine(deserialize?.Count);
-            foreach (var entry in deserialize)
-            {
-                Console.WriteLine(entry.ID);
-                Console.WriteLine(entry.Text);
-                entry.Answers.ForEach(i => Console.Write("{0}, ", i));
-                Console.WriteLine();
-                entry.Next.ForEach(i => Console.Write("{0}, ", i));
-                Console.WriteLine();
-                foreach (var index in entry.Actions)
-                {   
-                    index.Value.ForEach(i => Console.Write("{0}, ", i));
-                    Console.WriteLine();
-                }
-                Console.WriteLine();
-            }*/
-            
+
             return deserialize;
         }
         

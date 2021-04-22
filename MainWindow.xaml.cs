@@ -26,13 +26,14 @@ namespace KashTaskWPF
         IAdapter adapter;
 
         public static MainWindow mainwindow;
-        private const int Max_Number_Of_Buttons = 5;
+        private int numberOfButtons;
 
         public MainWindow()
         {
             InitializeComponent();
             mainwindow = this;
-            adapter = new Stager(this);         
+            adapter = new Stager(this);
+            numberOfButtons = AnswerPanel.Children.Count;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -44,10 +45,14 @@ namespace KashTaskWPF
 
         public void ChangeNumberOfButtons(int number)
         {
-            if (number > Max_Number_Of_Buttons)
+            while (number > numberOfButtons)
             {
-                throw new ArgumentException("Too much buttons were requested. Do smth with that!");
+                Button button = new Button();
+                button.Style = (Style)TryFindResource("AnswerButton");
+                AnswerPanel.Children.Add(button);
+                numberOfButtons++;
             }
+
             foreach (UIElement child in AnswerPanel.Children)
             {
                 if (number > 0)
@@ -64,12 +69,18 @@ namespace KashTaskWPF
 
         public void ChangeButtonsText(List<string> answers)
         {
+            if (answers.Count == 0)
+            {
+                (AnswerPanel.Children[0] as Button).Content = "Дальше";
+                return;
+            }
+            
             int i = 0;
             foreach (Button child in AnswerPanel.Children)
             {
                 if (i >= answers.Count)
                 {
-                    break;
+                    return;
                 }
                 
                 child.Content = answers[i];
