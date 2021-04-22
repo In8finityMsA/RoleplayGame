@@ -35,7 +35,17 @@ namespace KashTaskWPF.Adapters
         private List<Character> enemies = new List<Character>();
         List<KeyValuePair<Type, Spell>> spells;
         List<Artifact> artifacts;
+        List<string> words;
+        List<string> answers;
 
+        private string CHOOSETARGET = "Вы можете выбрать цель, на которую хотите направить свое действие!";
+        private string CHOOSEACTION = "Выберете действие, которое хотите направить на врагов!";
+        private string CHOOSEPOWER = "Выберете силу действия";
+        private string CHOOSESPELL = "Выберете заклинание!";
+        private string CHOOSEARTIFACT = "Выберете артефакт!";
+        private string CONVERSATION = "";
+
+        private string ABOUTENEMYPUNCHES = "";
         private Stager parent;
         private MainWindow ui = KashTaskWPF.MainWindow.mainwindow;
 
@@ -58,6 +68,11 @@ namespace KashTaskWPF.Adapters
             
             spells = ((Magician)parent.game.hero).Spells.ToList<KeyValuePair<Type, Spell>>();
             artifacts = parent.game.hero.Inventory;
+
+            words = plan.yourWord;
+            answers = plan.enemiesWord;
+
+            ui.InfoAboutPunches("Вы можете выбрать действие, чтобы атаковать врага!");
 
             //JsonInit();
             JoinLists();
@@ -82,6 +97,7 @@ namespace KashTaskWPF.Adapters
         //    reader.Close();
         //    plan = JsonSerializer.Deserialize<FightPlan>(jsonString);
         //}
+
 
         public List<string> EnemyNamesToList()
         {
@@ -108,7 +124,7 @@ namespace KashTaskWPF.Adapters
         {
             artifacts = parent.game.hero.Inventory;
             List<string> artifactNames = new List<string>();
-            for (int i = 0; i <= artifacts.Count; i++)
+            for (int i = 0; i < artifacts.Count; i++)
             {
                 artifactNames.Add(artifacts[i].NAME);
             }
@@ -136,17 +152,17 @@ namespace KashTaskWPF.Adapters
                             {
                                 prevStatus = chooseParams;
                                 chooseParams = FightStatus.ChooseTarget;
+                                ui.InfoAboutPunches(CHOOSETARGET);
 
                                 //List<string> list = EnemyNamesToList();
                                 //int variants = enemies.Count;
 
-                                ui.GetInfo(EnemyNamesToList(), enemies.Count);
-
-                                
+                                ui.GetInfo(EnemyNamesToList(), enemies.Count);                   
                             }                           
                             else if (enemies.Count == 1)
                             {
                                 parent.game.hero.Hit(enemies[0]);
+                                
                                 ui.GetInfoEnemies(enemies);
                                 if (enemies[0].StateHealth == StateHealth.DEAD)
                                 {
@@ -158,13 +174,13 @@ namespace KashTaskWPF.Adapters
                                 {
                                     YourEnemyReaction();
                                     if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                                    {
-                                        //You are died                           
+                                    {                        
                                         parent.EndFight(FightResult.DIED);
                                         return;
                                     }
                                 }
                                 prevStatus = chooseParams;
+                                ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                                 chooseParams = FightStatus.ChooseAction;
                                 ui.GetInfo(StandartList, 5);
                                                                 
@@ -176,6 +192,7 @@ namespace KashTaskWPF.Adapters
                             if (spells.Count >= 1)
                             {
                                 prevStatus = chooseParams;
+                                ui.InfoAboutPunches(CHOOSESPELL);
                                 chooseParams = FightStatus.ChooseSpell;
                                 ui.GetInfo(SpellNamesToList(), spells.Count);                             
                             }
@@ -186,6 +203,7 @@ namespace KashTaskWPF.Adapters
                             if (artifacts.Count >= 1)
                             {
                                 prevStatus = chooseParams;
+                                ui.InfoAboutPunches(CHOOSEARTIFACT);
                                 chooseParams = FightStatus.ChooseArtifact;
                                 ui.GetInfo(ArtifactNamesToList(), artifacts.Count);
                             }
@@ -193,7 +211,21 @@ namespace KashTaskWPF.Adapters
                         break;
                     case 4:  //TALK
                         {
-                            
+                            if (words.Count == 0)
+                            {
+                                ui.InfoAboutPunches(CHOOSEACTION);
+                                chooseParams = FightStatus.ChooseAction;
+                                CheckStandartList();
+                                ui.GetInfo(StandartList, StandartList.Count);
+                            }
+                            else
+                            {
+                                prevStatus = chooseParams;
+                                //ui.InfoAboutPunches(CHOOSEWORDS);
+                                chooseParams = FightStatus.ChooseWords;
+                                ui.GetInfo(new List<string>() { words[0] }, 1);
+                                words.RemoveAt(0);
+                            }
                         }
                         break;
                     case 5: //RUN
@@ -212,6 +244,7 @@ namespace KashTaskWPF.Adapters
                 if (spell is IMagicPowered)
                 {
                     prevStatus = chooseParams;
+                    ui.InfoAboutPunches(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
                 }
                 else
@@ -219,6 +252,7 @@ namespace KashTaskWPF.Adapters
                     if (enemies.Count != 1)
                     {
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(CHOOSETARGET);
                         chooseParams = FightStatus.ChooseTarget;
                         ui.GetInfo(EnemyNamesToList(), enemies.Count);
                     }
@@ -237,15 +271,15 @@ namespace KashTaskWPF.Adapters
                         {
                             YourEnemyReaction();
                             if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {
-                                //You are died                           
+                            {                         
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
                         }
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandartList, 5);
+                        ui.GetInfo(StandartList, StandartList.Count);
                         
                     }
                 }
@@ -257,6 +291,7 @@ namespace KashTaskWPF.Adapters
                 if (artifact is IMagicPowered)
                 {
                     prevStatus = chooseParams;
+                    ui.InfoAboutPunches(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
                 }
                 else
@@ -264,6 +299,7 @@ namespace KashTaskWPF.Adapters
                     if (enemies.Count != 1)
                     {
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(CHOOSETARGET);
                         chooseParams = FightStatus.ChooseTarget;
                         ui.GetInfo(EnemyNamesToList(), enemies.Count);
                     }
@@ -283,15 +319,15 @@ namespace KashTaskWPF.Adapters
                         {
                             YourEnemyReaction();
                             if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {
-                                //You are died                           
+                            {                          
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
                         }
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandartList, 5);                      
+                        ui.GetInfo(StandartList, StandartList.Count);                      
                     }
                 }
             }
@@ -317,15 +353,15 @@ namespace KashTaskWPF.Adapters
                     {
                         YourEnemyReaction();
                         if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                        {
-                            //You are died                           
+                        {                           
                             parent.EndFight(FightResult.DIED);
                             return;
                         }
                     }
                     prevStatus = chooseParams;
+                    ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                     chooseParams = FightStatus.ChooseAction;
-                    ui.GetInfo(StandartList, 5);
+                    ui.GetInfo(StandartList, StandartList.Count);
                 }
                 else if (whatNow == FightAction.SPELL)
                 {
@@ -347,15 +383,15 @@ namespace KashTaskWPF.Adapters
                         {
                             YourEnemyReaction();
                             if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {
-                                //You are died                           
+                            {                           
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
                         }
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandartList, 5);
+                        ui.GetInfo(StandartList, StandartList.Count);
                     }
                     else
                     {
@@ -375,15 +411,15 @@ namespace KashTaskWPF.Adapters
                         {
                             YourEnemyReaction();
                             if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {
-                                //You are died                           
+                            {                       
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
                         }
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandartList, 5);
+                        ui.GetInfo(StandartList, StandartList.Count);
                     }
 
                 }
@@ -407,15 +443,15 @@ namespace KashTaskWPF.Adapters
                         {
                             YourEnemyReaction();
                             if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {
-                                //You are died                           
+                            {                          
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
                         }
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandartList, 5);
+                        ui.GetInfo(StandartList, StandartList.Count);
                     }
                     else
                     {
@@ -435,15 +471,15 @@ namespace KashTaskWPF.Adapters
                         {
                             YourEnemyReaction();
                             if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {
-                                //You are died                           
+                            {                           
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
                         }
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandartList, 5);
+                        ui.GetInfo(StandartList, StandartList.Count);
                     }
                 }
                 else if (whatNow == FightAction.TALK)
@@ -462,6 +498,7 @@ namespace KashTaskWPF.Adapters
                 if (enemies.Count > 1)
                 {
                     prevStatus = chooseParams;
+                    ui.InfoAboutPunches(CHOOSETARGET);
                     chooseParams = FightStatus.ChooseTarget;
                     ui.GetInfo(EnemyNamesToList(), enemies.Count);
                 }
@@ -482,13 +519,13 @@ namespace KashTaskWPF.Adapters
                         {
                             YourEnemyReaction();
                             if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {
-                                //You are died                           
+                            {                          
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
                         }
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         ui.GetInfo(StandartList, 5);
                     }
@@ -508,19 +545,27 @@ namespace KashTaskWPF.Adapters
                         {
                             YourEnemyReaction();
                             if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {
-                                //You are died                           
+                            {                         
                                 parent.EndFight(FightResult.DIED);
                                 return;
                             }
                         }
                         prevStatus = chooseParams;
+                        ui.InfoAboutPunches(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
-                        ui.GetInfo(StandartList, 5);
+                        ui.GetInfo(StandartList, StandartList.Count);
                     }
                 }           
             }
         }
+
+        public void CheckStandartList()
+        {
+            if (answers.Count == 0)
+            {
+                StandartList.Remove("Поговорить");
+            }
+        }                    
 
         public void YourEnemyReaction()
         {
@@ -534,15 +579,23 @@ namespace KashTaskWPF.Adapters
                 {
                     art = whoIsOnDuty.Inventory[rnd.Next(0, whoIsOnDuty.Inventory.Count - 1)];
                     whoIsOnDuty.UseArtifact(art, parent.game.hero);
+                    ABOUTENEMYPUNCHES = "Против вас использовали артефакт: " + art.NAME + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                    ui.InfoAboutPunches(ABOUTENEMYPUNCHES);
+
                 }
                 else
                 {
                     whoIsOnDuty.Hit(parent.game.hero);
+                    ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + " \nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                    ui.InfoAboutPunches(ABOUTENEMYPUNCHES);
                 }
             }
             else
             {
                 whoIsOnDuty.Hit(parent.game.hero);
+                ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                ui.InfoAboutPunches(ABOUTENEMYPUNCHES);
+
             }
             ui.GetInfoCharacter(parent.game.hero);
         }
