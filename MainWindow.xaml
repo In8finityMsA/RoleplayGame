@@ -41,6 +41,30 @@
                 </TextBlock>
             </ScrollViewer>
         </Border>
+        
+
+        <Border BorderBrush="Black" BorderThickness="5" 
+                VerticalAlignment="Top" HorizontalAlignment="Left"
+                Margin="500,32,0,0" Padding="10" CornerRadius="1" Height="157" Width="276">
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,2,0,0">
+
+                <TextBlock x:Name="Me" TextWrapping="Wrap" FontFamily="JetBrains Mono NL Medium" FontSize="14" FontWeight="Bold" FontStretch="SemiExpanded">
+
+                </TextBlock>
+            </ScrollViewer>
+        </Border>
+        <Border BorderBrush="Black" BorderThickness="5" 
+                VerticalAlignment="Top" HorizontalAlignment="Left"
+                Margin="10,32,0,0" Padding="10" CornerRadius="1" Height="157" Width="276">
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,2,0,0">
+
+                <TextBlock x:Name="Enemy" TextWrapping="Wrap" FontFamily="JetBrains Mono NL Medium" FontSize="14" FontWeight="Bold" FontStretch="SemiExpanded">
+
+                </TextBlock>
+            </ScrollViewer>
+        </Border>
         <WrapPanel x:Name="AnswerPanel" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal">
             <Button Tag="0" Style="{StaticResource AnswerButton}">1</Button>
             <Button Tag="1" Style="{StaticResource AnswerButton}">2</Button>
@@ -48,5 +72,8 @@
             <Button Tag="3" Style="{StaticResource AnswerButton}">4</Button>
             <Button Tag="4" Style="{StaticResource AnswerButton}">5</Button>
         </WrapPanel>
+        <Label Content="Enemies" HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.278,-0.519" Height="38" Width="97"/>
+        <Label Content="You" HorizontalAlignment="Left" Margin="618,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.278,-0.519" Height="38" Width="97"/>
+
     </Grid>
 </Window>

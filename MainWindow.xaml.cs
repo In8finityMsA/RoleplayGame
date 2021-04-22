@@ -106,12 +106,28 @@ namespace KashTaskWPF
 
         public void GetInfoEnemies(List<Character> enemies)
         {
-            //ChangeText(enemies[0].ToString());
+            string str = "";
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                //TextBlock t = new TextBlock();
+                //t.Margin = new Thickness(i * 50, 0, 0, 0);
+                //t.Text = enemies[i].ToString()
+                str += enemies[i].ToString() + '\n';
+                
+            }
+            //ChangeText(str);
+            enemy(str);
+            
+        }
+
+        public void enemy(string str)
+        {
+            Enemy.Text = str;
         }
 
         public void GetInfoCharacter(Character hero)
         {
-            //ChangeText(hero.Name + " " + hero.Health + " " + hero.MaxHealth);
+            Me.Text = hero.ToString();
         }
 
         public void InfoAboutPunches(string text)

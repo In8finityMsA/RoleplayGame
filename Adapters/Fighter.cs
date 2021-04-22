@@ -77,6 +77,9 @@ namespace KashTaskWPF.Adapters
             //JsonInit();
             JoinLists();
             ui.GetInfo(StandartList, 5);
+
+            ui.GetInfoEnemies(enemies);
+            ui.GetInfoCharacter(parent.game.hero);
         }
 
         private void JoinLists()
@@ -144,7 +147,7 @@ namespace KashTaskWPF.Adapters
         }
 
         public void GetInput(int index)
-        {
+        {           
             if (chooseParams == FightStatus.ChooseAction)
             {
                 index += 1;
@@ -159,19 +162,16 @@ namespace KashTaskWPF.Adapters
                                 chooseParams = FightStatus.ChooseTarget;
                                 ui.InfoAboutPunches(CHOOSETARGET);
 
-                                //List<string> list = EnemyNamesToList();
-                                //int variants = enemies.Count;
-
                                 ui.GetInfo(EnemyNamesToList(), enemies.Count);                   
                             }                           
                             else if (enemies.Count == 1)
                             {
                                 parent.game.hero.Hit(enemies[0]);
-                                
                                 ui.GetInfoEnemies(enemies);
+
                                 if (enemies[0].StateHealth == StateHealth.DEAD)
-                                {
-                                    enemies.RemoveAt(0);
+                                {                                   enemies.RemoveAt(0);
+                                    ui.GetInfoEnemies(enemies);
                                     parent.EndFight(FightResult.WON);
                                     return;
                                 }
@@ -270,6 +270,7 @@ namespace KashTaskWPF.Adapters
                         if (enemies[0].StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
+                            ui.GetInfoEnemies(enemies);
                             parent.EndFight(FightResult.WON);
                             return;
                         }
@@ -318,6 +319,7 @@ namespace KashTaskWPF.Adapters
                         if (enemies[0].StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
+                            ui.GetInfoEnemies(enemies);
                             //tell about murder?
                             parent.EndFight(FightResult.WON);
                             return;
@@ -349,6 +351,7 @@ namespace KashTaskWPF.Adapters
                     if (target.StateHealth == StateHealth.DEAD)
                     {
                         enemies.Remove(target);
+                        ui.GetInfoEnemies(enemies);
                         //tell UI about murder?
                         if (enemies.Count == 0)
                         {
@@ -379,6 +382,7 @@ namespace KashTaskWPF.Adapters
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
+                            ui.GetInfoEnemies(enemies);
                             //tell UI about murder?
                             if (enemies.Count == 0)
                             {
@@ -407,6 +411,7 @@ namespace KashTaskWPF.Adapters
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
+                            ui.GetInfoEnemies(enemies);
                             //tell UI about murder?
                             if (enemies.Count == 0)
                             {
@@ -439,6 +444,7 @@ namespace KashTaskWPF.Adapters
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
+                            ui.GetInfoEnemies(enemies);
                             //tell UI about murder?
                             if (enemies.Count == 0)
                             {
@@ -467,6 +473,7 @@ namespace KashTaskWPF.Adapters
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.Remove(target);
+                            ui.GetInfoEnemies(enemies);
                             //tell UI about murder?
                             if (enemies.Count == 0)
                             {
@@ -545,6 +552,7 @@ namespace KashTaskWPF.Adapters
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             enemies.RemoveAt(0);
+                            ui.GetInfoEnemies(enemies);
                             //tell UI about murder?                            
                             parent.EndFight(FightResult.WON);
                             return;                            
