@@ -11,4 +11,15 @@
       <Compile Remove="Fighter.cs" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\belka.png" />
+      <Content Include="Resources\belka.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\goblin.png" />
+      <Content Include="Resources\goblin.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
