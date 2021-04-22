@@ -1,9 +1,10 @@
-﻿using Artifacts;
+﻿using KashTaskWPF.Artifacts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KashTaskWPF.Spells;
 
 namespace game
 {

@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using KashTaskWPF.Adapters;
 using KashTaskWPF;
-using Artifacts;
+using KashTaskWPF.Artifacts;
+using KashTaskWPF.Spells;
 
 namespace KashTaskWPF.Adapters
 {

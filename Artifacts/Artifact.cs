@@ -1,15 +1,15 @@
 ﻿using game;
 
-namespace Artifacts
+namespace KashTaskWPF.Artifacts
 { 
     public abstract class Artifact : IMagic
     {
-        public Artifact(bool isRechargable)
+        protected Artifact(bool isRechargeable)
         {
-            IsRechargable = isRechargable;
+            IsRechargeable = isRechargeable;
         }
 
-        public bool IsRechargable { get; }
+        public bool IsRechargeable { get; }
 
         public string NAME { get; protected set; }
 

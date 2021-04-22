@@ -1,7 +1,7 @@
 ﻿using game;
 using System;
 
-namespace Artifacts
+namespace KashTaskWPF.Artifacts
 {
     public class NegativeChargeException : Exception
     {

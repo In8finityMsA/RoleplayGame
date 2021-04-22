@@ -12,7 +12,7 @@
     "ID": 2,
     "Text": "Вы просыпаетесь в болоте.",
     "Answers": [],
-    "Actions": {},
+    "Actions": { "0": [ "get KashTaskWPF.Artifacts.FrogLegDecoct", "get KashTaskWPF.Artifacts.LivingWater 10", "get KashTaskWPF.Artifacts.PoisonedSpit 20"] },
     "Next": [
       3
     ]
@@ -27,7 +27,7 @@
       "Орк",
       "Гоблин"
     ],
-    "Actions": {},
+    "Actions": { "0": [ "learn KashTaskWPF.Spells.Unfreeze"]},
     "Next": [
       4,
       4,

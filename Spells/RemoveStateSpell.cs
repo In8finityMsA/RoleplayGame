@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using game;
 
-namespace game
+namespace KashTaskWPF.Spells
 {
     internal abstract class RemoveStateSpell : Spell
     {

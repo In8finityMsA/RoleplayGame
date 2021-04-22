@@ -1,6 +1,7 @@
-﻿using game;
+﻿using System;
+using game;
 
-namespace Artifacts
+namespace KashTaskWPF.Artifacts
 {
     public sealed class LivingWater : Water
     {
@@ -9,8 +10,9 @@ namespace Artifacts
             NAME = "Живая вода " + Size.ToString();
         }
         
-        public LivingWater(int size) : this( (BottleSize) size)
+        public LivingWater(int size) : base(size)
         {
+            NAME = "Живая вода " + Size.ToString();
         }
         
         protected sealed override void DrinkAction(Character target)

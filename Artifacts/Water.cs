@@ -1,7 +1,7 @@
 ﻿using System;
 using game;
 
-namespace Artifacts
+namespace KashTaskWPF.Artifacts
 {
     public enum BottleSize
     {
@@ -10,18 +10,26 @@ namespace Artifacts
 
     public abstract class Water: Artifact
     {
-        private BottleSize size;
-
-        public Water(BottleSize size) : base(false)
+        protected Water(BottleSize size) : base(false)
         {
-            this.size = size;
+            Size = size;
         }
 
-        public Water(int size) : this( (BottleSize) size)
+        protected Water(int size) : base(false)
         {
+            foreach (BottleSize bottleSize in Enum.GetValues(typeof(BottleSize)))
+            {
+                if ((BottleSize) size == bottleSize)
+                {
+                    Size = (BottleSize) size;
+                    return;
+                }
+            }
+
+            throw new ArgumentException($"No such value in enum BottleSize - {size}");
         }
 
-        public BottleSize Size { get => size; }
+        public BottleSize Size { get; protected set; }
 
         public sealed override void MagicEffect(Character user, Character target)
         {            

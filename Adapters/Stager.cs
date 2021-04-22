@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
-using Artifacts;
+using KashTaskWPF.Artifacts;
 using game;
-using KashTaskWPF;
-using KashTaskWPF.Adapters;
-using Microsoft.Windows.Themes;
+using KashTaskWPF.Spells;
 
 namespace KashTaskWPF.Adapters
 {
@@ -25,7 +24,7 @@ namespace KashTaskWPF.Adapters
 
             currentStageIndex = 0;
             DisplayStage(GetCurrentStage());
-            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 50));
+            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 150));
         }
 
         public void GetInput(int index)
@@ -115,8 +114,7 @@ namespace KashTaskWPF.Adapters
                 case "repeat": break; //метод о выписывании инфы по персонажу выписывает инфу в окно
                 case "damage":
                 {
-                    int amountDamage;
-                    if (Int32.TryParse(actionsWords[1], out amountDamage))
+                    if (Int32.TryParse(actionsWords[1], out var amountDamage))
                     {
                         game.hero.Health -= amountDamage;
                     }
@@ -125,8 +123,7 @@ namespace KashTaskWPF.Adapters
                 }
                 case "getexp": 
                 {
-                    int amountExp;
-                    if (Int32.TryParse(actionsWords[1], out amountExp))
+                    if (Int32.TryParse(actionsWords[1], out var amountExp))
                     {
                         game.hero.Experience += amountExp;
                     }
@@ -161,7 +158,7 @@ namespace KashTaskWPF.Adapters
 
         private object GetObjectFromString(string className, string[] parameters)
         {
-            Type type = Type.GetType("Artifacts." + className);
+            Type type = Type.GetType(className);
             if (type == null)
             {
                 throw new ArgumentException($"Type with specified name wasn't found - {className}. " +
@@ -182,9 +179,9 @@ namespace KashTaskWPF.Adapters
             }
             catch (Exception e)
             {
-                throw new ArgumentException($"Constructor with specified parameters for type {className} wasn't found. " +
+                throw new ArgumentException($"Cannot construct specified type - {className}. " +
                                             $"Parameters: {parameters}. " +
-                                            $"StageIndex:{currentStageIndex}");
+                                            $"StageIndex: {currentStageIndex}");
             }
 
             return createdObject;

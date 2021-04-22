@@ -1,4 +1,6 @@
-﻿namespace game
+﻿using game;
+
+namespace KashTaskWPF.Spells
 {
     public class AddHealth : Spell, IMagicPowered
     {        

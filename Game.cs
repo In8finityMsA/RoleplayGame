@@ -1,7 +1,8 @@
-﻿using Artifacts;
+﻿using KashTaskWPF.Artifacts;
 using game;
 using KashTaskWPF.Adapters;
 using System.Collections.Generic;
+using KashTaskWPF.Spells;
 
 namespace KashTaskWPF
 {
@@ -22,9 +23,9 @@ namespace KashTaskWPF
             //create list of fightplans
             Magician Anna = new Magician("Аннушка", Race.ELF, Sex.FEMALE, 12, 16, 20, 23);
             Character Mark = new Character("Марк", Race.ELF, Sex.MALE, 23, 20, 20);
-            hero.PickUpArtifact(new FrogLegDecoct());
-            hero.PickUpArtifact(new VasiliskEye());
-            hero.PickUpArtifact(new LivingWater(BottleSize.L));
+            //hero.PickUpArtifact(new FrogLegDecoct());
+            //hero.PickUpArtifact(new VasiliskEye());
+            //hero.PickUpArtifact(new LivingWater(BottleSize.L));
             ((Magician)hero).LearnSpell(typeof(AddHealth));
             ((Magician)hero).LearnSpell(typeof(Heal));
             Anna.PickUpArtifact(new VasiliskEye());

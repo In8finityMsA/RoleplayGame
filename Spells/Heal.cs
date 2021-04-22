@@ -1,4 +1,6 @@
-﻿namespace game
+﻿using game;
+
+namespace KashTaskWPF.Spells
 {
     class Heal : RemoveStateSpell
     {

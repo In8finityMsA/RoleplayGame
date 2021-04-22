@@ -1,10 +1,11 @@
 ﻿using System;
+using game;
 
-namespace game
+namespace KashTaskWPF.Spells
 {
     public abstract class Spell : IMagic
     {        
-        public Spell(double minManaCost, bool hasMotionalComponent, bool hasVerbalComponent)
+        protected Spell(double minManaCost, bool hasMotionalComponent, bool hasVerbalComponent)
         {
             if (minManaCost < 0)
             {

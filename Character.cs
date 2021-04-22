@@ -1,4 +1,4 @@
-﻿using Artifacts;
+﻿using KashTaskWPF.Artifacts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -103,23 +103,20 @@ namespace game
             {
                 if (StateHealth != StateHealth.DEAD)
                 {
-                    if (health != 0)
+                    if (value < 0)
                     {
-                        if (value < 0)
-                        {
-                            health = 0;
-                        }
-                        else if (value > maxHealth)
-                        {
-                            health = maxHealth;
-                        }
-                        else
-                        {
-                            health = value;
-                        }
-
-                        ManageState();
+                        health = 0;
                     }
+                    else if (value > maxHealth)
+                    {
+                        health = maxHealth;
+                    }
+                    else
+                    {
+                        health = value;
+                    }
+
+                    ManageState();
                 }
             }
         }
@@ -157,20 +154,22 @@ namespace game
 
         public bool AddState(State state)
         {
-            if (Health != 0)
+            CheckIfDeadTryAct();
+            if (state == State.PARALIZED)
             {
-                return states.Add(state);
+                canMoveNow = false;
             }
-            return false;
+            return states.Add(state);
         }
             
         public bool RemoveState(State state)
         {
-            if (Health != 0)
+            CheckIfDeadTryAct();
+            if (state == State.PARALIZED)
             {
-                return states.Remove(state);
+                canMoveNow = true;
             }
-            return false;
+            return states.Remove(state);
         }
 
         public bool CanSpeakNow { get => canSpeakNow; set => canSpeakNow = value; }
