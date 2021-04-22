@@ -25,7 +25,7 @@ namespace KashTaskWPF.Adapters
 
             currentStageIndex = 0;
             DisplayStage(GetCurrentStage());
-            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 50));
+            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 100, 0, 10));
         }
 
         public void GetInput(int index)
