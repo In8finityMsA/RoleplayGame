@@ -157,7 +157,7 @@ namespace game
             CheckIfDeadTryAct();
             if (state == State.PARALIZED)
             {
-                canMoveNow = false;
+                CanMoveNow = false;
             }
             return states.Add(state);
         }
@@ -167,7 +167,7 @@ namespace game
             CheckIfDeadTryAct();
             if (state == State.PARALIZED)
             {
-                canMoveNow = true;
+                CanMoveNow = true;
             }
             return states.Remove(state);
         }

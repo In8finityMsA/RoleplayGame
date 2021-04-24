@@ -111,8 +111,8 @@ namespace KashTaskWPF
 
         public void GetInfo(List<string> answers, int variantsAmount)
         {
-            ChangeButtonsText(answers);
             ChangeNumberOfButtons(variantsAmount);
+            ChangeButtonsText(answers);
         }
 
         public void GetInfoEnemies(List<Character> enemies)
