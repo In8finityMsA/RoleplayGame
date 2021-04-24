@@ -118,7 +118,7 @@ namespace KashTaskWPF
         public void GetInfoEnemies(List<Character> enemies)
         {
             string str = "";
-            for (int i = 0; i < enemies.Count; i++)
+            for (int i = 0; i < enemies.Count - 1; i++)
             {
                 //TextBlock t = new TextBlock();
                 //t.Margin = new Thickness(i * 50, 0, 0, 0);

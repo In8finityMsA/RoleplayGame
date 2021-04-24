@@ -53,6 +53,7 @@ namespace KashTaskWPF.Adapters
         private string NOTENOUGHMANA = "Вам не хватило маны на заклинание! Штош, придется пропустить ход(";
         private string CONVERSATION = "";
 
+
         private string ABOUTENEMYPUNCHES = "";
         private Stager parent;
         private MainWindow ui = KashTaskWPF.MainWindow.mainwindow;
@@ -84,12 +85,16 @@ namespace KashTaskWPF.Adapters
 
             //JsonInit();
             JoinLists();
-            ui.GetInfo(StandartList, 5);
+            ui.GetInfo(StandartList, StandartList.Count);
 
-            recorder.Push(chooseParams);
+            //recorder.Push(chooseParams);
 
+            enemies.Add(parent.game.hero);
             ui.GetInfoEnemies(enemies);
             ui.GetInfoCharacter(parent.game.hero);
+
+            
+            
         }
 
         private void JoinLists()
@@ -116,10 +121,11 @@ namespace KashTaskWPF.Adapters
         {
             List<string> enemiesNames = new List<string>();
 
-            for (int i = 0; i < enemies.Count; i++)
+            for (int i = 0; i < enemies.Count - 1; i++)
             {
                 enemiesNames.Add(enemies[i].Name);
             }
+            enemiesNames.Add("На себя");
             return enemiesNames;
         }
 
@@ -159,7 +165,7 @@ namespace KashTaskWPF.Adapters
         public void InitNewRecorder()
         {
             recorder = new Stack<FightStatus>();
-            recorder.Push(chooseParams);
+            recorder.Push(FightStatus.ChooseAction);
         }
 
         public void GetInput(int index)
@@ -187,7 +193,14 @@ namespace KashTaskWPF.Adapters
                             else if (enemies.Count == 1)
                             {
                                 parent.game.hero.Hit(enemies[0]);
-                                InitNewRecorder();
+
+
+
+                                //InitNewRecorder();
+                                
+
+
+
 
                                 if (enemies[0].StateHealth == StateHealth.DEAD)
                                 {   
@@ -207,6 +220,8 @@ namespace KashTaskWPF.Adapters
                                     }
                                 }
                                 //prevStatus = chooseParams;
+
+                                recorder = new Stack<FightStatus>();
                                 ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                                 chooseParams = FightStatus.ChooseAction;
                                 recorder.Push(chooseParams);
@@ -309,7 +324,7 @@ namespace KashTaskWPF.Adapters
                         try
                         {
                             ((Magician)parent.game.hero).UseSpell(spell, target);
-                            InitNewRecorder();
+                            
                         }
                         catch (Exception)
                         {
@@ -338,6 +353,8 @@ namespace KashTaskWPF.Adapters
                             }
                         }
                         //prevStatus = chooseParams;
+
+                        recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
@@ -375,7 +392,7 @@ namespace KashTaskWPF.Adapters
                         try
                         {
                             ((Magician)parent.game.hero).UseArtifact(artifact, target);
-                            InitNewRecorder();
+                            
                         }
                         catch (Exception)
                         {
@@ -404,7 +421,10 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        prevStatus = chooseParams;
+
+
+
+                        recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
@@ -419,7 +439,7 @@ namespace KashTaskWPF.Adapters
                 if (whatNow == FightAction.HIT)
                 {
                     parent.game.hero.Hit(target);
-                    InitNewRecorder();
+
                     ui.GetInfoEnemies(enemies);
                     if (target.StateHealth == StateHealth.DEAD)
                     {
@@ -441,7 +461,8 @@ namespace KashTaskWPF.Adapters
                             return;
                         }
                     }
-                    prevStatus = chooseParams;
+
+                    recorder = new Stack<FightStatus>();
                     ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                     chooseParams = FightStatus.ChooseAction;
                     //recorder.Push(chooseParams);
@@ -454,7 +475,7 @@ namespace KashTaskWPF.Adapters
                         try
                         {
                             ((Magician)parent.game.hero).UseSpell(spell, target, power);
-                            InitNewRecorder();
+
                         }
                         catch (Exception)
                         {
@@ -486,7 +507,7 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        prevStatus = chooseParams;
+                        recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
@@ -497,7 +518,7 @@ namespace KashTaskWPF.Adapters
                         try
                         {
                             ((Magician)parent.game.hero).UseSpell(spell, target);
-                            InitNewRecorder();
+
                         }
                         catch
                         {
@@ -529,7 +550,7 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        prevStatus = chooseParams;
+                        recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
@@ -566,6 +587,7 @@ namespace KashTaskWPF.Adapters
                             }
                         }
                         //prevStatus = chooseParams;
+                        recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
@@ -576,7 +598,7 @@ namespace KashTaskWPF.Adapters
 
 
                         parent.game.hero.UseArtifact(artifact, target);
-                        InitNewRecorder();
+
 
 
                         ui.GetInfoEnemies(enemies);
@@ -601,6 +623,7 @@ namespace KashTaskWPF.Adapters
                             }
                         }
                         //prevStatus = chooseParams;
+                        recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
@@ -623,12 +646,12 @@ namespace KashTaskWPF.Adapters
                 power = index * 10;
                 if (enemies.Count > 1)
                 {
-                    //prevStatus = chooseParams;
+
                     ui.InfoAboutCurrentConditions(CHOOSETARGET);
                     chooseParams = FightStatus.ChooseTarget;
                     recorder.Push(chooseParams);
                     ui.GetInfo(EnemyNamesToList(), enemies.Count);
-                    //ui.GetInfo(PowerToList(), 5);
+
                 }
                 else if (enemies.Count == 1)
                 {
@@ -637,7 +660,7 @@ namespace KashTaskWPF.Adapters
                         try
                         {
                             ((Magician)parent.game.hero).UseSpell(spell, enemies[0], power);
-                            InitNewRecorder();
+
 
 
 
@@ -669,6 +692,7 @@ namespace KashTaskWPF.Adapters
                             }
                         }
                         //prevStatus = chooseParams;
+                        recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
@@ -677,7 +701,7 @@ namespace KashTaskWPF.Adapters
                     else if (whatNow == FightAction.ARTIFACT)
                     {
                         parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, enemies[0], power);
-                        InitNewRecorder();
+
 
 
 
@@ -701,6 +725,7 @@ namespace KashTaskWPF.Adapters
                             }
                         }
                         //prevStatus = chooseParams;
+                        recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
@@ -783,7 +808,7 @@ namespace KashTaskWPF.Adapters
         public void YourEnemyReaction()
         {
             Random rnd = new Random();
-            Character whoIsOnDuty = enemies[rnd.Next(0, enemies.Count)];
+            Character whoIsOnDuty = enemies[rnd.Next(0, enemies.Count - 1)];// -1 not to kill yourself
             Artifact art;
 
             if (whoIsOnDuty.Inventory.Count != 0)
