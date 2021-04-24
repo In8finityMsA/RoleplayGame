@@ -145,5 +145,16 @@ namespace KashTaskWPF
         {
             ChangeText(text);
         }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                if (adapter is Fighter fighter)
+                {
+                    fighter.GivePrevStep();
+                }
+            }
+        }
     }
 }
