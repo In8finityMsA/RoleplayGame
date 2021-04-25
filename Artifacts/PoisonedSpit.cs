@@ -5,13 +5,18 @@ namespace KashTaskWPF.Artifacts
 {
     public sealed class PoisonedSpit : PoweredRenewableArtifact
     {
-        private const int period = 10;
+        private const int period = 2;
         public readonly int steps;
         public PoisonedSpit(int charge, int steps = period) : base(charge)
         {
             NAME = $"Ядовитая слюна ({Charge})";
             this.steps = steps;
-        }      
+        }
+        public PoisonedSpit(int charge): base(charge)
+        {
+            NAME = $"Ядовитая слюна ({Charge})";
+            this.steps = period;
+        }
         protected sealed override void ActionsWithState(Character target)
         {
             PoisonedState stateToAdd = new PoisonedState(target, steps);

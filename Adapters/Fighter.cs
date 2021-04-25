@@ -11,6 +11,7 @@ using KashTaskWPF.Adapters;
 using KashTaskWPF;
 using KashTaskWPF.Artifacts;
 using KashTaskWPF.Spells;
+using static game.Character;
 
 namespace KashTaskWPF.Adapters
 {
@@ -26,6 +27,8 @@ namespace KashTaskWPF.Adapters
     {
         HIT = 1, SPELL = 2, ARTIFACT = 3, TALK = 4, RUN = 5
     }
+
+    
     public class Fighter: IAdapter
     {
         //private readonly string fileName;
@@ -67,7 +70,15 @@ namespace KashTaskWPF.Adapters
         private double power;
         private Artifact artifact;
 
+        public event OnStepActions StepHappened;
 
+        public void SubscribeAllCharactersToStepHappend()
+        {
+            foreach (var item in enemies)
+            {
+                StepHappened += item.EventHandler;
+            }    
+        }
 
         public Fighter(/*string fileName,*/ Stager parent, FightPlan plan)
         {
@@ -92,9 +103,7 @@ namespace KashTaskWPF.Adapters
             enemies.Add(parent.game.hero);
             ui.GetInfoEnemies(enemies);
             ui.GetInfoCharacter(parent.game.hero);
-
-            
-            
+            SubscribeAllCharactersToStepHappend();         
         }
 
         private void JoinLists()
@@ -177,6 +186,7 @@ namespace KashTaskWPF.Adapters
                 whatNow = (FightAction)(index);
                 ////recorder = new Stack<FightStatus>();
                 //recorder.Push(chooseParams);
+                StepHappened();
                 InitNewRecorder();
                 switch (index)
                 {

@@ -231,6 +231,7 @@ namespace game
             {
                 toRemove = statesDynamic[state];
                 ActionsOnStep -= toRemove.Step;//unsubscription
+                statesDynamic.Remove(state);
                 return true;
             }
             catch (Exception)
@@ -243,7 +244,10 @@ namespace game
 
         public void EventHandler()//when step was made
         {
-            ActionsOnStep();
+            if (ActionsOnStep != null)
+            {
+                ActionsOnStep();
+            }          
         }
 
 
@@ -416,7 +420,7 @@ namespace game
             "Age: " + Age + "\n" + "Health: " + Health + "\n" + "Experience: " + Experience + "\n" +
             "State: " + StateHealth + "\n" + "Max health: " + MaxHealth + "\n" +
             "Ability to speak now: " + CanSpeakNow + "\n" +
-            "Ability to move now: " + CanMoveNow + "\n" + "States: " + String.Join(", ", States);
+            "Ability to move now: " + CanMoveNow + "\n" + "States: " + String.Join(", ", statesDynamic.Keys);
         }
 
         public void Hit(Character target)

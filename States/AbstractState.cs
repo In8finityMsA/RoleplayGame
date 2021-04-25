@@ -19,7 +19,7 @@ namespace KashTaskWPF.States
             this.counter = counter;
         }
         public int Counter { get => counter; }
-        public State State { get => State; }
+        public State State { get => state; }
         public Character Carrier { get => carrier; }
       
         abstract public void Step();
