@@ -43,16 +43,17 @@ namespace KashTaskWPF.Artifacts
             double fee = power * ConsumptionPerPower;
             if (fee <= Charge)
             {
-                ActionsWithState(target); //It must be before health substraction because it can cause action on dead Character
+                ActionsWithState(target); 
                 target.Health -= fee;
                 Charge -= fee;
+                                                          
             }
             else if (Charge != 0)
             {
-                ActionsWithState(target); //It must be before health substraction because it can cause action on dead Character
+                ActionsWithState(target); 
                 target.Health -= Charge;
                 Charge = 0;
-            }                       
+            }                             
         }
     }
 }

@@ -16,12 +16,9 @@ namespace KashTaskWPF.Spells
         {
             if (base.CheckCastRequirements(user))
             {
-                if (target.RemoveStateD(StateToRemove))
-                {
-                    ((Magician)user).Mana -= MinManaCost;
-                }
+                target.RemoveStateD(StateToRemove);               
+                ((Magician)user).Mana -= MinManaCost;               
             }
         }
-
     }
 }

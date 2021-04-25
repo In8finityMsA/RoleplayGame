@@ -11,7 +11,7 @@ namespace KashTaskWPF.Artifacts
 
         public override void MagicEffect(Character user, Character target)
         {           
-            target.RemoveState(State.POISONED);
+            target.RemoveStateD(State.POISONED);
             user.RemoveArtifact(this);         
         }
     }

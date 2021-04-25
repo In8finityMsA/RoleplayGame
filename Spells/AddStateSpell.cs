@@ -18,10 +18,8 @@ namespace KashTaskWPF.Spells
         {
             if (base.CheckCastRequirements(user))
             {
-                if (target.AddStateD(StateToAdd))
-                {
-                    ((Magician)user).Mana -= MinManaCost;
-                }
+                target.AddStateD(StateToAdd);               
+                ((Magician)user).Mana -= MinManaCost;               
             }
         }
     }
