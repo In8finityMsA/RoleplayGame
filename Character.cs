@@ -15,7 +15,7 @@ namespace game
 
     public enum State
     {
-        SICK, POISONED, PARALIZED
+        SICK, POISONED, PARALIZED, ARMOR
     }
 
     public enum Race
@@ -27,6 +27,7 @@ namespace game
     {
         MALE, FEMALE
     }
+
 
     //public class StateForSteps
     //{
