@@ -187,16 +187,16 @@ namespace KashTaskWPF.Adapters
                 index += 1;
                 whatNow = (FightAction)(index);
 
-                if (flag)
-                {
-                    StepHappened();
-                    ui.GetInfoEnemies(enemies);
-                    ui.GetInfoCharacter(parent.game.hero);
-                }
-                else
-                {
-                    flag = true;
-                }
+                //if (flag)
+                //{
+                //    StepHappened();
+                //    ui.GetInfoEnemies(enemies);
+                //    ui.GetInfoCharacter(parent.game.hero);
+                //}
+                //else
+                //{
+                //    flag = true;
+                //}
 
                 InitNewRecorder();
                 switch (index)
@@ -245,6 +245,16 @@ namespace KashTaskWPF.Adapters
                                     }
                                    
                                 }
+
+
+
+
+                                StepHappened();
+                                ui.GetInfoEnemies(enemies);
+                                ui.GetInfoCharacter(parent.game.hero);
+
+
+
 
                                 //StepHappened();
                                 recorder = new Stack<FightStatus>();
@@ -379,7 +389,14 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                   
+
+                        StepHappened();
+                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoCharacter(parent.game.hero);
+
+
+
+
 
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
@@ -451,6 +468,12 @@ namespace KashTaskWPF.Adapters
                         }
 
 
+                        StepHappened();
+                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoCharacter(parent.game.hero);
+
+
+
 
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
@@ -490,6 +513,14 @@ namespace KashTaskWPF.Adapters
                             return;
                         }
                     }
+
+
+                    StepHappened();
+                    ui.GetInfoEnemies(enemies);
+                    ui.GetInfoCharacter(parent.game.hero);
+
+
+
 
                     recorder = new Stack<FightStatus>();
                     ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
@@ -537,6 +568,15 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
+
+
+                        StepHappened();
+                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoCharacter(parent.game.hero);
+
+
+
+
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -581,6 +621,15 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
+
+
+                        StepHappened();
+                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoCharacter(parent.game.hero);
+
+
+
+
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -618,7 +667,15 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                      
+
+
+                        StepHappened();
+                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoCharacter(parent.game.hero);
+
+
+
+
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -655,7 +712,17 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        
+
+
+
+                        StepHappened();
+                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoCharacter(parent.game.hero);
+
+
+
+
+
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -725,7 +792,16 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                  
+
+
+                        StepHappened();
+                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoCharacter(parent.game.hero);
+
+
+
+
+
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -759,7 +835,14 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                 
+
+                        StepHappened();
+                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoCharacter(parent.game.hero);
+
+
+
+
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
