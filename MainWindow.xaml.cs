@@ -32,13 +32,12 @@ namespace KashTaskWPF
         {
             InitializeComponent();
             mainwindow = this;
-            adapter = new Stager(this);
             numberOfButtons = AnswerPanel.Children.Count;
+            adapter = new Stager(this);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
             int index = Int32.Parse((e.Source as Button).Tag.ToString());
             adapter.GetInput(index);
         }
@@ -49,6 +48,7 @@ namespace KashTaskWPF
             {
                 Button button = new Button();
                 button.Style = (Style)TryFindResource("AnswerButton");
+                button.Tag = numberOfButtons.ToString();
                 AnswerPanel.Children.Add(button);
                 numberOfButtons++;
             }
@@ -156,5 +156,6 @@ namespace KashTaskWPF
                 }
             }
         }
+        
     }
 }
