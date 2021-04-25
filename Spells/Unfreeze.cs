@@ -6,7 +6,7 @@ namespace KashTaskWPF.Spells
     {
         private const double MANA_COST = 85.0;
 
-        public Unfreeze() : base(MANA_COST, true, true, State.PARALIZED) 
+        public Unfreeze() : base(MANA_COST, false, true, State.PARALIZED) 
         {
             NAME = "Отомри";
         }    

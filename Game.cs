@@ -28,10 +28,11 @@ namespace KashTaskWPF
             //hero.PickUpArtifact(new LivingWater(BottleSize.L));
             ((Magician)hero).LearnSpell(typeof(AddHealth));
             ((Magician)hero).LearnSpell(typeof(Heal));
+            //Anna.PickUpArtifact(new PoisonedSpit(300));
             Anna.PickUpArtifact(new VasiliskEye());
-            Anna.PickUpArtifact(new VasiliskEye());
-            Mark.PickUpArtifact(new VasiliskEye());
-            Mark.PickUpArtifact(new VasiliskEye());
+            //Anna.PickUpArtifact(new VasiliskEye());
+            //Mark.PickUpArtifact(new VasiliskEye());
+            //Mark.PickUpArtifact(new VasiliskEye());
             FightPlan f1 = new FightPlan(new List<Magician>() { Anna },
                 new List<Character>() { Mark }, null, null);
             fightPlans.Add(f1);

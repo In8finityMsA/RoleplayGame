@@ -33,28 +33,34 @@ namespace KashTaskWPF.Adapters
     {
         //private readonly string fileName;
         private FightPlan plan;
-        private List<string> prevList;
-        private int prevVariantsAmount;
+
         private List<string> StandartList = new List<string>() { "Удар", "Заклинание", "Артефакт", "Поговорить", "Бежать" };
         private List<Character> enemies = new List<Character>();
         List<KeyValuePair<Type, Spell>> spells;
         List<Artifact> artifacts;
-        List<string> words;
-        List<string> answers;
+        
 
         Stack<FightStatus> recorder = new Stack<FightStatus>();
 
+
+        //in normal cases
         private string CHOOSETARGET = "Вы можете выбрать цель, на которую хотите направить свое действие!";
         private string CHOOSEACTION = "Выберите действие, которое хотите направить на врагов!";
         private string CHOOSEPOWER = "Выберите силу действия";
         private string CHOOSESPELL = "Выберите заклинание!";
         private string CHOOSEARTIFACT = "Выберите артефакт!";
+
+        //in abnormal cases
         private string CHOOSEANOTHERACTION = "Выберите другое действие!";
         private string NOMANA = "У вас нет маны!";
         private string NOARTIFACTS = "У вас нет артефактов!";
         private string NOSPELLS = " У вас нет выученных заклинаний!";
         private string NOTENOUGHMANA = "Вам не хватило маны на заклинание! Штош, придется пропустить ход(";
+
+
         private string CONVERSATION = "";
+        List<string> words;
+        List<string> answers;
 
 
         private string ABOUTENEMYPUNCHES = "";
@@ -62,7 +68,6 @@ namespace KashTaskWPF.Adapters
         private MainWindow ui = KashTaskWPF.MainWindow.mainwindow;
 
         private FightAction whatNow;
-        private FightStatus prevStatus = FightStatus.ChooseAction;
         private FightStatus chooseParams = FightStatus.ChooseAction;
 
         private Character target;
@@ -86,6 +91,8 @@ namespace KashTaskWPF.Adapters
         public Fighter(/*string fileName,*/ Stager parent, FightPlan plan)
         {
             //this.fileName = fileName;
+            //JsonInit();
+
             this.parent = parent;
             this.plan = plan;
             
@@ -95,17 +102,16 @@ namespace KashTaskWPF.Adapters
             words = plan.yourWord;
             answers = plan.enemiesWord;
 
-            ui.InfoAboutCurrentConditions("Вы можете выбрать действие, чтобы атаковать врага!");
-
-            //JsonInit();
             JoinLists();
-            ui.GetInfo(StandartList, StandartList.Count);
-
-            //recorder.Push(chooseParams);
-
             enemies.Add(parent.game.hero);
+
+            //for ui
+            ui.InfoAboutCurrentConditions("Вы можете выбрать действие, чтобы атаковать врага!");
+            ui.GetInfo(StandartList, StandartList.Count);         
             ui.GetInfoEnemies(enemies);
             ui.GetInfoCharacter(parent.game.hero);
+
+            //for event
             SubscribeAllCharactersToStepHappend();         
         }
 
@@ -167,13 +173,6 @@ namespace KashTaskWPF.Adapters
             return artifactNames;
         }
 
-        private void WritePrevInfo(List<string> list, int amount)
-        {
-            prevList = list;
-            prevVariantsAmount = amount;
-
-        }
-
         public void InitNewRecorder()
         {
             recorder = new Stack<FightStatus>();
@@ -191,12 +190,14 @@ namespace KashTaskWPF.Adapters
                 if (flag)
                 {
                     StepHappened();
+                    ui.GetInfoEnemies(enemies);
+                    ui.GetInfoCharacter(parent.game.hero);
                 }
                 else
                 {
                     flag = true;
                 }
-                
+
                 InitNewRecorder();
                 switch (index)
                 {
