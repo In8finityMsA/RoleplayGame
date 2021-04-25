@@ -27,6 +27,21 @@ namespace game
         MALE, FEMALE
     }
 
+    //public class StateForSteps
+    //{
+    //    private int counter;
+    //    public readonly State state;
+    //    public StateForSteps(State state, int counter)
+    //    {
+    //        this.state = state;
+    //        this.counter = counter;
+    //    }
+    //    public void Step()
+    //    {
+
+    //    }
+    //}
+
     public class DeadTryToactException: Exception
     {
         public DeadTryToactException(string message = "") : base(message) { }
@@ -44,6 +59,13 @@ namespace game
         private int age;
         private double health;
         private StateHealth stateHealth;
+
+
+
+
+
+
+
         private HashSet<State> states = new HashSet<State>();
         private double maxHealth;
         private int experience;
