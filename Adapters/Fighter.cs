@@ -70,6 +70,9 @@ namespace KashTaskWPF.Adapters
         private double power;
         private Artifact artifact;
 
+
+        private bool flag = true;//
+
         public event OnStepActions StepHappened;
 
         public void SubscribeAllCharactersToStepHappend()
@@ -179,14 +182,21 @@ namespace KashTaskWPF.Adapters
 
         public void GetInput(int index)
         {
-            //index += 1;
+
             if (chooseParams == FightStatus.ChooseAction)////// if gamer has to choose action
             {
                 index += 1;
                 whatNow = (FightAction)(index);
-                ////recorder = new Stack<FightStatus>();
-                //recorder.Push(chooseParams);
-                StepHappened();
+
+                if (flag)
+                {
+                    StepHappened();
+                }
+                else
+                {
+                    flag = true;
+                }
+                
                 InitNewRecorder();
                 switch (index)
                 {
@@ -206,17 +216,21 @@ namespace KashTaskWPF.Adapters
 
 
 
-                                //InitNewRecorder();
+                                
                                 
 
 
 
 
                                 if (enemies[0].StateHealth == StateHealth.DEAD)
-                                {   
+                                {
+                                    StepHappened -= enemies[0].EventHandler;//unsubscribe
                                     enemies.RemoveAt(0);
-                                    ui.GetInfoEnemies(enemies);
+                                    ui.GetInfoEnemies(enemies);// empty list
                                     parent.EndFight(FightResult.WON);
+
+                                    
+                                    
                                     return;
                                 }
                                 else
@@ -228,9 +242,10 @@ namespace KashTaskWPF.Adapters
                                         parent.EndFight(FightResult.DIED);
                                         return;
                                     }
+                                   
                                 }
-                                //prevStatus = chooseParams;
 
+                                //StepHappened();
                                 recorder = new Stack<FightStatus>();
                                 ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                                 chooseParams = FightStatus.ChooseAction;
@@ -249,7 +264,7 @@ namespace KashTaskWPF.Adapters
                                 }
                                 else
                                 {
-                                    //prevStatus = chooseParams;
+                                   
                                     chooseParams = FightStatus.ChooseSpell;
                                     recorder.Push(chooseParams);
                                     ui.InfoAboutCurrentConditions(CHOOSESPELL);
@@ -266,7 +281,7 @@ namespace KashTaskWPF.Adapters
                         {                            
                             if (artifacts.Count >= 1)
                             {
-                                //prevStatus = chooseParams;
+                                
                                 ui.InfoAboutCurrentConditions(CHOOSEARTIFACT);
                                 chooseParams = FightStatus.ChooseArtifact;
                                 recorder.Push(chooseParams);
@@ -312,7 +327,7 @@ namespace KashTaskWPF.Adapters
                 spell = spells[index].Value;
                 if (spell is IMagicPowered)
                 {
-                    //prevStatus = chooseParams;
+                   
                     ui.InfoAboutCurrentConditions(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
                     recorder.Push(chooseParams);
@@ -322,7 +337,7 @@ namespace KashTaskWPF.Adapters
                 {
                     if (enemies.Count != 1)
                     {
-                        //prevStatus = chooseParams;
+                     
                         ui.InfoAboutCurrentConditions(CHOOSETARGET);
                         chooseParams = FightStatus.ChooseTarget;
                         recorder.Push(chooseParams);
@@ -348,6 +363,7 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoCharacter(parent.game.hero);
                         if (enemies[0].StateHealth == StateHealth.DEAD)
                         {
+                            StepHappened -= enemies[0].EventHandler;
                             enemies.RemoveAt(0);
                             ui.GetInfoEnemies(enemies);
                             parent.EndFight(FightResult.WON);
@@ -362,7 +378,7 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        //prevStatus = chooseParams;
+                   
 
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
@@ -379,7 +395,7 @@ namespace KashTaskWPF.Adapters
 
                 if (artifact is IMagicPowered)
                 {
-                    //prevStatus = chooseParams;
+                 
                     ui.InfoAboutCurrentConditions(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
                     recorder.Push(chooseParams);
@@ -389,7 +405,7 @@ namespace KashTaskWPF.Adapters
                 {
                     if (enemies.Count >= 1)
                     {
-                        //prevStatus = chooseParams;
+                  
                         ui.InfoAboutCurrentConditions(CHOOSETARGET);
                         chooseParams = FightStatus.ChooseTarget;
                         recorder.Push(chooseParams);
@@ -415,6 +431,7 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoEnemies(enemies);
                         if (enemies[0].StateHealth == StateHealth.DEAD)
                         {
+                            StepHappened -= enemies[0].EventHandler;//unsubscribe
                             enemies.RemoveAt(0);
                             ui.GetInfoEnemies(enemies);
                             //tell about murder?
@@ -453,6 +470,7 @@ namespace KashTaskWPF.Adapters
                     ui.GetInfoEnemies(enemies);
                     if (target.StateHealth == StateHealth.DEAD)
                     {
+                        StepHappened -= target.EventHandler;//unsubscribe
                         enemies.Remove(target);
                         ui.GetInfoEnemies(enemies);
                         //tell UI about murder?
@@ -475,7 +493,7 @@ namespace KashTaskWPF.Adapters
                     recorder = new Stack<FightStatus>();
                     ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                     chooseParams = FightStatus.ChooseAction;
-                    //recorder.Push(chooseParams);
+
                     ui.GetInfo(StandartList, StandartList.Count);
                 }
                 else if (whatNow == FightAction.SPELL)
@@ -499,6 +517,7 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
+                            StepHappened -= target.EventHandler;
                             enemies.Remove(target);
                             ui.GetInfoEnemies(enemies);
                             //tell UI about murder?
@@ -542,6 +561,7 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
+                            StepHappened -= target.EventHandler;//unsubscribe
                             enemies.Remove(target);
                             ui.GetInfoEnemies(enemies);
                             //tell UI about murder?
@@ -578,6 +598,7 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
+                            StepHappened -= target.EventHandler;//unsubscribe
                             enemies.Remove(target);
                             ui.GetInfoEnemies(enemies);
                             //tell UI about murder?
@@ -596,7 +617,7 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        //prevStatus = chooseParams;
+                      
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -614,6 +635,7 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
+                            StepHappened -= target.EventHandler;//unsubscribe
                             enemies.Remove(target);
                             ui.GetInfoEnemies(enemies);
                             //tell UI about murder?
@@ -632,7 +654,7 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        //prevStatus = chooseParams;
+                        
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -686,6 +708,7 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
+                            StepHappened -= target.EventHandler;//unsubscribe
                             enemies.RemoveAt(0);
                             //tell UI about murder?
                             ui.GetInfoEnemies(enemies);
@@ -701,7 +724,7 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        //prevStatus = chooseParams;
+                  
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -716,9 +739,10 @@ namespace KashTaskWPF.Adapters
 
 
                         ui.GetInfoEnemies(enemies);
-                        //enemy actions? Are you alive?
+                        
                         if (target.StateHealth == StateHealth.DEAD)
                         {
+                            StepHappened -= target.EventHandler;//unsubscribe
                             enemies.RemoveAt(0);
                             ui.GetInfoEnemies(enemies);
                             //tell UI about murder?                            
@@ -734,7 +758,7 @@ namespace KashTaskWPF.Adapters
                                 return;
                             }
                         }
-                        //prevStatus = chooseParams;
+                 
                         recorder = new Stack<FightStatus>();
                         ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
@@ -751,7 +775,11 @@ namespace KashTaskWPF.Adapters
             {
                 recorder.Pop();
                 chooseParams = recorder.Peek();
-                //GetInput((int)chooseParams);
+
+                if (chooseParams == FightStatus.ChooseAction)
+                {
+                    flag = false;
+                }
                 DrawSituation(chooseParams);
             }
         }
