@@ -7,17 +7,21 @@ using System.Threading.Tasks;
 
 namespace KashTaskWPF.States
 {
-    class ParalizedState : AbstractState
+    public class ParalizedState : AbstractState
     {
         public ParalizedState(Character carrier, int counter) : base(carrier, State.PARALIZED, counter) { }
         
         public override void Step()
         {
-            if (counter != 0)
+            if (counter > 0)
             {
                 counter--;
                 //TODO
-            }          
+            }
+            else
+            {
+                carrier.RemoveStateD(State);
+            }
         }
     }
 }

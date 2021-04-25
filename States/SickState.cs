@@ -7,16 +7,20 @@ using System.Threading.Tasks;
 
 namespace KashTaskWPF.States
 {
-    class SickState : AbstractState
+    public class SickState : AbstractState
     {
         public SickState(Character carrier, int counter) : base(carrier, State.SICK, counter) { }
         
         public override void Step()
         {
-            if (counter != 0)
+            if (counter > 0)
             {
                 counter--;
                 //TODO
+            }
+            else
+            {
+                carrier.RemoveStateD(State);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using KashTaskWPF.Artifacts;
+using KashTaskWPF.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,9 +61,13 @@ namespace game
         private double health;
         private StateHealth stateHealth;
 
-
-
-
+        /// 
+        ///
+        ///
+        private Dictionary<State, AbstractState> statesDynamic = new Dictionary<State, AbstractState>();
+        /// 
+        /// 
+        /// 
 
 
 
@@ -172,6 +177,74 @@ namespace game
         }
 
         public HashSet<State> States { get => states; }
+
+        //
+        //
+        //
+        public Dictionary<State, AbstractState> StatesDynamic { get => statesDynamic; }
+        //
+        //
+        //
+
+        public delegate void OnStepActions();
+        public OnStepActions ActionsOnStep;
+
+        public bool AddStateD(AbstractState istat)
+        {
+            CheckIfDeadTryAct();//?
+            State state = istat.State;
+            AbstractState toChange;
+            try
+            {
+                toChange = statesDynamic[state];
+                if (toChange.Counter < istat.Counter)
+                {
+                    statesDynamic[state] = istat;
+
+                    ActionsOnStep -= toChange.Step;//unsubscryption
+                    ActionsOnStep += istat.Step;//subscription
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                statesDynamic[state] = istat;
+
+
+                //
+                ActionsOnStep += istat.Step; //subscription
+                //
+                return true;
+            }
+        }
+
+        public bool RemoveStateD(State state)
+        {
+            CheckIfDeadTryAct();//?
+
+            AbstractState toRemove;
+            try
+            {
+                toRemove = statesDynamic[state];
+                ActionsOnStep -= toRemove.Step;//unsubscription
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        
+
+        public void EventHandler()//when step was made
+        {
+            ActionsOnStep();
+        }
 
 
         public bool AddState(State state)

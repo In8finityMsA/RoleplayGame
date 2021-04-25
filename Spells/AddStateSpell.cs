@@ -1,26 +1,28 @@
 ﻿using game;
+using KashTaskWPF.States;
 
 namespace KashTaskWPF.Spells
 {
     internal abstract class AddStateSpell : Spell
     {
-        protected AddStateSpell(double minManaCost, bool hasMotionalComponent, bool hasVerbalComponent, State stateToAdd) : base(minManaCost, hasMotionalComponent, hasVerbalComponent)
+        protected AddStateSpell(double minManaCost, bool hasMotionalComponent, bool hasVerbalComponent, AbstractState stateToAdd, int steps) : base(minManaCost, hasMotionalComponent, hasVerbalComponent)
         {
             StateToAdd = stateToAdd;
+            periodInSteps = steps;
         }
 
-        public State StateToAdd { get; }
+        public readonly int periodInSteps;
+        public AbstractState StateToAdd { get; }
 
         public override void MagicEffect(Character user, Character target)
         {
             if (base.CheckCastRequirements(user))
             {
-                if (target.AddState(StateToAdd))
+                if (target.AddStateD(StateToAdd))
                 {
                     ((Magician)user).Mana -= MinManaCost;
                 }
             }
         }
-
     }
 }

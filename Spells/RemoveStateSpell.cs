@@ -1,4 +1,5 @@
 ﻿using game;
+using KashTaskWPF.States;
 
 namespace KashTaskWPF.Spells
 {
@@ -15,7 +16,7 @@ namespace KashTaskWPF.Spells
         {
             if (base.CheckCastRequirements(user))
             {
-                if (target.RemoveState(StateToRemove))
+                if (target.RemoveStateD(StateToRemove))
                 {
                     ((Magician)user).Mana -= MinManaCost;
                 }

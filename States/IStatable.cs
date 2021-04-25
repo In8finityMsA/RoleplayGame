@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KashTaskWPF.States
 {
-    interface IStatable
+    public interface IStatable
     {
         public void Step();
     }

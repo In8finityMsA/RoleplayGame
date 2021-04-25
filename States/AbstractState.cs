@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KashTaskWPF.States
 {
-    abstract class AbstractState: IStatable
+    public abstract class AbstractState: IStatable
     {
         protected int counter;
         protected State state;
