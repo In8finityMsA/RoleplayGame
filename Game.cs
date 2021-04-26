@@ -27,7 +27,10 @@ namespace KashTaskWPF
             //hero.PickUpArtifact(new VasiliskEye());
             //hero.PickUpArtifact(new LivingWater(BottleSize.L));
             ((Magician)hero).LearnSpell(typeof(AddHealth));
-            ((Magician)hero).LearnSpell(typeof(Heal));
+            //((Magician)hero).LearnSpell(typeof(Heal));
+            ((Magician)hero).LearnSpell(typeof(Armor));
+            hero.CanMoveNow = false;
+            hero.CanSpeakNow = false;
             //Anna.PickUpArtifact(new PoisonedSpit(300));
             Anna.PickUpArtifact(new VasiliskEye());
             //Anna.PickUpArtifact(new VasiliskEye());

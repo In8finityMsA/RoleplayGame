@@ -7,7 +7,7 @@ namespace KashTaskWPF.Spells
         private const double MANA_COST = 2.0; //mana needed per one health point
         public double ConsumptionPerPower { get; }
 
-        public AddHealth() : base(MANA_COST, false, true)
+        public AddHealth() : base(MANA_COST, true, true)
         {
             ConsumptionPerPower = MANA_COST;
             NAME = "Добавить здоровье";

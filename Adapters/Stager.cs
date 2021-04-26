@@ -24,7 +24,7 @@ namespace KashTaskWPF.Adapters
 
             currentStageIndex = 0;
             DisplayStage(GetCurrentStage());
-            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 1000, 0, 1500));
+            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 1000, 0, 1000));
         }
 
         public void GetInput(int index)
@@ -101,12 +101,12 @@ namespace KashTaskWPF.Adapters
                 }
                 case "learn":
                 {
-                    object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
+                    //object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
 
-                    if (createdObject is Spell)
-                    {
-                        game.hero.LearnSpell(createdObject as Spell);
-                    }
+                    //if (createdObject is Spell)
+                    //{
+                    //    game.hero.LearnSpell(createdObject as Spell);
+                    //}
                     
                     break;
                 }
