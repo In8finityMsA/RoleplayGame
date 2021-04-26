@@ -87,9 +87,11 @@
                 <Button Tag="4" Style="{StaticResource AnswerButton}">5</Button>
             </WrapPanel>
         </ScrollViewer>
-        <Label Grid.Row="0" Grid.Column="0"  Content="Enemies" Style="{StaticResource LabelFont}" HorizontalAlignment="Center"  VerticalAlignment="Top"
+        <Label x:Name="EnemyLabel" Grid.Row="0" Grid.Column="0"  Content="Enemies" 
+               Style="{StaticResource LabelFont}" HorizontalAlignment="Center"  VerticalAlignment="Top"
                Margin="30,0,0,0"/>
-        <Label Grid.Row="0" Grid.Column="2"  Content="You" Style="{StaticResource LabelFont}" HorizontalAlignment="Center" VerticalAlignment="Top"
+        <Label x:Name="HeroLabel" Grid.Row="0" Grid.Column="2"  Content="You" 
+               Style="{StaticResource LabelFont}" HorizontalAlignment="Center" VerticalAlignment="Top"
                Margin="0,0,30,0"/>
 
     </Grid>

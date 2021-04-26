@@ -21,8 +21,8 @@ namespace KashTaskWPF
         private void CreateFightPlanList()
         {
             //create list of fightplans
-            Magician Anna = new Magician("Аннушка", Race.ELF, Sex.FEMALE, 12, 1000, 20, 23);
-            Character Mark = new Character("Марк", Race.ELF, Sex.MALE, 23, 2000, 20);
+            Magician Anna = new Magician("Аннушка", Race.ELF, Sex.FEMALE, 12, 20, 20, 23);
+            Character Mark = new Character("Марк", Race.ELF, Sex.MALE, 23, 50, 20);
             //hero.PickUpArtifact(new FrogLegDecoct());
             //hero.PickUpArtifact(new VasiliskEye());
             //hero.PickUpArtifact(new LivingWater(BottleSize.L));

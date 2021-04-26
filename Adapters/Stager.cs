@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using System.Windows;
 using KashTaskWPF.Artifacts;
 using KashTaskWPF.Adapters;
 using game;
@@ -13,10 +14,14 @@ namespace KashTaskWPF.Adapters
     {
         private List<Stage> stages;
         private int currentStageIndex;
-        private int checkpointStageIndex;
+        private int previousStageIndex;
+        
+        private int fightWinStage;
+        private int fightRunStage;
+
         public Game game;
         private MainWindow ui;
-        private const string FILENAME = @"game.json";
+        private const string FILENAME = @"Resources/game.json";
         public Stager(MainWindow window)
         {
             ui = window;
@@ -30,20 +35,20 @@ namespace KashTaskWPF.Adapters
         public void GetInput(int index)
         {
             HandleAnswer(index);
-            //ChangeStage(index);
         }
 
         public void HandleAnswer(int answerIndex)
         {
-            Stage oldStage = GetCurrentStage();
+            Stage currentStage = GetCurrentStage();
             //if (currentStage != null && currentStage.Answers.Count > answerIndex && currentStage.Next.Count > answerIndex)
-            if (oldStage != null && oldStage.Next.Count > answerIndex)
+            if (currentStage != null && currentStage.Next.Count > answerIndex)
             {
-                ChangeStage(oldStage.Next[answerIndex] - 1);
+                previousStageIndex = currentStageIndex;
+                ChangeStage(currentStage.Next[answerIndex] - 1);
                 
-                if (oldStage.Actions.ContainsKey(answerIndex.ToString()))
+                if (currentStage.Actions.ContainsKey(answerIndex.ToString()))
                 {
-                    foreach (var action in oldStage.Actions[answerIndex.ToString()])
+                    foreach (var action in currentStage.Actions[answerIndex.ToString()])
                     {
                         DoAction(action);
                         Console.WriteLine("Action");
@@ -85,6 +90,18 @@ namespace KashTaskWPF.Adapters
                         List<FightPlan> fightplans = game.fightPlans;
                         Fighter fighter = new Fighter(this, fightplans[0]);
                         fightplans.RemoveAt(0);
+
+                        if (Int32.TryParse(actionsWords[1], out fightWinStage) && Int32.TryParse(actionsWords[2], out fightRunStage))
+                        {
+                            fightRunStage--; fightWinStage--; //To comply with 0 indexing
+                            if (fightWinStage >= stages.Count || fightRunStage >= stages.Count)
+                            {
+                                throw new ArgumentException($"There is no stage with one or both specified IDs - {actionsWords[1]}, {actionsWords[2]}. " +
+                                                            $"StageIndex:{previousStageIndex}");
+                            }
+                        }
+                        else throw new ArgumentException($"One or both stage IDs are incorrect (not integers) - {actionsWords[1]}, {actionsWords[2]}. " +
+                                                         $"StageIndex:{previousStageIndex}");
                         ui.ChangeAdapter(fighter);
                         break;
                 }
@@ -153,7 +170,7 @@ namespace KashTaskWPF.Adapters
                 }
                 default:
                     throw new ArgumentException($"There is no action with specified name - {actionName}. " +
-                                                $"StageIndex:{currentStageIndex}");
+                                                $"StageIndex:{previousStageIndex}");
             }
         }
 
@@ -163,7 +180,7 @@ namespace KashTaskWPF.Adapters
             if (type == null)
             {
                 throw new ArgumentException($"Type with specified name wasn't found - {className}. " +
-                                                 $"StageIndex:{currentStageIndex}");
+                                                 $"StageIndex:{previousStageIndex}");
             }
                     
             object createdObject = null;
@@ -182,20 +199,39 @@ namespace KashTaskWPF.Adapters
             {
                 throw new ArgumentException($"Cannot construct specified type - {className}. " +
                                             $"Parameters: {parameters}. " +
-                                            $"StageIndex: {currentStageIndex}");
+                                            $"StageIndex: {previousStageIndex}");
             }
 
             return createdObject;
         }
 
-        public void StartFight()
-        {
-            ui.StartFight();
-        }
-
         public void EndFight(FightResult result)
         {
+            switch (result)
+            {
+                case FightResult.WON:
+                {
+                    MessageBox.Show("Об этой битве будут слагать легенды!");
+                    ChangeStage(fightWinStage);
+                    break;
+                }
+                case FightResult.DIED:
+                {
+                    MessageBox.Show("Вы погибли... Не расстраивайтесь, попробуйте снова :)");
+                    ChangeStage(previousStageIndex);
+                    break;
+                }
+                case FightResult.RAN:
+                {
+                    MessageBox.Show("Иногда лучше отступить, чтобы напасть вновь.");
+                    ChangeStage(fightRunStage);
+                    break;
+                }
+            }
+            
             ui.EndFight(result);
+            ui.ChangeAdapter(this);
+
         }
 
         private void EndGame() //TODO:
