@@ -11,31 +11,44 @@
             <EventSetter Event="Click" Handler="Button_Click"/>
             <Setter Property="MinHeight" Value="50"/>
             <Setter Property="MinWidth" Value="50"/>
-            <Setter Property="Margin" Value="5,0,5,0"/>
+            <Setter Property="Margin" Value="5,3,5,3"/>
             <Setter Property="Padding" Value="5,0,5,0"/>
             <Setter Property="FontFamily" Value="JetBrains Mono NL Medium"/>
             <Setter Property="FontSize" Value="14"/>
         </Style>
+        <Style x:Key="TextBlockFont" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="JetBrains Mono NL Medium"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontStretch" Value="SemiExpanded"/>
+        </Style>
+        <Style x:Key="LabelFont" TargetType="Label">
+            <Setter Property="FontFamily" Value="JetBrains Mono NL Medium"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontStretch" Value="SemiExpanded"/>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="797*"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="0.33*"/>
+            <ColumnDefinition Width="0.33*"/>
+            <ColumnDefinition Width="0.33*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.5*"/>
             <RowDefinition Height="0.35*"/>
             <RowDefinition Height="0.150*"/>
         </Grid.RowDefinitions>
-        <Image x:Name="MainImage" Grid.Row="0" Grid.ColumnSpan="2" >
+        <Image x:Name="MainImage" Grid.Row="0" Grid.Column="1" >
             <Image.Source>
                 <BitmapImage UriSource="Resources\belka.png"></BitmapImage>
             </Image.Source>
         </Image>
-        <Border BorderBrush="Black" BorderThickness="5"
-                Margin="10,217,7,5" Padding="10" CornerRadius="10" Grid.RowSpan="2">
+        <Border x:Name="MainTextBorder" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="5"
+                Margin="10, 10,10,5" Padding="10" CornerRadius="10" >
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <TextBlock x:Name="MainText" TextWrapping="Wrap" FontFamily="JetBrains Mono NL Medium" FontSize="14" FontWeight="Bold" FontStretch="SemiExpanded">
+                <TextBlock x:Name="MainText" TextWrapping="Wrap" Style="{StaticResource TextBlockFont}">
                         1) Hit <LineBreak/>
                         2) Spell <LineBreak/>
                         3) Artifact <LineBreak/>
@@ -45,32 +58,28 @@
             </ScrollViewer>
         </Border>
 
+        
+        <Border x:Name="EnemyTextBorder" Grid.Row="0" Grid.Column="0" 
+                BorderBrush="Black" BorderThickness="5" CornerRadius="1"
+                Margin="30, 25, 0, 10" Padding="8, 6, 3, 6">
 
-        <Border BorderBrush="Black" BorderThickness="5" 
-                VerticalAlignment="Top" HorizontalAlignment="Left"
-                Margin="500,32,0,0" Padding="10" CornerRadius="1" Height="157" Width="276">
-
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,2,0,0">
-
-                <TextBlock x:Name="Me" TextWrapping="Wrap" FontFamily="JetBrains Mono NL Medium" FontSize="14" FontWeight="Bold" FontStretch="SemiExpanded">
-
-                </TextBlock>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="EnemyText" TextWrapping="Wrap" Style="{StaticResource TextBlockFont}"/>
             </ScrollViewer>
         </Border>
-        <Border BorderBrush="Black" BorderThickness="5" 
-                VerticalAlignment="Top" HorizontalAlignment="Left"
-                Margin="10,32,0,0" Padding="10" CornerRadius="1" Height="157" Width="276">
+        <Border x:Name="HeroTextBorder" Grid.Row="0" Grid.Column="2"
+                BorderBrush="Black" BorderThickness="5" CornerRadius="1"
+                Margin="0, 25, 30, 10" Padding="8, 6, 3, 6" >
 
-            <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,2,0,0">
-
-                <TextBlock x:Name="Enemy" TextWrapping="Wrap" FontFamily="JetBrains Mono NL Medium" FontSize="14" FontWeight="Bold" FontStretch="SemiExpanded">
-
-                </TextBlock>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="HeroText" TextWrapping="Wrap" Style="{StaticResource TextBlockFont}"/>
             </ScrollViewer>
         </Border>
-        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2">
-            <WrapPanel x:Name="AnswerPanel" VerticalAlignment="Center" HorizontalAlignment="Center"
-                       Orientation="Horizontal">
+        
+        
+        <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Auto" >
+            <WrapPanel x:Name="AnswerPanel" Orientation="Horizontal" 
+                       VerticalAlignment="Center" HorizontalAlignment="Center">
                 <Button Tag="0" Style="{StaticResource AnswerButton}">1</Button>
                 <Button Tag="1" Style="{StaticResource AnswerButton}">2</Button>
                 <Button Tag="2" Style="{StaticResource AnswerButton}">3</Button>
@@ -78,8 +87,10 @@
                 <Button Tag="4" Style="{StaticResource AnswerButton}">5</Button>
             </WrapPanel>
         </ScrollViewer>
-        <Label Content="Enemies" HorizontalAlignment="Left" Margin="118,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.278,-0.519" Height="38" Width="97"/>
-        <Label Content="You" HorizontalAlignment="Left" Margin="618,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.278,-0.519" Height="38" Width="97"/>
+        <Label Grid.Row="0" Grid.Column="0"  Content="Enemies" Style="{StaticResource LabelFont}" HorizontalAlignment="Center"  VerticalAlignment="Top"
+               Margin="30,0,0,0"/>
+        <Label Grid.Row="0" Grid.Column="2"  Content="You" Style="{StaticResource LabelFont}" HorizontalAlignment="Center" VerticalAlignment="Top"
+               Margin="0,0,30,0"/>
 
     </Grid>
 </Window>

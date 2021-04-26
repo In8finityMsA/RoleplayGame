@@ -133,12 +133,12 @@ namespace KashTaskWPF
 
         public void enemy(string str)
         {
-            Enemy.Text = str;
+            EnemyText.Text = str;
         }
 
         public void GetInfoCharacter(Character hero)
         {
-            Me.Text = hero.ToString();
+            HeroText.Text = hero.ToString();
         }
 
         public void InfoAboutCurrentConditions(string text)
