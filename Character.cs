@@ -44,9 +44,9 @@ namespace game
     //    }
     //}
 
-    public class DeadTryToactException: Exception
+    public class DeadTryToActException: Exception
     {
-        public DeadTryToactException(string message = "") : base(message) { }
+        public DeadTryToActException(string message = "") : base(message) { }
     }
         
     public class Character: IComparable
@@ -405,7 +405,7 @@ namespace game
         {
             if (StateHealth == StateHealth.DEAD)
             {
-                throw new DeadTryToactException("Dead character can't act.");
+                throw new DeadTryToActException("Dead character can't act.");
             }
         }
 

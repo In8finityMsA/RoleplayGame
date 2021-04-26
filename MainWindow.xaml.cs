@@ -34,12 +34,23 @@ namespace KashTaskWPF
             mainwindow = this;
             numberOfButtons = AnswerPanel.Children.Count;
             adapter = new Stager(this);
+
+            EnemyTextBorder.Visibility = Visibility.Collapsed;
+            HeroTextBorder.Visibility = Visibility.Collapsed;
+            EnemyLabel.Visibility = Visibility.Collapsed;
+            HeroLabel.Visibility = Visibility.Collapsed;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             int index = Int32.Parse((e.Source as Button).Tag.ToString());
             adapter.GetInput(index);
+        }
+        
+        public void ChangeButtons(List<string> answers, int variantsAmount)
+        {
+            ChangeNumberOfButtons(variantsAmount);
+            ChangeButtonsText(answers);
         }
 
         public void ChangeNumberOfButtons(int number)
@@ -93,9 +104,27 @@ namespace KashTaskWPF
             MainText.Text = text;
         }
 
-        public void StartFight() { }
-
-        public void EndFight(FightResult result) { }
+        //public void StartFight(List<Character> enemies, Character hero)
+        public void StartFight()
+        {
+            EnemyTextBorder.Visibility = Visibility.Visible;
+            HeroTextBorder.Visibility = Visibility.Visible;
+            EnemyLabel.Visibility = Visibility.Visible;
+            HeroLabel.Visibility = Visibility.Visible;
+            
+            /*GetInfoEnemies(enemies);
+            GetInfoCharacter(hero);*/
+        }
+        
+        public void EndFight(FightResult result)
+        {
+            EnemyLabel.Visibility = Visibility.Collapsed;
+            HeroLabel.Visibility = Visibility.Collapsed;
+            EnemyTextBorder.Visibility = Visibility.Collapsed;
+            HeroTextBorder.Visibility = Visibility.Collapsed;
+            EnemyText.Text = "";
+            HeroText.Text = "";
+        }
 
         public void ChangeAdapter([NotNull] IAdapter adapter)
         {
@@ -109,41 +138,21 @@ namespace KashTaskWPF
             }
         }
 
-        public void GetInfo(List<string> answers, int variantsAmount)
-        {
-            ChangeNumberOfButtons(variantsAmount);
-            ChangeButtonsText(answers);
-        }
-
         public void GetInfoEnemies(List<Character> enemies)
         {
             string str = "";
             for (int i = 0; i < enemies.Count - 1; i++)
             {
-                //TextBlock t = new TextBlock();
-                //t.Margin = new Thickness(i * 50, 0, 0, 0);
-                //t.Text = enemies[i].ToString()
                 str += enemies[i].ToString() + '\n';
                 
             }
-            //ChangeText(str);
-            enemy(str);
+            EnemyText.Text = str;
             
         }
-
-        public void enemy(string str)
-        {
-            EnemyText.Text = str;
-        }
-
+        
         public void GetInfoCharacter(Character hero)
         {
             HeroText.Text = hero.ToString();
-        }
-
-        public void InfoAboutCurrentConditions(string text)
-        {
-            ChangeText(text);
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
