@@ -9,11 +9,12 @@ namespace KashTaskWPF
     public class Game
     {
         public Magician hero;
+        public Character Gnom = new Character("Дварфыч", Race.GNOME, Sex.MALE, 300, 50, 250);
         public List<FightPlan> fightPlans = new List<FightPlan>();
         
-        public Game(Magician hero)
+        public Game()
         {
-            this.hero = hero;
+            this.hero = new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 1000, 300, 1000);
             //hero can learn spells to be born with
             CreateFightPlanList();
         }

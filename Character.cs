@@ -55,8 +55,8 @@ namespace game
 
         private readonly string name;
         private readonly int id;
-        private readonly Race race;
-        private readonly Sex sex;
+        private Race race;
+        private Sex sex;
               
         private int age;
         private double health;
@@ -106,8 +106,8 @@ namespace game
         
         public int ID { get => id; }
         public string Name { get => name; }
-        public Race Race { get => race; }
-        public Sex Sex { get => sex; }
+        public Race Race { get => race; set => race = value; }
+        public Sex Sex { get => sex; set => sex = value; }
 
         public List<Artifact> Inventory { get => inventory; }
 

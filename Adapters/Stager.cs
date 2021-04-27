@@ -22,6 +22,7 @@ namespace KashTaskWPF.Adapters
         public Game game;
         private MainWindow ui;
         private const string FILENAME = @"Resources/game.json";
+        private const byte indexingFix = 1; //To comply with 0 indexing
         public Stager(MainWindow window)
         {
             ui = window;
@@ -29,7 +30,7 @@ namespace KashTaskWPF.Adapters
 
             currentStageIndex = 0;
             DisplayStage(GetCurrentStage());
-            game = new Game(new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 1000, 0, 1000));
+            game = new Game();
         }
 
         public void GetInput(int index)
@@ -44,7 +45,7 @@ namespace KashTaskWPF.Adapters
             if (currentStage != null && currentStage.Next.Count > answerIndex)
             {
                 previousStageIndex = currentStageIndex;
-                ChangeStage(currentStage.Next[answerIndex] - 1);
+                ChangeStage(currentStage.Next[answerIndex] - indexingFix);
                 
                 if (currentStage.Actions.ContainsKey(answerIndex.ToString()))
                 {
@@ -93,7 +94,7 @@ namespace KashTaskWPF.Adapters
 
                         if (Int32.TryParse(actionsWords[1], out fightWinStage) && Int32.TryParse(actionsWords[2], out fightRunStage))
                         {
-                            fightRunStage--; fightWinStage--; //To comply with 0 indexing
+                            fightRunStage -= indexingFix; fightWinStage -= indexingFix;
                             if (fightWinStage >= stages.Count || fightRunStage >= stages.Count)
                             {
                                 throw new ArgumentException($"There is no stage with one or both specified IDs - {actionsWords[1]}, {actionsWords[2]}. " +
@@ -104,6 +105,66 @@ namespace KashTaskWPF.Adapters
                                                          $"StageIndex:{previousStageIndex}");
                         ui.ChangeAdapter(fighter);
                         break;
+                }
+                case "set":
+                {
+                    var property = game.hero.GetType().GetProperty(actionsWords[1]);
+                    if (property == null)
+                    {
+                        throw new ArgumentException($"There is no property with specified name - {actionsWords[1]}" +
+                                                    $"StageIndex:{previousStageIndex}");
+                    }
+                    else if (!property.CanWrite)
+                    {
+                        throw new ArgumentException($"Specified property is readonly - {actionsWords[1]}" +
+                                                    $"StageIndex:{previousStageIndex}");
+                    }
+
+                    string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? ui.TextBoxUserInput() : actionsWords[3];
+                    switch (actionsWords[2])
+                    {
+                        case "bool":
+                        {
+                            if (Boolean.TryParse(stringValue, out bool value))
+                            {
+                                property.SetValue(game.hero, value);
+                            }
+                            break;
+                        }
+                        case "string":
+                        {
+                            property.SetValue(game.hero, stringValue);
+                            break;
+                        }
+                        case "int":
+                        {
+                            if (Int32.TryParse(stringValue, out int value))
+                            {
+                                property.SetValue(game.hero, value);
+                            }
+                            break;
+                        }
+                        case "Race":
+                        {
+                            if (Enum.TryParse<Race>(stringValue, out var value))
+                            {
+                                property.SetValue(game.hero, value);
+                            }
+                            break;
+                        }
+                        case "Sex":
+                        {
+                            if (Enum.TryParse<Sex>(stringValue, out var value))
+                            {
+                                property.SetValue(game.hero, value);
+                            }
+                            break;
+                        }
+                        default: 
+                            throw new ArgumentException($"Specified property type is not supported - {actionsWords[2]}" +
+                                                        $"StageIndex:{previousStageIndex}");
+                    }
+                    break;
                 }
                 case "get":
                 {
@@ -127,7 +188,8 @@ namespace KashTaskWPF.Adapters
                     
                     break;
                 }
-                case "info": {
+                case "info":
+                case "repeat": {
                     ui.ChangeText(ui.MainText.Text + "\n" + game.hero.ToString());
                     
                     break; //метод о выписывании инфы по персонажу выписывает инфу в окно
@@ -151,12 +213,13 @@ namespace KashTaskWPF.Adapters
                     break; //дать игроку опыт
                 }
                 case "camp": break; // то самое окно, где можно учить спеллы и открыть инвентарь
-                case "compexp":
+                case "compexp": //Make compare with number in action?
                 {
-                    string stageIndexString = game.hero.CompareTo(/* change */ game.hero) >= 0 ? actionsWords[1] : actionsWords[2];
+                    string stageIndexString = game.hero.CompareTo(/* change */ game.Gnom) >= 0 ? actionsWords[1] : actionsWords[2];
 
                     if (Int32.TryParse(stageIndexString, out var stageIndex))
                     {
+                        stageIndex -= indexingFix;
                         ChangeStage(stageIndex);    
                     }
                     

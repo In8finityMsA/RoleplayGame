@@ -31,9 +31,9 @@
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.33*"/>
-            <ColumnDefinition Width="0.33*"/>
-            <ColumnDefinition Width="0.33*"/>
+            <ColumnDefinition Width="0.3*"/>
+            <ColumnDefinition Width="0.4*"/>
+            <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="0.5*"/>
@@ -80,6 +80,7 @@
         <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Auto" >
             <WrapPanel x:Name="AnswerPanel" Orientation="Horizontal" 
                        VerticalAlignment="Center" HorizontalAlignment="Center">
+                <!--<TextBox x:Name="UserText" Visibility="Collapsed"></TextBox>-->
                 <Button Tag="0" Style="{StaticResource AnswerButton}">1</Button>
                 <Button Tag="1" Style="{StaticResource AnswerButton}">2</Button>
                 <Button Tag="2" Style="{StaticResource AnswerButton}">3</Button>
@@ -88,7 +89,7 @@
             </WrapPanel>
         </ScrollViewer>
         <Label x:Name="EnemyLabel" Grid.Row="0" Grid.Column="0"  Content="Enemies" 
-               Style="{StaticResource LabelFont}" HorizontalAlignment="Center"  VerticalAlignment="Top"
+               Style="{StaticResource LabelFont}" HorizontalAlignment="Center" VerticalAlignment="Top"
                Margin="30,0,0,0"/>
         <Label x:Name="HeroLabel" Grid.Row="0" Grid.Column="2"  Content="You" 
                Style="{StaticResource LabelFont}" HorizontalAlignment="Center" VerticalAlignment="Top"
