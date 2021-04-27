@@ -191,17 +191,6 @@ namespace KashTaskWPF.Adapters
                 index += 1;
                 whatNow = (FightAction)(index);
 
-                //if (flag)
-                //{
-                //    StepHappened();
-                //    ui.GetInfoEnemies(enemies);
-                //    ui.GetInfoCharacter(parent.game.hero);
-                //}
-                //else
-                //{
-                //    flag = true;
-                //}
-
                 InitNewRecorder();
                 switch (index)
                 {
@@ -219,71 +208,23 @@ namespace KashTaskWPF.Adapters
                                 }
                                 else if (enemies.Count == 1)
                                 {
-                                    parent.game.hero.Hit(enemies[0]);
-
-
-                                    if (enemies[0].StateHealth == StateHealth.DEAD)
-                                    {
-                                        StepHappened -= enemies[0].EventHandler;//unsubscribe
-                                        enemies.RemoveAt(0);
-                                        ui.GetInfoEnemies(enemies);// empty list
-                                        parent.EndFight(FightResult.WON);
-
-
-
-                                        return;
-                                    }
-                                    else
-                                    {
-                                        YourEnemyReaction();
-
-                                        if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                                        {
-                                            parent.EndFight(FightResult.DIED);
-                                            return;
-                                        }
-
-                                    }
-
-
-
-
-                                    StepHappened();
-                                    ui.GetInfoEnemies(enemies);
-                                    ui.GetInfoCharacter(parent.game.hero);
-
-
-
-
-                                    //StepHappened();
-                                    recorder = new Stack<FightStatus>();
-                                    ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
-                                    chooseParams = FightStatus.ChooseAction;
-                                    recorder.Push(chooseParams);
-                                    ui.GetInfo(StandartList, StandartList.Count);
+                                    parent.EndFight(FightResult.WON);
                                 }
                             }
                             else
                             {
-                                //
-                                //
-                                //
-                                //
+                                
                                 PROBLEM = YOUAREPARALIZEDCANNOTHIT;
                                 ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
                                 PROBLEM = "";
                                 chooseParams = FightStatus.ChooseAction;
                                 ui.GetInfo(StandartList, StandartList.Count);
-                                //
-                                //
-                                //
-                                //
+                                
                             }                                    
                         }                       
                         break;
                     case 2: //SPELL
-                        {
-                            //spells = new List<KeyValuePair<Type, Spell>>();                      
+                        {                   
                             if (spells.Count >= 1)
                             {                               
                                 if (parent.game.hero.Mana > 0)
@@ -295,45 +236,30 @@ namespace KashTaskWPF.Adapters
                                 }
                                 else
                                 {
-                                    //
-                                    //
-                                    //
-                                    //
+                                   
                                     
                                     PROBLEM = NOMANA;
                                     ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
                                     PROBLEM = "";
                                     chooseParams = FightStatus.ChooseAction;
                                     ui.GetInfo(StandartList, StandartList.Count);
-                                    //
-                                    //
-                                    //
-                                    //
+                                   
                                 }                              
                             }
                             else
                             {
-                                //
-                                //
-                                //
-                                //
-                                //                                
+                                                   
                                 PROBLEM = NOSPELLS;
                                 ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
                                 PROBLEM = "";
                                 chooseParams = FightStatus.ChooseAction;
                                 ui.GetInfo(StandartList, StandartList.Count);
-                                //
-                                //
-                                //
-                                //
-                                //
+                                
                             }                            
                         }
                         break;
                     case 3:  //ARTIFACT
                         {
-                            //artifacts = new List<Artifact>();
                             if (artifacts.Count >= 1)
                             {
                                 
@@ -344,22 +270,13 @@ namespace KashTaskWPF.Adapters
                             }
                             else
                             {
-                                //
-                                //
-                                //
-                                //
-                                //
-                                //ui.InfoAboutCurrentConditions(NOARTIFACTS + '\n' + CHOOSEANOTHERACTION);
+                                
                                 PROBLEM = NOARTIFACTS;
                                 ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEANOTHERACTION);
                                 PROBLEM = "";
                                 chooseParams = FightStatus.ChooseAction;
                                 ui.GetInfo(StandartList, StandartList.Count);
-                                //
-                                //
-                                //
-                                //
-                                //
+                                
                             }
                         }
                         break;
@@ -405,7 +322,7 @@ namespace KashTaskWPF.Adapters
                 }
                 else
                 {
-                    if (enemies.Count != 1)
+                    if (enemies.Count > 1)
                     {
                      
                         ui.InfoAboutCurrentConditions(CHOOSETARGET);
@@ -415,110 +332,7 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (enemies.Count == 1)
                     {
-                        target = enemies[0];
-                        try
-                        {
-                            ((Magician)parent.game.hero).UseSpell(spell, target);///dgdgfdfg
-
-                            ui.GetInfoEnemies(enemies);
-                            ui.GetInfoCharacter(parent.game.hero);
-                            if (enemies[0].StateHealth == StateHealth.DEAD)
-                            {
-                                StepHappened -= enemies[0].EventHandler;
-                                enemies.RemoveAt(0);
-                                ui.GetInfoEnemies(enemies);
-                                parent.EndFight(FightResult.WON);
-                                return;
-                            }
-                            else
-                            {
-                                YourEnemyReaction();
-                                if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                                {
-                                    parent.EndFight(FightResult.DIED);
-                                    return;
-                                }
-                            }
-
-                            StepHappened();
-                            ui.GetInfoEnemies(enemies);
-                            ui.GetInfoCharacter(parent.game.hero);
-
-
-
-
-
-                            recorder = new Stack<FightStatus>();
-                            ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
-                            chooseParams = FightStatus.ChooseAction;
-                            recorder.Push(chooseParams);
-                            ui.GetInfo(StandartList, StandartList.Count);
-
-                        }
-                        catch (NotEnoughManaException)
-                        {
-                            //
-                            //
-                            //
-                            //
-                            //ui.InfoAboutCurrentConditions(NOTENOUGHMANA + '\n' + CHOOSEACTION);
-                            //chooseParams = FightStatus.ChooseAction;
-                            //recorder.Push(chooseParams);
-                            //ui.GetInfo(StandartList, StandartList.Count);
-
-                            PROBLEM = NOTENOUGHMANA;
-                            if (spells.Count > 1)
-                            {
-                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSESPELL);
-                                PROBLEM = "";
-                                chooseParams = FightStatus.ChooseSpell;
-                                InitNewRecorder();///??????
-                                recorder.Push(chooseParams);
-                                ui.GetInfo(SpellNamesToList(), spells.Count);
-                            }
-                            else
-                            {
-                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
-                                PROBLEM = "";
-                                chooseParams = FightStatus.ChooseAction;
-                                InitNewRecorder();
-                                ui.GetInfo(StandartList, StandartList.Count);
-                            }
-                            //
-                            //
-                            //
-                            //
-                            //
-                        }
-                        catch (Exception)
-                        {
-                            //
-                            //
-                            //
-                            //
-                            //
-                            PROBLEM = YOUCANNOTEMOVEORTALK;
-                            if (spells.Count > 1)
-                            {
-                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSESPELL);
-                                PROBLEM = "";
-                                chooseParams = FightStatus.ChooseSpell;
-                                ui.GetInfo(SpellNamesToList(), spells.Count);
-                            }
-                            else
-                            {
-                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
-                                PROBLEM = "";
-                                InitNewRecorder();
-                                chooseParams = FightStatus.ChooseAction;
-                                ui.GetInfo(StandartList, StandartList.Count);
-                            }
-                            //
-                            //
-                            //
-                            //
-                            //
-                        }                                   
+                        parent.EndFight(FightResult.WON);
                     }
                 }
             }
@@ -536,7 +350,7 @@ namespace KashTaskWPF.Adapters
                 }
                 else
                 {
-                    if (enemies.Count >= 1)
+                    if (enemies.Count > 1)
                     {
                   
                         ui.InfoAboutCurrentConditions(CHOOSETARGET);
@@ -546,55 +360,7 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (enemies.Count == 1)
                     {
-                        target = enemies[0];
-
-                        try
-                        {
-                            ((Magician)parent.game.hero).UseArtifact(artifact, target);
-                            
-                        }
-                        catch (Exception)
-                        {
-                            ui.InfoAboutCurrentConditions(NOTENOUGHMANA + '\n' + CHOOSEACTION);
-                            chooseParams = FightStatus.ChooseAction;
-                            recorder.Push(chooseParams);
-                            ui.GetInfo(StandartList, StandartList.Count);
-                        }
-                        
-                        ui.GetInfoEnemies(enemies);
-                        if (enemies[0].StateHealth == StateHealth.DEAD)
-                        {
-                            StepHappened -= enemies[0].EventHandler;//unsubscribe
-                            enemies.RemoveAt(0);
-                            ui.GetInfoEnemies(enemies);
-                            //tell about murder?
-                            parent.EndFight(FightResult.WON);
-                            return;
-                        }
-                        else
-                        {
-                            YourEnemyReaction();
-
-                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {                          
-                                parent.EndFight(FightResult.DIED);
-                                return;
-                            }
-                        }
-
-
-                        StepHappened();
-                        ui.GetInfoEnemies(enemies);
-                        ui.GetInfoCharacter(parent.game.hero);
-
-
-
-
-                        recorder = new Stack<FightStatus>();
-                        ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
-                        chooseParams = FightStatus.ChooseAction;
-                        recorder.Push(chooseParams);
-                        ui.GetInfo(StandartList, StandartList.Count);                      
+                        parent.EndFight(FightResult.WON);
                     }
                 }
             }
@@ -609,15 +375,22 @@ namespace KashTaskWPF.Adapters
                     ui.GetInfoEnemies(enemies);
                     if (target.StateHealth == StateHealth.DEAD)
                     {
-                        StepHappened -= target.EventHandler;//unsubscribe
-                        enemies.Remove(target);
-                        ui.GetInfoEnemies(enemies);
-                        //tell UI about murder?
-                        if (enemies.Count == 0)
+                        if (target == parent.game.hero)
                         {
-                            parent.EndFight(FightResult.WON);
-                            return;
+                            parent.EndFight(FightResult.DIED);
                         }
+                        else
+                        {
+                            StepHappened -= target.EventHandler;//unsubscribe
+                            enemies.Remove(target);
+                            ui.GetInfoEnemies(enemies);
+                            //tell UI about murder?
+                            if (enemies.Count == 1)
+                            {
+                                parent.EndFight(FightResult.WON);
+                                return;
+                            }
+                        }                
                     }
                     else
                     {
@@ -656,15 +429,22 @@ namespace KashTaskWPF.Adapters
                             ui.GetInfoEnemies(enemies);
                             if (target.StateHealth == StateHealth.DEAD)
                             {
-                                StepHappened -= target.EventHandler;
-                                enemies.Remove(target);
-                                ui.GetInfoEnemies(enemies);
-                                //tell UI about murder?
-                                if (enemies.Count == 0)
+                                if (target == parent.game.hero)
                                 {
-                                    parent.EndFight(FightResult.WON);
-                                    return;
+                                    parent.EndFight(FightResult.DIED);
                                 }
+                                else
+                                {
+                                    StepHappened -= target.EventHandler;
+                                    enemies.Remove(target);
+                                    ui.GetInfoEnemies(enemies);
+                                    //tell UI about murder?
+                                    if (enemies.Count == 1)
+                                    {
+                                        parent.EndFight(FightResult.WON);
+                                        return;
+                                    }
+                                }                      
                             }
                             else
                             {
@@ -692,15 +472,7 @@ namespace KashTaskWPF.Adapters
                         }
                         catch (NotEnoughManaException)
                         {
-                            //
-                            //
-                            //
-                            //
-                            //ui.InfoAboutCurrentConditions(NOTENOUGHMANA + '\n' + CHOOSEACTION);
-                            //chooseParams = FightStatus.ChooseAction;
-                            //recorder.Push(chooseParams);
-                            //ui.GetInfo(StandartList, StandartList.Count);
-
+                            
                             PROBLEM = NOTENOUGHMANA;
                             if (spells.Count > 1)
                             {
@@ -719,19 +491,11 @@ namespace KashTaskWPF.Adapters
                                 InitNewRecorder();//test it, yes, we need to make new recorder       //work ok
                                 ui.GetInfo(StandartList, StandartList.Count);
                             }
-                            //
-                            //
-                            //
-                            //
-                            //
+                            
                         }
                         catch (Exception)
                         {
-                            //
-                            //
-                            //
-                            //
-                            //
+                            
                             PROBLEM = YOUCANNOTEMOVEORTALK;
                             if (spells.Count > 1)
                             {
@@ -751,11 +515,7 @@ namespace KashTaskWPF.Adapters
                                 InitNewRecorder();
                                 ui.GetInfo(StandartList, StandartList.Count);
                             }
-                            //
-                            //
-                            //
-                            //
-                            //
+                            
                         }
 
 
@@ -772,15 +532,22 @@ namespace KashTaskWPF.Adapters
                             ui.GetInfoEnemies(enemies);
                             if (target.StateHealth == StateHealth.DEAD)
                             {
-                                StepHappened -= target.EventHandler;//unsubscribe
-                                enemies.Remove(target);
-                                ui.GetInfoEnemies(enemies);
-                                //tell UI about murder?
-                                if (enemies.Count == 0)
+                                if (target == parent.game.hero)
                                 {
-                                    parent.EndFight(FightResult.WON);
-                                    return;
+                                    parent.EndFight(FightResult.DIED);
                                 }
+                                else 
+                                {
+                                    StepHappened -= target.EventHandler;//unsubscribe
+                                    enemies.Remove(target);
+                                    ui.GetInfoEnemies(enemies);
+                                    //tell UI about murder?
+                                    if (enemies.Count == 1)
+                                    {
+                                        parent.EndFight(FightResult.WON);
+                                        return;
+                                    }
+                                }                        
                             }
                             else
                             {
@@ -809,15 +576,7 @@ namespace KashTaskWPF.Adapters
                         }
                         catch (NotEnoughManaException)
                         {
-                            //
-                            //
-                            //
-                            //
-                            //ui.InfoAboutCurrentConditions(NOTENOUGHMANA + '\n' + CHOOSEACTION);
-                            //chooseParams = FightStatus.ChooseAction;
-                            //recorder.Push(chooseParams);
-                            //ui.GetInfo(StandartList, StandartList.Count);
-
+                            
                             PROBLEM = NOTENOUGHMANA;
                             if (spells.Count > 1)
                             {
@@ -836,19 +595,11 @@ namespace KashTaskWPF.Adapters
                                 InitNewRecorder();
                                 ui.GetInfo(StandartList, StandartList.Count);
                             }
-                            //
-                            //
-                            //
-                            //
-                            //
+                            
                         }
                         catch (Exception)
                         {
-                            //
-                            //
-                            //
-                            //
-                            //
+                           
                             PROBLEM = YOUCANNOTEMOVEORTALK;
                             if (spells.Count > 1)
                             {
@@ -867,11 +618,7 @@ namespace KashTaskWPF.Adapters
                                 chooseParams = FightStatus.ChooseAction;
                                 ui.GetInfo(StandartList, StandartList.Count);
                             }
-                            //
-                            //
-                            //
-                            //
-                            //
+                            
                         }
                     }
                 }
@@ -885,15 +632,22 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
-                            StepHappened -= target.EventHandler;//unsubscribe
-                            enemies.Remove(target);
-                            ui.GetInfoEnemies(enemies);
-                            //tell UI about murder?
-                            if (enemies.Count == 0)
+                            if (target == parent.game.hero)
                             {
-                                parent.EndFight(FightResult.WON);
-                                return;
+                                parent.EndFight(FightResult.DIED);
                             }
+                            else
+                            {
+                                StepHappened -= target.EventHandler;//unsubscribe
+                                enemies.Remove(target);
+                                ui.GetInfoEnemies(enemies);
+                                //tell UI about murder?
+                                if (enemies.Count == 1)
+                                {
+                                    parent.EndFight(FightResult.WON);
+                                    return;
+                                }
+                            }                    
                         }
                         else
                         {
@@ -930,15 +684,22 @@ namespace KashTaskWPF.Adapters
                         ui.GetInfoEnemies(enemies);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
-                            StepHappened -= target.EventHandler;//unsubscribe
-                            enemies.Remove(target);
-                            ui.GetInfoEnemies(enemies);
-                            //tell UI about murder?
-                            if (enemies.Count == 0)
+                            if (target == parent.game.hero)
                             {
-                                parent.EndFight(FightResult.WON);
-                                return;
+                                parent.EndFight(FightResult.DIED);
                             }
+                            else
+                            {
+                                StepHappened -= target.EventHandler;//unsubscribe
+                                enemies.Remove(target);
+                                ui.GetInfoEnemies(enemies);
+                                //tell UI about murder?
+                                if (enemies.Count == 1)
+                                {
+                                    parent.EndFight(FightResult.WON);
+                                    return;
+                                }
+                            }                         
                         }
                         else
                         {
@@ -992,170 +753,8 @@ namespace KashTaskWPF.Adapters
                 }
                 else if (enemies.Count == 1)
                 {
-                    if (whatNow == FightAction.SPELL)
-                    {
-                        try
-                        {
-                            ((Magician)parent.game.hero).UseSpell(spell, enemies[0], power);//dgggfg
+                    parent.EndFight(FightResult.WON);
 
-
-
-
-
-                            ui.GetInfoCharacter(parent.game.hero);
-                            ui.GetInfoEnemies(enemies);
-                            if (target.StateHealth == StateHealth.DEAD)
-                            {
-                                StepHappened -= target.EventHandler;//unsubscribe
-                                enemies.RemoveAt(0);
-                                //tell UI about murder?
-                                ui.GetInfoEnemies(enemies);
-                                parent.EndFight(FightResult.WON);
-                                return;
-                            }
-                            else
-                            {
-                                YourEnemyReaction();
-                                if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                                {
-                                    parent.EndFight(FightResult.DIED);
-                                    return;
-                                }
-                            }
-
-
-                            StepHappened();
-                            ui.GetInfoEnemies(enemies);
-                            ui.GetInfoCharacter(parent.game.hero);
-
-
-
-
-
-                            recorder = new Stack<FightStatus>();
-                            ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
-                            chooseParams = FightStatus.ChooseAction;
-                            recorder.Push(chooseParams);
-                            ui.GetInfo(StandartList, StandartList.Count);
-
-
-                        }
-                        //catch (Exception)
-                        //{
-                        //    ui.InfoAboutCurrentConditions(NOTENOUGHMANA + '\n' + CHOOSEACTION);
-                        //    chooseParams = FightStatus.ChooseAction;
-                        //    recorder.Push(chooseParams);
-                        //    ui.GetInfo(StandartList, StandartList.Count);
-                        //}
-                        catch (NotEnoughManaException)
-                        {
-                            //
-                            //
-                            //
-                            //
-                            //ui.InfoAboutCurrentConditions(NOTENOUGHMANA + '\n' + CHOOSEACTION);
-                            //chooseParams = FightStatus.ChooseAction;
-                            //recorder.Push(chooseParams);
-                            //ui.GetInfo(StandartList, StandartList.Count);
-
-                            PROBLEM = NOTENOUGHMANA;
-                            if (spells.Count > 1)
-                            {
-                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSESPELL);
-                                PROBLEM = "";
-                                chooseParams = FightStatus.ChooseSpell;
-                                InitNewRecorder();
-                                recorder.Push(chooseParams);
-                                ui.GetInfo(SpellNamesToList(), spells.Count);
-                            }
-                            else
-                            {
-                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
-                                PROBLEM = "";
-                                InitNewRecorder();
-                                chooseParams = FightStatus.ChooseAction;
-                                ui.GetInfo(StandartList, StandartList.Count);
-                            }
-                            //
-                            //
-                            //
-                            //
-                            //
-                        }
-                        catch (Exception)
-                        {
-                            //
-                            //
-                            //
-                            //
-                            //
-                            PROBLEM = YOUCANNOTEMOVEORTALK;
-                            if (spells.Count > 1)
-                            {
-                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSESPELL);
-                                PROBLEM = "";
-                                chooseParams = FightStatus.ChooseSpell;
-                                InitNewRecorder();
-                                recorder.Push(chooseParams);
-                                ui.GetInfo(SpellNamesToList(), spells.Count);
-                            }
-                            else
-                            {
-                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
-                                PROBLEM = "";
-                                InitNewRecorder();
-                                chooseParams = FightStatus.ChooseAction;
-                                ui.GetInfo(StandartList, StandartList.Count);
-                            }
-                            //
-                            //
-                            //
-                            //
-                            //
-                        }
-
-                    }
-                    else if (whatNow == FightAction.ARTIFACT)
-                    {
-                        parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, enemies[0], power);
-
-
-
-
-                        ui.GetInfoEnemies(enemies);
-                        
-                        if (target.StateHealth == StateHealth.DEAD)
-                        {
-                            StepHappened -= target.EventHandler;//unsubscribe
-                            enemies.RemoveAt(0);
-                            ui.GetInfoEnemies(enemies);
-                            //tell UI about murder?                            
-                            parent.EndFight(FightResult.WON);
-                            return;                            
-                        }
-                        else
-                        {
-                            YourEnemyReaction();
-                            if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                            {                         
-                                parent.EndFight(FightResult.DIED);
-                                return;
-                            }
-                        }
-
-                        StepHappened();
-                        ui.GetInfoEnemies(enemies);
-                        ui.GetInfoCharacter(parent.game.hero);
-
-
-
-
-                        recorder = new Stack<FightStatus>();
-                        ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
-                        chooseParams = FightStatus.ChooseAction;
-                        recorder.Push(chooseParams);
-                        ui.GetInfo(StandartList, StandartList.Count);
-                    }
                 }           
             }
         }
@@ -1226,13 +825,13 @@ namespace KashTaskWPF.Adapters
             }
         }
 
-        public void CheckStandartList()
-        {
-            if (answers.Count == 0)
-            {
-                StandartList.Remove("Поговорить");
-            }
-        }                    
+        //public void CheckStandartList()
+        //{
+        //    if (answers.Count == 0)
+        //    {
+        //        StandartList.Remove("Поговорить");
+        //    }
+        //}                    
 
         public void YourEnemyReaction()
         {
@@ -1253,16 +852,31 @@ namespace KashTaskWPF.Adapters
                 else
                 {
                     whoIsOnDuty.Hit(parent.game.hero);
-                    ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + " \nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                    if (!parent.game.hero.StatesDynamic.ContainsKey(State.ARMOR))
+                    {
+                        ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + " \nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                    }
+                    else
+                    {
+                        ABOUTENEMYPUNCHES = "Вас хотели ударить, но у вас броня! " + " \nУдар пытался нанести: " + whoIsOnDuty.Name + '\n';
+
+                    }
                     ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
                 }
             }
             else
             {
                 whoIsOnDuty.Hit(parent.game.hero);
-                ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
-                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
+                if (!parent.game.hero.StatesDynamic.ContainsKey(State.ARMOR))
+                {
+                    ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                }
+                else
+                {
+                    ABOUTENEMYPUNCHES = "Вас хотели ударить, но у вас броня! " + " \nУдар пытался нанести: " + whoIsOnDuty.Name + '\n';
 
+                }
+                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
             }
             ui.GetInfoCharacter(parent.game.hero);
             ui.GetInfoEnemies(enemies);

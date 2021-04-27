@@ -16,6 +16,7 @@ namespace KashTaskWPF.States
             if (counter > 0)
             {
                 counter--;
+                carrier.CanMoveNow = false;
                 //TODO
             }
             else
