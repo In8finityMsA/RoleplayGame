@@ -28,7 +28,7 @@
 		"Гоблин"
       ],
 	  "Actions": {
-        "0" : [ "fight 34 34" ],
+        "0" : [ "set Race Race HUMAN" ],
         "1" : [ "set Race Race GNOME" ],
         "2" : [ "set Race Race ELF" ],
         "3" : [ "set Race Race ORC" ],
