@@ -46,6 +46,23 @@ namespace KashTaskWPF
             int index = Int32.Parse((e.Source as Button).Tag.ToString());
             adapter.GetInput(index);
         }
+
+        public string GetUserInputText()
+        {
+            return TextBoxUserInput.Text;
+        }
+
+        public void DisplayTextBox()
+        {
+            TextBoxUserInput.Text = "";
+            TextBoxUserInput.Visibility = Visibility.Visible;
+        }
+
+        public void HideTextBox()
+        {
+            TextBoxUserInput.Text = "";
+            TextBoxUserInput.Visibility = Visibility.Collapsed;
+        }
         
         public void GetInfo(List<string> answers, int variantsAmount)
         {
@@ -53,7 +70,7 @@ namespace KashTaskWPF
             ChangeButtonsText(answers);
         }
 
-        public void ChangeNumberOfButtons(int number)
+        public void ChangeNumberOfButtons(int number) //Does it need to delete unused buttons?
         {
             while (number > numberOfButtons)
             {
@@ -80,12 +97,6 @@ namespace KashTaskWPF
 
         public void ChangeButtonsText(List<string> answers)
         {
-            if (answers.Count == 0)
-            {
-                (AnswerPanel.Children[0] as Button).Content = "Дальше";
-                return;
-            }
-            
             int i = 0;
             foreach (Button child in AnswerPanel.Children)
             {
@@ -103,17 +114,13 @@ namespace KashTaskWPF
         {
             MainText.Text = text;
         }
-
-        //public void StartFight(List<Character> enemies, Character hero)
+        
         public void StartFight()
         {
             EnemyTextBorder.Visibility = Visibility.Visible;
             HeroTextBorder.Visibility = Visibility.Visible;
             EnemyLabel.Visibility = Visibility.Visible;
             HeroLabel.Visibility = Visibility.Visible;
-            
-            /*GetInfoEnemies(enemies);
-            GetInfoCharacter(hero);*/
         }
         
         public void EndFight(FightResult result)

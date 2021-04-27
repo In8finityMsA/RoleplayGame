@@ -7,14 +7,12 @@ namespace KashTaskWPF.Artifacts
     {
         private const int period = 2;
         public readonly int steps;
-        public PoisonedSpit(int charge, int steps = period) : base(charge)
+        public PoisonedSpit(int charge, int steps = period) : base(charge, "Ядовитая слюна")
         {
-            NAME = $"Ядовитая слюна ({Charge})";
             this.steps = steps;
         }
-        public PoisonedSpit(int charge): base(charge)
+        public PoisonedSpit(int charge): base(charge, "Ядовитая слюна")
         {
-            NAME = $"Ядовитая слюна ({Charge})";
             this.steps = period;
         }
         protected sealed override void ActionsWithState(Character target)

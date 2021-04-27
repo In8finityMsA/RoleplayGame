@@ -11,9 +11,11 @@ namespace KashTaskWPF.Artifacts
     public abstract class PoweredRenewableArtifact: Artifact, IMagicPowered
     {
         protected double charge;
-        public PoweredRenewableArtifact(int charge): base(true)
+        public PoweredRenewableArtifact(int charge, string shortName): base(true)
         {
+            this.shortName = shortName;
             Charge = charge;
+            NAME = shortName + $" ({Charge})";
         }
 
         public double Charge
@@ -28,6 +30,8 @@ namespace KashTaskWPF.Artifacts
                 charge = value;
             }
         }
+
+        protected string shortName;
 
         public abstract double ConsumptionPerPower { get; }
 
@@ -46,14 +50,16 @@ namespace KashTaskWPF.Artifacts
                 ActionsWithState(target); 
                 target.Health -= fee;
                 Charge -= fee;
-                                                          
+                
             }
             else if (Charge != 0)
             {
                 ActionsWithState(target); 
                 target.Health -= Charge;
                 Charge = 0;
-            }                             
+            }
+
+            NAME = shortName + $" ({Charge})";
         }
     }
 }
