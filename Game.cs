@@ -23,7 +23,7 @@ namespace KashTaskWPF
         {
             //create list of fightplans
             Character goblin = new Character("Особенно Наглый Гоблин", Race.GOBLIN, Sex.MALE, 200, 200, 150);
-            Character hydra = new Character("Гидра", Race.ELF, Sex.FEMALE, 48, 250, 300);
+            Character hydra = new Character("Гидра", Race.ORC, Sex.FEMALE, 48, 250, 300);
             
             List<string> words1 = new List<string>() { "ШШСС", "ССШИПИМ", "МЫ НЕ МОЖЕМ", "ШШШС. ЭТО НЕ ПРОКЛЯТИЕ. ЭТО МОЯ ГОЛОВА ТАНАКЕД ЗАБЫЛА ССВОИ ССЛОВА И МЫ НЕПРАВИЛЬНО ПРОИЗЗНЕССЛИ СЗАКЛИНАНИЕ.", "МНЕ НУЖНЫ ЛЯГУССШАЧЬИ ЛАПКИ.", "ДА"  };
             List<string> answers1 = new List<string>() { "Чего шипишь, гидра?", "Сними проклятие, гидра, а, гидра?", "Всмысле не можешь?", "И что делать, #$#@$?", "Декокт из лягушачьих лапок подойдет?", "..."};
