@@ -59,6 +59,8 @@ namespace KashTaskWPF.Adapters
         private string NOTENOUGHMANA = "Вам не хватило маны на заклинание!";
         private string YOUCANNOTEMOVEORTALK = "У вас плохо со здровьем. Вы либо не можете говорить, либо не можете двигаться. А для данного заклинания это важно.";
         private string PROBLEM = "";
+        private string NOWORDS = "С вами не хотят говорить!";
+        private string EXIT = "Закончить разговор";
 
 
         private string YOUAREPARALIZEDCANNOTHIT = "Вы не можете двигаться, и не можете наносить удары.";
@@ -103,8 +105,8 @@ namespace KashTaskWPF.Adapters
             spells = ((Magician)parent.game.hero).Spells.ToList<KeyValuePair<Type, Spell>>();
             artifacts = parent.game.hero.Inventory;
 
-            words = plan.yourWord;
-            answers = plan.enemiesWord;
+            answers = plan.yourWord;
+            words = plan.enemiesWord;
 
             JoinLists();
             enemies.Add(parent.game.hero);
@@ -282,21 +284,24 @@ namespace KashTaskWPF.Adapters
                         break;
                     case 4:  //TALK
                         {
-                            //if (words.Count == 0)
-                            //{
-                            //    ui.InfoAboutCurrentConditions(CHOOSEACTION);
-                            //    chooseParams = FightStatus.ChooseAction;
-                            //    CheckStandartList();
-                            //    ui.GetInfo(StandartList, StandartList.Count);
-                            //}
-                            //else
-                            //{
-                            //    prevStatus = chooseParams;
-                            //    //ui.InfoAboutCurrentConditions(CHOOSEWORDS);
-                            //    chooseParams = FightStatus.ChooseWords;
-                            //    ui.GetInfo(new List<string>() { words[0] }, 1);
-                            //    words.RemoveAt(0);
-                            //}
+                            if (words.Count == 0)
+                            {
+                                PROBLEM = NOWORDS;
+                                ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
+                                PROBLEM = "";
+                                chooseParams = FightStatus.ChooseAction;
+                                ui.GetInfo(StandartList, StandartList.Count);
+                            }
+                            else
+                            {
+                                CONVERSATION += words[0];
+                                ui.InfoAboutCurrentConditions(CONVERSATION);
+                                //words.RemoveAt(0);
+                                ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
+                                
+                                chooseParams = FightStatus.ChooseWords;
+                                recorder.Push(chooseParams);
+                            }
                         }
                         break;
                     case 5: //RUN
@@ -736,7 +741,54 @@ namespace KashTaskWPF.Adapters
             }
             else if (chooseParams == FightStatus.ChooseWords)
             {
+                index += 1;
+                switch (index)
+                {
+                    case 1:
+                        {
+                            CONVERSATION += answers[0];
+                            ui.InfoAboutCurrentConditions(CONVERSATION);
+                            answers.RemoveAt(0);
+                            if (words.Count == 0)
+                            {
+                                chooseParams = FightStatus.ChooseAction;
+                                ui.InfoAboutCurrentConditions(NOWORDS + '\n' + CHOOSEACTION);
+                                ui.GetInfo(StandartList, StandartList.Count);
+                            }
+                            else
+                            {
+                                chooseParams = FightStatus.ChooseWords;
+                                ui.InfoAboutCurrentConditions(CONVERSATION);
+                                InitNewRecorder();
+                            }
+                            break;
+                        }
 
+                    case 2:
+                        {
+                            break;
+                        }
+                }
+
+                //if (words.Count == 0)
+                //{
+                //    PROBLEM = NOWORDS;
+                //    ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
+                //    PROBLEM = "";
+                //    chooseParams = FightStatus.ChooseAction;
+                //    ui.GetInfo(StandartList, StandartList.Count);
+                //}
+                //else
+                //{
+                //    CONVERSATION += words[0];
+                //    ui.InfoAboutCurrentConditions(CONVERSATION);
+                //    words.RemoveAt(0);
+                //    ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
+                //    CONVERSATION += answers[0];
+                //    answers.RemoveAt(0);
+                //    chooseParams = FightStatus.ChooseWords;
+                //    recorder.Push(chooseParams);
+                //}
             }
             else if (chooseParams == FightStatus.ChoosePower)/////////////////////////////////////////////////////////////////////////////
             {

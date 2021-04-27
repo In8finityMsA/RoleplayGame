@@ -33,13 +33,13 @@ namespace KashTaskWPF
             //hero.CanSpeakNow = false;
             //Anna.PickUpArtifact(new PoisonedSpit(300));
             Anna.PickUpArtifact(new VasiliskEye());
-            List<string> words = new List<string>() { "1", "3", "5" };
-            List<string> answers = new List<string>() { "2", "4", "6" };
+            List<string> words = new List<string>() { "1 \n", "3 \n", "5 \n" };
+            List<string> answers = new List<string>() { "2 \n", "4 \n", "6 \n" };
             //Anna.PickUpArtifact(new VasiliskEye());
             //Mark.PickUpArtifact(new VasiliskEye());
             //Mark.PickUpArtifact(new VasiliskEye());
             FightPlan f1 = new FightPlan(new List<Magician>() { Anna },
-                new List<Character>() { Mark }, null, null);
+                new List<Character>() { Mark }, answers, words);
             fightPlans.Add(f1);
         }        
     }
