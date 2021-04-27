@@ -64,7 +64,9 @@
       "Answers": [
         "<TEXTBOX>"
       ],
-	  "Actions": { },
+	  "Actions": {
+        "0" : [ "set Age int <TEXTBOX>" ]
+      },
 	  "Next": [
         6
       ]
@@ -73,9 +75,11 @@
       "ID": 6,
       "Text": "А зовут вас…",
       "Answers": [
-        "CHAR_NAME"
+        "<TEXTBOX>"
       ],
-	  "Actions": { },
+	  "Actions": {
+        "0" : [ "set Name string <TEXTBOX>" ]
+      },
 	  "Next": [
         7
       ]

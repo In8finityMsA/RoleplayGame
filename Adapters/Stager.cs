@@ -23,6 +23,7 @@ namespace KashTaskWPF.Adapters
         private MainWindow ui;
         private const string FILENAME = @"Resources/game.json";
         private const byte indexingFix = 1; //To comply with 0 indexing
+        private const string textboxKeyword = "<TEXTBOX>"; //Magic word from json for displaying textbox instead of buttons
         public Stager(MainWindow window)
         {
             ui = window;
@@ -72,8 +73,18 @@ namespace KashTaskWPF.Adapters
             if (stage != null)
             {
                 ui.ChangeText(stage.Text);
-                ui.ChangeNumberOfButtons(stage.Next.Count);
-                ui.ChangeButtonsText(stage.Answers);
+                if (stage.Answers.Count >= 1 && stage.Answers[0].Equals(textboxKeyword))
+                {
+                    ui.ChangeNumberOfButtons(1);
+                    ui.ChangeButtonsText(new List<string> {"Далее"});
+                    ui.DisplayTextBox();
+                }
+                else
+                {
+                    ui.ChangeNumberOfButtons(stage.Next.Count);
+                    ui.ChangeButtonsText(stage.Answers);
+                    ui.HideTextBox();
+                }
             }
         }
 
@@ -120,7 +131,7 @@ namespace KashTaskWPF.Adapters
                                                     $"StageIndex:{previousStageIndex}");
                     }
 
-                    string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? ui.TextBoxUserInput() : actionsWords[3];
+                    string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? ui.GetUserInputText() : actionsWords[3];
                     switch (actionsWords[2])
                     {
                         case "bool":

@@ -53,8 +53,8 @@ namespace game
     {
         private static int unique_ID = 0;
 
-        private readonly string name;
         private readonly int id;
+        private string name;
         private Race race;
         private Sex sex;
               
@@ -105,7 +105,7 @@ namespace game
         }       
         
         public int ID { get => id; }
-        public string Name { get => name; }
+        public string Name { get => name; set => name = value; }
         public Race Race { get => race; set => race = value; }
         public Sex Sex { get => sex; set => sex = value; }
 

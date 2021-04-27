@@ -47,9 +47,21 @@ namespace KashTaskWPF
             adapter.GetInput(index);
         }
 
-        public string TextBoxUserInput()
+        public string GetUserInputText()
         {
-            return "";
+            return TextBoxUserInput.Text;
+        }
+
+        public void DisplayTextBox()
+        {
+            TextBoxUserInput.Text = "";
+            TextBoxUserInput.Visibility = Visibility.Visible;
+        }
+
+        public void HideTextBox()
+        {
+            TextBoxUserInput.Text = "";
+            TextBoxUserInput.Visibility = Visibility.Collapsed;
         }
         
         public void GetInfo(List<string> answers, int variantsAmount)

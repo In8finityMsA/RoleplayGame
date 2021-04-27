@@ -78,14 +78,18 @@
         
         
         <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" VerticalScrollBarVisibility="Auto" >
-            <WrapPanel x:Name="AnswerPanel" Orientation="Horizontal" 
-                       VerticalAlignment="Center" HorizontalAlignment="Center">
-                <!--<TextBox x:Name="UserText" Visibility="Collapsed"></TextBox>-->
-                <Button Tag="0" Style="{StaticResource AnswerButton}">1</Button>
-                <Button Tag="1" Style="{StaticResource AnswerButton}">2</Button>
-                <Button Tag="2" Style="{StaticResource AnswerButton}">3</Button>
-                <Button Tag="3" Style="{StaticResource AnswerButton}">4</Button>
-                <Button Tag="4" Style="{StaticResource AnswerButton}">5</Button>
+            <WrapPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBox x:Name="TextBoxUserInput" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                         MaxHeight="40" MinWidth="150" MaxWidth="350" Padding="7" Visibility="Visible"
+                         FontFamily="JetBrains Mono NL Medium" FontWeight="Medium" FontSize="18"/>
+                <WrapPanel x:Name="AnswerPanel" Orientation="Horizontal"
+                           VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Button Tag="0" Style="{StaticResource AnswerButton}">1</Button>
+                    <Button Tag="1" Style="{StaticResource AnswerButton}">2</Button>
+                    <Button Tag="2" Style="{StaticResource AnswerButton}">3</Button>
+                    <Button Tag="3" Style="{StaticResource AnswerButton}">4</Button>
+                    <Button Tag="4" Style="{StaticResource AnswerButton}">5</Button>
+                </WrapPanel>
             </WrapPanel>
         </ScrollViewer>
         <Label x:Name="EnemyLabel" Grid.Row="0" Grid.Column="0"  Content="Enemies" 
