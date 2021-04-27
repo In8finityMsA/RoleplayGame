@@ -22,25 +22,18 @@ namespace KashTaskWPF
         private void CreateFightPlanList()
         {
             //create list of fightplans
-            Magician Anna = new Magician("Аннушка", Race.ELF, Sex.FEMALE, 12, 20, 20, 23);
-            Character Mark = new Character("Марк", Race.ELF, Sex.MALE, 23, 50, 20);
-            //hero.PickUpArtifact(new FrogLegDecoct());
-            //hero.PickUpArtifact(new VasiliskEye());
-            //hero.PickUpArtifact(new LivingWater(BottleSize.L));
-            ((Magician)hero).LearnSpell(typeof(AddHealth));
-            //((Magician)hero).LearnSpell(typeof(Heal));
-            ((Magician)hero).LearnSpell(typeof(Armor));
-            //hero.CanMoveNow = false;
-            //hero.CanSpeakNow = false;
-            //Anna.PickUpArtifact(new PoisonedSpit(300));
-            Anna.PickUpArtifact(new VasiliskEye());
-            List<string> words = new List<string>() { "1", "3", "5" };
-            List<string> answers = new List<string>() { "2", "4", "6" };
-            //Anna.PickUpArtifact(new VasiliskEye());
-            //Mark.PickUpArtifact(new VasiliskEye());
-            //Mark.PickUpArtifact(new VasiliskEye());
-            FightPlan f1 = new FightPlan(new List<Character>() { Anna, Mark }, answers, words);
+            Character goblin = new Character("Особенно Наглый Гоблин", Race.GOBLIN, Sex.MALE, 200, 200, 150);
+            Character hydra = new Character("Гидра", Race.ELF, Sex.FEMALE, 48, 250, 300);
+            
+            List<string> words1 = new List<string>() { "ШШСС", "ССШИПИМ", "МЫ НЕ МОЖЕМ", "ШШШС. ЭТО НЕ ПРОКЛЯТИЕ. ЭТО МОЯ ГОЛОВА ТАНАКЕД ЗАБЫЛА ССВОИ ССЛОВА И МЫ НЕПРАВИЛЬНО ПРОИЗЗНЕССЛИ СЗАКЛИНАНИЕ.", "МНЕ НУЖНЫ ЛЯГУССШАЧЬИ ЛАПКИ.", "ДА"  };
+            List<string> answers1 = new List<string>() { "Чего шипишь, гидра?", "Сними проклятие, гидра, а, гидра?", "Всмысле не можешь?", "И что делать, #$#@$?", "Декокт из лягушачьих лапок подойдет?", "..."};
+            
+            List<string> words2 = new List<string>() { "Пацаны, смарите, йюху-ху, #@*%!", "#@*%%и #@*##a!"};
+            List<string> answers2 = new List<string>() { "Ну ты и дикий!", "..." };
+            FightPlan f1 = new FightPlan(new List<Character>() { hydra }, answers1, words1);
+            FightPlan f2 = new FightPlan(new List<Character>() { goblin }, answers2, words2);
             fightPlans.Add(f1);
+            fightPlans.Add(f2);
         }        
     }
 }
