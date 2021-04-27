@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text.Json;
 using System.Windows;
 using KashTaskWPF.Artifacts;
@@ -106,28 +107,34 @@ namespace KashTaskWPF.Adapters
             switch (command)
             {
                 case "fight":
-                {                  
-                        ui.StartFight();
-                        List<FightPlan> fightplans = game.fightPlans;
-                        Fighter fighter = new Fighter(this, fightplans[0]);
-                        fightplans.RemoveAt(0);
+                {          
+                    if (actionsWords.Length < 3) 
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                    
+                    ui.StartFight();
+                    List<FightPlan> fightplans = game.fightPlans;
+                    Fighter fighter = new Fighter(this, fightplans[0]);
+                    fightplans.RemoveAt(0);
 
-                        if (Int32.TryParse(actionsWords[1], out fightWinStage) && Int32.TryParse(actionsWords[2], out fightRunStage))
+                    if (Int32.TryParse(actionsWords[1], out fightWinStage) && Int32.TryParse(actionsWords[2], out fightRunStage))
+                    {
+                        fightRunStage -= indexingFix; fightWinStage -= indexingFix;
+                        if (fightWinStage >= stages.Count || fightRunStage >= stages.Count)
                         {
-                            fightRunStage -= indexingFix; fightWinStage -= indexingFix;
-                            if (fightWinStage >= stages.Count || fightRunStage >= stages.Count)
-                            {
-                                throw new ArgumentException($"There is no stage with one or both specified IDs - {actionsWords[1]}, {actionsWords[2]}. " +
-                                                            $"StageIndex:{previousStageIndex}");
-                            }
+                            throw new ArgumentException($"There is no stage with one or both specified IDs - {actionsWords[1]}, {actionsWords[2]}. " +
+                                                        $"StageIndex:{previousStageIndex}");
                         }
-                        else throw new ArgumentException($"One or both stage IDs are incorrect (not integers) - {actionsWords[1]}, {actionsWords[2]}. " +
-                                                         $"StageIndex:{previousStageIndex}");
-                        ui.ChangeAdapter(fighter);
-                        break;
+                    }
+                    else throw new ArgumentException($"One or both stage IDs are incorrect (not integers) - {actionsWords[1]}, {actionsWords[2]}. " +
+                                                     $"StageIndex:{previousStageIndex}");
+                    ui.ChangeAdapter(fighter);
+                    break;
                 }
                 case "set":
                 {
+                    if (actionsWords.Length < 4) 
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                    
                     var property = game.hero.GetType().GetProperty(actionsWords[1]);
                     if (property == null)
                     {
@@ -141,53 +148,71 @@ namespace KashTaskWPF.Adapters
                     }
 
                     string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? lastUserInput : actionsWords[3];
-                    switch (actionsWords[2])
+                    try
                     {
-                        case "bool":
+                        switch (actionsWords[2])
                         {
-                            if (Boolean.TryParse(stringValue, out bool value))
+                            case "bool":
                             {
+                                var value = Boolean.Parse(stringValue);
                                 property.SetValue(game.hero, value);
+                                break;
                             }
-                            break;
-                        }
-                        case "string":
-                        {
-                            property.SetValue(game.hero, stringValue);
-                            break;
-                        }
-                        case "int":
-                        {
-                            if (Int32.TryParse(stringValue, out int value))
+                            case "string":
                             {
-                                property.SetValue(game.hero, value);
+                                property.SetValue(game.hero, stringValue);
+                                break;
                             }
-                            break;
-                        }
-                        case "Race":
-                        {
-                            if (Enum.TryParse<Race>(stringValue, out var value))
+                            case "int":
                             {
+                                var value = Int32.Parse(stringValue);
                                 property.SetValue(game.hero, value);
+                                break;
                             }
-                            break;
-                        }
-                        case "Sex":
-                        {
-                            if (Enum.TryParse<Sex>(stringValue, out var value))
+                            case "Race":
                             {
+                                var value = Enum.Parse<Race>(stringValue);
                                 property.SetValue(game.hero, value);
+                                break;
                             }
-                            break;
+                            case "Sex":
+                            {
+                                var value = Enum.Parse<Sex>(stringValue);
+                                property.SetValue(game.hero, value);
+                                break;
+                            }
+                            default:
+                                throw new ArgumentException(
+                                    $"Specified property type is not supported - {actionsWords[2]}" +
+                                    $"StageIndex:{previousStageIndex}");
                         }
-                        default: 
-                            throw new ArgumentException($"Specified property type is not supported - {actionsWords[2]}" +
-                                                        $"StageIndex:{previousStageIndex}");
                     }
+                    catch (ArgumentNullException ex)
+                    {
+                        throw new ArgumentException($"Specified value is null" +
+                                                    $"StageIndex:{previousStageIndex}");
+                    }
+                    catch (Exception ex) when (ex is TargetInvocationException || ex is FormatException)
+                    {
+                        if (actionsWords[3].Equals(textboxKeyword))
+                        {
+                            ChangeStage(previousStageIndex);
+                            MessageBox.Show("Некорректный ввод, попробуйте снова.");
+                        }
+                        else
+                        {
+                            throw new ArgumentException($"Specified value is incorrect - {actionsWords[3]}" +
+                                                        $"StageIndex:{previousStageIndex}");
+                        }
+                    }
+
                     break;
                 }
                 case "get":
                 {
+                    if (actionsWords.Length < 2) 
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                    
                     object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
 
                     if (createdObject is Artifact)
@@ -199,6 +224,9 @@ namespace KashTaskWPF.Adapters
                 }
                 case "learn":
                 {
+                    if (actionsWords.Length < 2) 
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+
                     object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
 
                     if (createdObject is Spell)
@@ -209,32 +237,43 @@ namespace KashTaskWPF.Adapters
                     break;
                 }
                 case "info":
-                case "repeat": {
+                case "repeat": //метод о выписывании инфы по персонажу выписывает инфу в окно
+                { 
                     ui.ChangeText(ui.MainText.Text + "\n" + game.hero.ToString());
                     
-                    break; //метод о выписывании инфы по персонажу выписывает инфу в окно
+                    break; 
                 }
-                case "damage":
+                case "damage": // наносит урон игроку
                 {
+                    if (actionsWords.Length < 2) 
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                    
                     if (Int32.TryParse(actionsWords[1], out var amountDamage))
                     {
                         game.hero.Health -= amountDamage;
                     }
                     
-                    break; // наносит урон игроку
+                    break; 
                 }
-                case "getexp": 
+                case "getexp": //дать игроку опыт
                 {
+                    if (actionsWords.Length < 2) 
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                    
                     if (Int32.TryParse(actionsWords[1], out var amountExp))
                     {
                         game.hero.Experience += amountExp;
                     }
                     
-                    break; //дать игроку опыт
+                    break; 
                 }
                 case "camp": break; // то самое окно, где можно учить спеллы и открыть инвентарь
-                case "compexp": //Make compare with number in action?
+                case "compexp": //сравнивает экспу игрока и гнома 
                 {
+                    //Make compare with number supplied by action?
+                    if (actionsWords.Length < 3) 
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                    
                     string stageIndexString = game.hero.CompareTo(/* change */ game.Gnom) >= 0 ? actionsWords[1] : actionsWords[2];
 
                     if (Int32.TryParse(stageIndexString, out var stageIndex))
@@ -243,13 +282,13 @@ namespace KashTaskWPF.Adapters
                         ChangeStage(stageIndex);    
                     }
                     
-                    break; //сравнивает экспу игрока и гнома
+                    break; 
                 }
-                case "end": 
+                case "end":  //конец игры
                 {
                     EndGame();
                     
-                    break; //конец игры
+                    break;
                 }
                 default:
                     throw new ArgumentException($"There is no action with specified name - {actionName}. " +
