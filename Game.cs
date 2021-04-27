@@ -39,8 +39,7 @@ namespace KashTaskWPF
             //Anna.PickUpArtifact(new VasiliskEye());
             //Mark.PickUpArtifact(new VasiliskEye());
             //Mark.PickUpArtifact(new VasiliskEye());
-            FightPlan f1 = new FightPlan(new List<Magician>() { Anna },
-                new List<Character>() { Mark }, answers, words);
+            FightPlan f1 = new FightPlan(new List<Character>() { Anna, Mark }, answers, words);
             fightPlans.Add(f1);
         }        
     }

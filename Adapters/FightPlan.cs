@@ -10,15 +10,14 @@ namespace KashTaskWPF.Adapters
     public class FightPlan
     {
         public FightPlan() { }
-        public FightPlan(List<Magician> magicEnemyList, List<Character> usualEnemyList, List<string> yourWord, List<string> enemiesWord)
+        public FightPlan(List<Character> EnemyList, List<string> yourWord, List<string> enemiesWord)
         {
-            enemyM = magicEnemyList;
-            enemyNonM = usualEnemyList;
+            this.EnemyList = EnemyList;
             this.yourWord = yourWord;
             this.enemiesWord = enemiesWord;
         }
-        public List<Magician> enemyM { get; set; }
-        public List<Character> enemyNonM { get; set; }
+        
+        public List<Character> EnemyList { get; set; }
         public List<string> yourWord { get; set; }
         public List<string> enemiesWord { get; set; }
 

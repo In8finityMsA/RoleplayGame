@@ -32,17 +32,16 @@ namespace KashTaskWPF.Adapters
     
     public class Fighter: IAdapter
     {
-        //private readonly string fileName;
         private FightPlan plan;
+        private Stager parent;
 
         private List<string> StandartList = new List<string>() { "Удар", "Заклинание", "Артефакт", "Поговорить", "Бежать" };
-        private List<Character> enemies = new List<Character>();
+
+        private List<Character> enemiesPlusHero = new List<Character>();
         List<KeyValuePair<Type, Spell>> spells;
-        List<Artifact> artifacts;
-        
+        List<Artifact> artifacts;    
 
         Stack<FightStatus> recorder = new Stack<FightStatus>();
-
 
         //in normal cases
         private string CHOOSETARGET = "Вы можете выбрать цель, на которую хотите направить свое действие!";
@@ -59,19 +58,21 @@ namespace KashTaskWPF.Adapters
         private string NOTENOUGHMANA = "Вам не хватило маны на заклинание!";
         private string YOUCANNOTEMOVEORTALK = "У вас плохо со здровьем. Вы либо не можете говорить, либо не можете двигаться. А для данного заклинания это важно.";
         private string PROBLEM = "";
+        private string ENTER = "Ввести!";
+
+        //dialog
         private string NOWORDS = "С вами не хотят говорить!";
         private string EXIT = "Закончить разговор";
         private string YOUDECIDEDTOINTERDIAL = "Вы решили прервать диалог!";
-
-
         private string YOUAREPARALIZEDCANNOTHIT = "Вы не можете двигаться, и не можете наносить удары.";
         private string CONVERSATION = "";
+
         List<string> words;
         List<string> answers;
 
 
         private string ABOUTENEMYPUNCHES = "";
-        private Stager parent;
+        
         private MainWindow ui = KashTaskWPF.MainWindow.mainwindow;
 
         private FightAction whatNow;
@@ -89,16 +90,14 @@ namespace KashTaskWPF.Adapters
 
         public void SubscribeAllCharactersToStepHappend()
         {
-            foreach (var item in enemies)
+            foreach (var item in enemiesPlusHero)
             {
                 StepHappened += item.EventHandler;
             }    
         }
 
-        public Fighter(/*string fileName,*/ Stager parent, FightPlan plan)
+        public Fighter(Stager parent, FightPlan plan)
         {
-            //this.fileName = fileName;
-            //JsonInit();
 
             this.parent = parent;
             this.plan = plan;
@@ -108,56 +107,36 @@ namespace KashTaskWPF.Adapters
 
             answers = plan.yourWord;
             words = plan.enemiesWord;
+            enemiesPlusHero = plan.EnemyList;
 
-            JoinLists();
-            enemies.Add(parent.game.hero);
+            enemiesPlusHero.Add(parent.game.hero);
 
             //for ui
-            ui.InfoAboutCurrentConditions("Вы можете выбрать действие, чтобы атаковать врага!");
+            ui.InfoAboutCurrentConditions(CHOOSEACTION);
             ui.GetInfo(StandartList, StandartList.Count);
-            ui.GetInfoEnemies(enemies);
+            ui.GetInfoEnemies(enemiesPlusHero);
             ui.GetInfoCharacter(parent.game.hero);
 
             //for event
             SubscribeAllCharactersToStepHappend();         
         }
 
-        private void JoinLists()
-        {
-            List<Character> magaschar = new List<Character>(plan.enemyM.Count);
-            for (int i = 0; i < plan.enemyM.Count; i++)
-            {
-                magaschar.Add((Character)plan.enemyM[i]);
-            }
-            enemies.AddRange(magaschar);
-            enemies.AddRange(plan.enemyNonM);
-        }
-
-        //public void JsonInit()
-        //{
-        //    var reader = new StreamReader(fileName);
-        //    var jsonString = reader.ReadToEnd();
-        //    reader.Close();
-        //    plan = JsonSerializer.Deserialize<FightPlan>(jsonString);
-        //}
-
-
-        public List<string> EnemyNamesToList()
+        public List<string> EnemyNamesToList()//only enemies, without hero
         {
             List<string> enemiesNames = new List<string>();
 
-            for (int i = 0; i < enemies.Count - 1; i++)
+            for (int i = 0; i < enemiesPlusHero.Count - 1; i++)
             {
-                enemiesNames.Add(enemies[i].Name);
+                enemiesNames.Add(enemiesPlusHero[i].Name);
             }
             enemiesNames.Add("На себя");
             return enemiesNames;
         }
 
-        public List<string> PowerToList()
-        {
-            return new List<string>() { "10", "20", "30" , "40", "50"};
-        }
+        //public List<string> PowerToList()
+        //{
+        //    return new List<string>() { "10", "20", "30" , "40", "50"};
+        //}
 
         public List<string> SpellNamesToList()
         {
@@ -201,15 +180,15 @@ namespace KashTaskWPF.Adapters
                         {
                             if (parent.game.hero.CanMoveNow)
                             {
-                                if (enemies.Count > 1)
+                                if (enemiesPlusHero.Count > 1)
                                 {
                                     chooseParams = FightStatus.ChooseTarget;
                                     recorder.Push(chooseParams);
 
                                     ui.InfoAboutCurrentConditions(CHOOSETARGET);
-                                    ui.GetInfo(EnemyNamesToList(), enemies.Count);//providing gamer with options of enemies                   
+                                    ui.GetInfo(EnemyNamesToList(), enemiesPlusHero.Count);//providing gamer with options of enemies                   
                                 }
-                                else if (enemies.Count == 1)
+                                else if (enemiesPlusHero.Count == 1)
                                 {
                                     parent.EndFight(FightResult.WON);
                                 }
@@ -323,19 +302,20 @@ namespace KashTaskWPF.Adapters
                     ui.InfoAboutCurrentConditions(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
                     recorder.Push(chooseParams);
-                    ui.GetInfo(PowerToList(), 5);
+                    ui.DisplayTextBox();
+                    ui.GetInfo(new List<string>() { "Введите мощность" }, 1);
                 }
                 else
                 {
-                    if (enemies.Count > 1)
+                    if (enemiesPlusHero.Count > 1)
                     {
                      
                         ui.InfoAboutCurrentConditions(CHOOSETARGET);
                         chooseParams = FightStatus.ChooseTarget;
                         recorder.Push(chooseParams);
-                        ui.GetInfo(EnemyNamesToList(), enemies.Count);
+                        ui.GetInfo(EnemyNamesToList(), enemiesPlusHero.Count);
                     }
-                    else if (enemies.Count == 1)
+                    else if (enemiesPlusHero.Count == 1)
                     {
                         parent.EndFight(FightResult.WON);
                     }
@@ -351,19 +331,20 @@ namespace KashTaskWPF.Adapters
                     ui.InfoAboutCurrentConditions(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
                     recorder.Push(chooseParams);
-                    ui.GetInfo(PowerToList(), 5);
+                    ui.DisplayTextBox();
+                    ui.GetInfo(new List<string>() { "Введите мощность" }, 1);
                 }
                 else
                 {
-                    if (enemies.Count > 1)
+                    if (enemiesPlusHero.Count > 1)
                     {
                   
                         ui.InfoAboutCurrentConditions(CHOOSETARGET);
                         chooseParams = FightStatus.ChooseTarget;
                         recorder.Push(chooseParams);
-                        ui.GetInfo(EnemyNamesToList(), enemies.Count);
+                        ui.GetInfo(EnemyNamesToList(), enemiesPlusHero.Count);
                     }
-                    else if (enemies.Count == 1)
+                    else if (enemiesPlusHero.Count == 1)
                     {
                         parent.EndFight(FightResult.WON);
                     }
@@ -371,13 +352,13 @@ namespace KashTaskWPF.Adapters
             }
             else if (chooseParams == FightStatus.ChooseTarget)
             {
-                target = enemies[index];
+                target = enemiesPlusHero[index];
 
                 if (whatNow == FightAction.HIT)
                 {
                     parent.game.hero.Hit(target);
 
-                    ui.GetInfoEnemies(enemies);
+                    ui.GetInfoEnemies(enemiesPlusHero);
                     if (target.StateHealth == StateHealth.DEAD)
                     {
                         if (target == parent.game.hero)
@@ -387,10 +368,10 @@ namespace KashTaskWPF.Adapters
                         else
                         {
                             StepHappened -= target.EventHandler;//unsubscribe
-                            enemies.Remove(target);
-                            ui.GetInfoEnemies(enemies);
+                            enemiesPlusHero.Remove(target);
+                            ui.GetInfoEnemies(enemiesPlusHero);
                             //tell UI about murder?
-                            if (enemies.Count == 1)
+                            if (enemiesPlusHero.Count == 1)
                             {
                                 parent.EndFight(FightResult.WON);
                                 return;
@@ -409,7 +390,7 @@ namespace KashTaskWPF.Adapters
 
 
                     StepHappened();
-                    ui.GetInfoEnemies(enemies);
+                    ui.GetInfoEnemies(enemiesPlusHero);
                     ui.GetInfoCharacter(parent.game.hero);
 
 
@@ -431,7 +412,7 @@ namespace KashTaskWPF.Adapters
 
 
                             ui.GetInfoCharacter(parent.game.hero);
-                            ui.GetInfoEnemies(enemies);
+                            ui.GetInfoEnemies(enemiesPlusHero);
                             if (target.StateHealth == StateHealth.DEAD)
                             {
                                 if (target == parent.game.hero)
@@ -441,10 +422,10 @@ namespace KashTaskWPF.Adapters
                                 else
                                 {
                                     StepHappened -= target.EventHandler;
-                                    enemies.Remove(target);
-                                    ui.GetInfoEnemies(enemies);
+                                    enemiesPlusHero.Remove(target);
+                                    ui.GetInfoEnemies(enemiesPlusHero);
                                     //tell UI about murder?
-                                    if (enemies.Count == 1)
+                                    if (enemiesPlusHero.Count == 1)
                                     {
                                         parent.EndFight(FightResult.WON);
                                         return;
@@ -463,7 +444,7 @@ namespace KashTaskWPF.Adapters
 
 
                             StepHappened();
-                            ui.GetInfoEnemies(enemies);
+                            ui.GetInfoEnemies(enemiesPlusHero);
                             ui.GetInfoCharacter(parent.game.hero);
 
 
@@ -534,7 +515,7 @@ namespace KashTaskWPF.Adapters
 
 
                             ui.GetInfoCharacter(parent.game.hero);
-                            ui.GetInfoEnemies(enemies);
+                            ui.GetInfoEnemies(enemiesPlusHero);
                             if (target.StateHealth == StateHealth.DEAD)
                             {
                                 if (target == parent.game.hero)
@@ -544,10 +525,10 @@ namespace KashTaskWPF.Adapters
                                 else 
                                 {
                                     StepHappened -= target.EventHandler;//unsubscribe
-                                    enemies.Remove(target);
-                                    ui.GetInfoEnemies(enemies);
+                                    enemiesPlusHero.Remove(target);
+                                    ui.GetInfoEnemies(enemiesPlusHero);
                                     //tell UI about murder?
-                                    if (enemies.Count == 1)
+                                    if (enemiesPlusHero.Count == 1)
                                     {
                                         parent.EndFight(FightResult.WON);
                                         return;
@@ -566,7 +547,7 @@ namespace KashTaskWPF.Adapters
 
 
                             StepHappened();
-                            ui.GetInfoEnemies(enemies);
+                            ui.GetInfoEnemies(enemiesPlusHero);
                             ui.GetInfoCharacter(parent.game.hero);
 
 
@@ -634,7 +615,7 @@ namespace KashTaskWPF.Adapters
                         parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, target, power);
                         InitNewRecorder();
 
-                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             if (target == parent.game.hero)
@@ -644,10 +625,10 @@ namespace KashTaskWPF.Adapters
                             else
                             {
                                 StepHappened -= target.EventHandler;//unsubscribe
-                                enemies.Remove(target);
-                                ui.GetInfoEnemies(enemies);
+                                enemiesPlusHero.Remove(target);
+                                ui.GetInfoEnemies(enemiesPlusHero);
                                 //tell UI about murder?
-                                if (enemies.Count == 1)
+                                if (enemiesPlusHero.Count == 1)
                                 {
                                     parent.EndFight(FightResult.WON);
                                     return;
@@ -666,7 +647,7 @@ namespace KashTaskWPF.Adapters
 
 
                         StepHappened();
-                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         ui.GetInfoCharacter(parent.game.hero);
 
 
@@ -686,7 +667,7 @@ namespace KashTaskWPF.Adapters
 
 
 
-                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         if (target.StateHealth == StateHealth.DEAD)
                         {
                             if (target == parent.game.hero)
@@ -696,10 +677,10 @@ namespace KashTaskWPF.Adapters
                             else
                             {
                                 StepHappened -= target.EventHandler;//unsubscribe
-                                enemies.Remove(target);
-                                ui.GetInfoEnemies(enemies);
+                                enemiesPlusHero.Remove(target);
+                                ui.GetInfoEnemies(enemiesPlusHero);
                                 //tell UI about murder?
-                                if (enemies.Count == 1)
+                                if (enemiesPlusHero.Count == 1)
                                 {
                                     parent.EndFight(FightResult.WON);
                                     return;
@@ -719,7 +700,7 @@ namespace KashTaskWPF.Adapters
 
 
                         StepHappened();
-                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         ui.GetInfoCharacter(parent.game.hero);
 
 
@@ -734,7 +715,7 @@ namespace KashTaskWPF.Adapters
                     }
                 }                         
             }
-            else if (chooseParams == FightStatus.ChooseWords)
+            else if (chooseParams == FightStatus.ChooseWords)//CHOOSEWORDS
             {
                 index += 1;
                 switch (index)
@@ -771,59 +752,45 @@ namespace KashTaskWPF.Adapters
                             break;
                         }
                 }
-
-                //if (words.Count == 0)
-                //{
-                //    PROBLEM = NOWORDS;
-                //    ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
-                //    PROBLEM = "";
-                //    chooseParams = FightStatus.ChooseAction;
-                //    ui.GetInfo(StandartList, StandartList.Count);
-                //}
-                //else
-                //{
-                //    CONVERSATION += words[0];
-                //    ui.InfoAboutCurrentConditions(CONVERSATION);
-                //    words.RemoveAt(0);
-                //    ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
-                //    CONVERSATION += answers[0];
-                //    answers.RemoveAt(0);
-                //    chooseParams = FightStatus.ChooseWords;
-                //    recorder.Push(chooseParams);
-                //}
             }
-            else if (chooseParams == FightStatus.ChoosePower)/////////////////////////////////////////////////////////////////////////////
+            else if (chooseParams == FightStatus.ChoosePower)//CHOOSEPOWER
             {
-                index += 1;
-                power = index * 10;
-                if (enemies.Count > 1)
+                
+                try
                 {
+                    power = Convert.ToInt32(ui.GetUserInputText());
 
-                    ui.InfoAboutCurrentConditions(CHOOSETARGET);
-                    chooseParams = FightStatus.ChooseTarget;
-                    recorder.Push(chooseParams);
-                    ui.GetInfo(EnemyNamesToList(), enemies.Count);
+                    ui.HideTextBox();
 
+                    if (enemiesPlusHero.Count > 1)
+                    {
+
+                        ui.InfoAboutCurrentConditions(CHOOSETARGET);
+                        chooseParams = FightStatus.ChooseTarget;
+                        recorder.Push(chooseParams);
+                        ui.GetInfo(EnemyNamesToList(), enemiesPlusHero.Count);
+
+                    }
+                    else if (enemiesPlusHero.Count == 1)
+                    {
+                        parent.EndFight(FightResult.WON);
+                    }
                 }
-                else if (enemies.Count == 1)
+                catch
                 {
-                    parent.EndFight(FightResult.WON);
-
-                }           
+                    ui.InfoAboutCurrentConditions("Упс. Что-то пошло не так...");
+                }      
             }
         }
 
         public void GivePrevStep()
         {
+            ui.HideTextBox();
             if (recorder.Count > 1)
             {
                 recorder.Pop();
                 chooseParams = recorder.Peek();
 
-                if (chooseParams == FightStatus.ChooseAction)
-                {
-                    flag = false;
-                }
                 DrawSituation(chooseParams);
             }
         }
@@ -835,7 +802,7 @@ namespace KashTaskWPF.Adapters
                 case FightStatus.ChooseAction:
                     {
                         ui.GetInfo(StandartList, StandartList.Count);
-                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         ui.GetInfoCharacter(parent.game.hero);
                         ui.InfoAboutCurrentConditions(CHOOSEACTION);
                     }
@@ -843,16 +810,17 @@ namespace KashTaskWPF.Adapters
                 case FightStatus.ChooseTarget:
                     {
                         ui.InfoAboutCurrentConditions(CHOOSETARGET);
-                        ui.GetInfo(EnemyNamesToList(), enemies.Count);
-                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfo(EnemyNamesToList(), enemiesPlusHero.Count);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
                     break;
                 case FightStatus.ChoosePower:
                     {
                         ui.InfoAboutCurrentConditions(CHOOSEPOWER);
-                        ui.GetInfo(PowerToList(), 5);
-                        ui.GetInfoEnemies(enemies);
+                        ui.DisplayTextBox();
+                        ui.GetInfo(new List<string>() { "Введите мощность" }, 1);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
                     break;
@@ -860,7 +828,7 @@ namespace KashTaskWPF.Adapters
                     {
                         ui.InfoAboutCurrentConditions(CHOOSESPELL);
                         ui.GetInfo(SpellNamesToList(), spells.Count);
-                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
                     break;
@@ -868,7 +836,7 @@ namespace KashTaskWPF.Adapters
                     {
                         ui.InfoAboutCurrentConditions(CHOOSEARTIFACT);
                         ui.GetInfo(ArtifactNamesToList(), artifacts.Count);
-                        ui.GetInfoEnemies(enemies);
+                        ui.GetInfoEnemies(enemiesPlusHero);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
                     break;
@@ -879,18 +847,10 @@ namespace KashTaskWPF.Adapters
             }
         }
 
-        //public void CheckStandartList()
-        //{
-        //    if (answers.Count == 0)
-        //    {
-        //        StandartList.Remove("Поговорить");
-        //    }
-        //}                    
-
         public void YourEnemyReaction()
         {
             Random rnd = new Random();
-            Character whoIsOnDuty = enemies[rnd.Next(0, enemies.Count - 1)];// -1 not to kill yourself
+            Character whoIsOnDuty = enemiesPlusHero[rnd.Next(0, enemiesPlusHero.Count - 1)];// -1 not to kill yourself
             Artifact art;
 
             if (whoIsOnDuty.Inventory.Count != 0)
@@ -901,7 +861,6 @@ namespace KashTaskWPF.Adapters
                     whoIsOnDuty.UseArtifact(art, parent.game.hero);
                     ABOUTENEMYPUNCHES = "Против вас использовали артефакт: " + art.NAME + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
                     ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
-
                 }
                 else
                 {
@@ -913,7 +872,6 @@ namespace KashTaskWPF.Adapters
                     else
                     {
                         ABOUTENEMYPUNCHES = "Вас хотели ударить, но у вас броня! " + " \nУдар пытался нанести: " + whoIsOnDuty.Name + '\n';
-
                     }
                     ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
                 }
@@ -928,12 +886,11 @@ namespace KashTaskWPF.Adapters
                 else
                 {
                     ABOUTENEMYPUNCHES = "Вас хотели ударить, но у вас броня! " + " \nУдар пытался нанести: " + whoIsOnDuty.Name + '\n';
-
                 }
                 ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
             }
             ui.GetInfoCharacter(parent.game.hero);
-            ui.GetInfoEnemies(enemies);
+            ui.GetInfoEnemies(enemiesPlusHero);
         }
     }
 }
