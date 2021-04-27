@@ -758,7 +758,12 @@ namespace KashTaskWPF.Adapters
                 
                 try
                 {
-                    power = Convert.ToInt32(ui.GetUserInputText());
+                    power = Convert.ToUInt32(ui.GetUserInputText());
+
+                    if (power == 0)
+                    {
+                        throw new Exception("power cannot be 0");
+                    }
 
                     ui.HideTextBox();
 
@@ -867,7 +872,7 @@ namespace KashTaskWPF.Adapters
                     whoIsOnDuty.Hit(parent.game.hero);
                     if (!parent.game.hero.StatesDynamic.ContainsKey(State.ARMOR))
                     {
-                        ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + " \nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                        ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли" + whoIsOnDuty.HitPower + " баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + " \nУдар нанес: " + whoIsOnDuty.Name + '\n';
                     }
                     else
                     {
@@ -881,7 +886,7 @@ namespace KashTaskWPF.Adapters
                 whoIsOnDuty.Hit(parent.game.hero);
                 if (!parent.game.hero.StatesDynamic.ContainsKey(State.ARMOR))
                 {
-                    ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                    ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли" + whoIsOnDuty.HitPower + " баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
                 }
                 else
                 {

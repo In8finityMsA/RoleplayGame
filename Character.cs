@@ -79,7 +79,7 @@ namespace game
         private bool canSpeakNow = true;
         private bool canMoveNow = true;
 
-        private readonly double HitPower = 15;
+        public readonly double HitPower = 15;
 
 
 
