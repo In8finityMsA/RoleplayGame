@@ -19,6 +19,8 @@ namespace KashTaskWPF.Adapters
         private int fightWinStage;
         private int fightRunStage;
 
+        private string lastUserInput;
+
         public Game game;
         private MainWindow ui;
         private const string FILENAME = @"Resources/game.json";
@@ -42,10 +44,11 @@ namespace KashTaskWPF.Adapters
         public void HandleAnswer(int answerIndex)
         {
             Stage currentStage = GetCurrentStage();
-            //if (currentStage != null && currentStage.Answers.Count > answerIndex && currentStage.Next.Count > answerIndex)
+
             if (currentStage != null && currentStage.Next.Count > answerIndex)
             {
                 previousStageIndex = currentStageIndex;
+                lastUserInput = ui.GetUserInputText();
                 ChangeStage(currentStage.Next[answerIndex] - indexingFix);
                 
                 if (currentStage.Actions.ContainsKey(answerIndex.ToString()))
@@ -78,6 +81,12 @@ namespace KashTaskWPF.Adapters
                     ui.ChangeNumberOfButtons(1);
                     ui.ChangeButtonsText(new List<string> {"Далее"});
                     ui.DisplayTextBox();
+                }
+                else if (stage.Answers.Count == 0)
+                {
+                    ui.ChangeNumberOfButtons(1);
+                    ui.ChangeButtonsText(new List<string> {"Далее"});
+                    ui.HideTextBox();
                 }
                 else
                 {
@@ -125,13 +134,13 @@ namespace KashTaskWPF.Adapters
                         throw new ArgumentException($"There is no property with specified name - {actionsWords[1]}" +
                                                     $"StageIndex:{previousStageIndex}");
                     }
-                    else if (!property.CanWrite)
+                    if (!property.CanWrite)
                     {
                         throw new ArgumentException($"Specified property is readonly - {actionsWords[1]}" +
                                                     $"StageIndex:{previousStageIndex}");
                     }
 
-                    string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? ui.GetUserInputText() : actionsWords[3];
+                    string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? lastUserInput : actionsWords[3];
                     switch (actionsWords[2])
                     {
                         case "bool":
@@ -190,12 +199,12 @@ namespace KashTaskWPF.Adapters
                 }
                 case "learn":
                 {
-                    //object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
+                    object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
 
-                    //if (createdObject is Spell)
-                    //{
-                    //    game.hero.LearnSpell(createdObject as Spell);
-                    //}
+                    if (createdObject is Spell)
+                    {
+                        game.hero.LearnSpell(createdObject as Spell);
+                    }
                     
                     break;
                 }

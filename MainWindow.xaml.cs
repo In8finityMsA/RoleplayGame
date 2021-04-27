@@ -97,12 +97,6 @@ namespace KashTaskWPF
 
         public void ChangeButtonsText(List<string> answers)
         {
-            if (answers.Count == 0)
-            {
-                (AnswerPanel.Children[0] as Button).Content = "Дальше";
-                return;
-            }
-            
             int i = 0;
             foreach (Button child in AnswerPanel.Children)
             {
