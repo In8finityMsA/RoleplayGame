@@ -34,8 +34,8 @@ namespace KashTaskWPF
             //hero.CanSpeakNow = false;
             //Anna.PickUpArtifact(new PoisonedSpit(300));
             Anna.PickUpArtifact(new VasiliskEye());
-            List<string> words = new List<string>() { "1 \n", "3 \n", "5 \n" };
-            List<string> answers = new List<string>() { "2 \n", "4 \n", "6 \n" };
+            List<string> words = new List<string>() { "1", "3", "5" };
+            List<string> answers = new List<string>() { "2", "4", "6" };
             //Anna.PickUpArtifact(new VasiliskEye());
             //Mark.PickUpArtifact(new VasiliskEye());
             //Mark.PickUpArtifact(new VasiliskEye());

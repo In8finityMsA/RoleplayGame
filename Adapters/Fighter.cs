@@ -61,6 +61,7 @@ namespace KashTaskWPF.Adapters
         private string PROBLEM = "";
         private string NOWORDS = "С вами не хотят говорить!";
         private string EXIT = "Закончить разговор";
+        private string YOUDECIDEDTOINTERDIAL = "Вы решили прервать диалог!";
 
 
         private string YOUAREPARALIZEDCANNOTHIT = "Вы не можете двигаться, и не можете наносить удары.";
@@ -294,9 +295,8 @@ namespace KashTaskWPF.Adapters
                             }
                             else
                             {
-                                CONVERSATION += words[0];
-                                ui.InfoAboutCurrentConditions(CONVERSATION);
-                                //words.RemoveAt(0);
+
+                                ui.InfoAboutCurrentConditions(CONVERSATION + words[0]);
                                 ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
                                 
                                 chooseParams = FightStatus.ChooseWords;
@@ -732,12 +732,7 @@ namespace KashTaskWPF.Adapters
                         recorder.Push(chooseParams);
                         ui.GetInfo(StandartList, StandartList.Count);
                     }
-                }
-                else if (whatNow == FightAction.TALK)
-                {
-
-                }
-                
+                }                         
             }
             else if (chooseParams == FightStatus.ChooseWords)
             {
@@ -746,19 +741,21 @@ namespace KashTaskWPF.Adapters
                 {
                     case 1:
                         {
-                            CONVERSATION += answers[0];
+                            CONVERSATION += (words[0] + '\n' + answers[0] + '\n');
                             ui.InfoAboutCurrentConditions(CONVERSATION);
+                            words.RemoveAt(0);
                             answers.RemoveAt(0);
                             if (words.Count == 0)
                             {
                                 chooseParams = FightStatus.ChooseAction;
-                                ui.InfoAboutCurrentConditions(NOWORDS + '\n' + CHOOSEACTION);
+                                ui.InfoAboutCurrentConditions(CONVERSATION + '\n' + NOWORDS + '\n' + CHOOSEACTION);
                                 ui.GetInfo(StandartList, StandartList.Count);
                             }
                             else
                             {
                                 chooseParams = FightStatus.ChooseWords;
-                                ui.InfoAboutCurrentConditions(CONVERSATION);
+                                ui.InfoAboutCurrentConditions(CONVERSATION + words[0]);
+                                ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
                                 InitNewRecorder();
                             }
                             break;
@@ -766,6 +763,11 @@ namespace KashTaskWPF.Adapters
 
                     case 2:
                         {
+                            PROBLEM = YOUDECIDEDTOINTERDIAL;
+                            ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
+                            PROBLEM = "";
+                            chooseParams = FightStatus.ChooseAction;
+                            ui.GetInfo(StandartList, StandartList.Count);
                             break;
                         }
                 }
