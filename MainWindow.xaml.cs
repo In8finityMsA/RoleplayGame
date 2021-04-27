@@ -47,7 +47,7 @@ namespace KashTaskWPF
             adapter.GetInput(index);
         }
         
-        public void ChangeButtons(List<string> answers, int variantsAmount)
+        public void GetInfo(List<string> answers, int variantsAmount)
         {
             ChangeNumberOfButtons(variantsAmount);
             ChangeButtonsText(answers);
@@ -153,6 +153,11 @@ namespace KashTaskWPF
         public void GetInfoCharacter(Character hero)
         {
             HeroText.Text = hero.ToString();
+        }
+
+        public void InfoAboutCurrentConditions(string text)
+        {
+            ChangeText(text);
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

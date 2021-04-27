@@ -61,7 +61,7 @@ namespace KashTaskWPF.Adapters
         private string PROBLEM = "";
 
 
-        private string YOUAREPARALIZEDCANNOTHIT = "Вы парализованы, и не можете наносить удары.";
+        private string YOUAREPARALIZEDCANNOTHIT = "Вы не можете двигаться, и не можете наносить удары.";
         private string CONVERSATION = "";
         List<string> words;
         List<string> answers;
@@ -110,8 +110,8 @@ namespace KashTaskWPF.Adapters
             enemies.Add(parent.game.hero);
 
             //for ui
-            InfoAboutCurrentConditions("Вы можете выбрать действие, чтобы атаковать врага!");
-            ui.ChangeButtons(StandartList, StandartList.Count);
+            ui.InfoAboutCurrentConditions("Вы можете выбрать действие, чтобы атаковать врага!");
+            ui.GetInfo(StandartList, StandartList.Count);
             ui.GetInfoEnemies(enemies);
             ui.GetInfoCharacter(parent.game.hero);
 
@@ -207,7 +207,7 @@ namespace KashTaskWPF.Adapters
                 {
                     case 1: //HIT
                         {
-                            if (!parent.game.hero.StatesDynamic.ContainsKey(State.PARALIZED))
+                            if (parent.game.hero.CanMoveNow)
                             {
                                 if (enemies.Count > 1)
                                 {
@@ -337,10 +337,10 @@ namespace KashTaskWPF.Adapters
                             if (artifacts.Count >= 1)
                             {
                                 
-                                InfoAboutCurrentConditions(CHOOSEARTIFACT);
+                                ui.InfoAboutCurrentConditions(CHOOSEARTIFACT);
                                 chooseParams = FightStatus.ChooseArtifact;
                                 recorder.Push(chooseParams);
-                                ui.ChangeButtons(ArtifactNamesToList(), artifacts.Count);
+                                ui.GetInfo(ArtifactNamesToList(), artifacts.Count);
                             }
                             else
                             {
@@ -367,7 +367,7 @@ namespace KashTaskWPF.Adapters
                         {
                             //if (words.Count == 0)
                             //{
-                            //    InfoAboutCurrentConditions(CHOOSEACTION);
+                            //    ui.InfoAboutCurrentConditions(CHOOSEACTION);
                             //    chooseParams = FightStatus.ChooseAction;
                             //    CheckStandartList();
                             //    ui.GetInfo(StandartList, StandartList.Count);
@@ -375,7 +375,7 @@ namespace KashTaskWPF.Adapters
                             //else
                             //{
                             //    prevStatus = chooseParams;
-                            //    //InfoAboutCurrentConditions(CHOOSEWORDS);
+                            //    //ui.InfoAboutCurrentConditions(CHOOSEWORDS);
                             //    chooseParams = FightStatus.ChooseWords;
                             //    ui.GetInfo(new List<string>() { words[0] }, 1);
                             //    words.RemoveAt(0);
@@ -398,20 +398,20 @@ namespace KashTaskWPF.Adapters
                 if (spell is IMagicPowered)
                 {
                    
-                    InfoAboutCurrentConditions(CHOOSEPOWER);
+                    ui.InfoAboutCurrentConditions(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
                     recorder.Push(chooseParams);
-                    ui.ChangeButtons(PowerToList(), 5);
+                    ui.GetInfo(PowerToList(), 5);
                 }
                 else
                 {
                     if (enemies.Count != 1)
                     {
                      
-                        InfoAboutCurrentConditions(CHOOSETARGET);
+                        ui.InfoAboutCurrentConditions(CHOOSETARGET);
                         chooseParams = FightStatus.ChooseTarget;
                         recorder.Push(chooseParams);
-                        ui.ChangeButtons(EnemyNamesToList(), enemies.Count);
+                        ui.GetInfo(EnemyNamesToList(), enemies.Count);
                     }
                     else if (enemies.Count == 1)
                     {
@@ -529,20 +529,20 @@ namespace KashTaskWPF.Adapters
                 if (artifact is IMagicPowered)
                 {
                  
-                    InfoAboutCurrentConditions(CHOOSEPOWER);
+                    ui.InfoAboutCurrentConditions(CHOOSEPOWER);
                     chooseParams = FightStatus.ChoosePower;
                     recorder.Push(chooseParams);
-                    ui.ChangeButtons(PowerToList(), 5);
+                    ui.GetInfo(PowerToList(), 5);
                 }
                 else
                 {
                     if (enemies.Count >= 1)
                     {
                   
-                        InfoAboutCurrentConditions(CHOOSETARGET);
+                        ui.InfoAboutCurrentConditions(CHOOSETARGET);
                         chooseParams = FightStatus.ChooseTarget;
                         recorder.Push(chooseParams);
-                        ui.ChangeButtons(EnemyNamesToList(), enemies.Count);
+                        ui.GetInfo(EnemyNamesToList(), enemies.Count);
                     }
                     else if (enemies.Count == 1)
                     {
@@ -555,10 +555,10 @@ namespace KashTaskWPF.Adapters
                         }
                         catch (Exception)
                         {
-                            InfoAboutCurrentConditions(NOTENOUGHMANA + '\n' + CHOOSEACTION);
+                            ui.InfoAboutCurrentConditions(NOTENOUGHMANA + '\n' + CHOOSEACTION);
                             chooseParams = FightStatus.ChooseAction;
                             recorder.Push(chooseParams);
-                            ui.ChangeButtons(StandartList, StandartList.Count);
+                            ui.GetInfo(StandartList, StandartList.Count);
                         }
                         
                         ui.GetInfoEnemies(enemies);
@@ -591,10 +591,10 @@ namespace KashTaskWPF.Adapters
 
 
                         recorder = new Stack<FightStatus>();
-                        InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
+                        ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
-                        ui.ChangeButtons(StandartList, StandartList.Count);                      
+                        ui.GetInfo(StandartList, StandartList.Count);                      
                     }
                 }
             }
@@ -638,10 +638,10 @@ namespace KashTaskWPF.Adapters
 
 
                     recorder = new Stack<FightStatus>();
-                    InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
+                    ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                     chooseParams = FightStatus.ChooseAction;
 
-                    ui.ChangeButtons(StandartList, StandartList.Count);
+                    ui.GetInfo(StandartList, StandartList.Count);
                 }
                 else if (whatNow == FightAction.SPELL)
                 {
@@ -914,10 +914,10 @@ namespace KashTaskWPF.Adapters
 
 
                         recorder = new Stack<FightStatus>();
-                        InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
+                        ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
-                        ui.ChangeButtons(StandartList, StandartList.Count);
+                        ui.GetInfo(StandartList, StandartList.Count);
                     }
                     else
                     {
@@ -961,10 +961,10 @@ namespace KashTaskWPF.Adapters
 
 
                         recorder = new Stack<FightStatus>();
-                        InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
+                        ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
-                        ui.ChangeButtons(StandartList, StandartList.Count);
+                        ui.GetInfo(StandartList, StandartList.Count);
                     }
                 }
                 else if (whatNow == FightAction.TALK)
@@ -984,10 +984,10 @@ namespace KashTaskWPF.Adapters
                 if (enemies.Count > 1)
                 {
 
-                    InfoAboutCurrentConditions(CHOOSETARGET);
+                    ui.InfoAboutCurrentConditions(CHOOSETARGET);
                     chooseParams = FightStatus.ChooseTarget;
                     recorder.Push(chooseParams);
-                    ui.ChangeButtons(EnemyNamesToList(), enemies.Count);
+                    ui.GetInfo(EnemyNamesToList(), enemies.Count);
 
                 }
                 else if (enemies.Count == 1)
@@ -1151,10 +1151,10 @@ namespace KashTaskWPF.Adapters
 
 
                         recorder = new Stack<FightStatus>();
-                        InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
+                        ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES + CHOOSEACTION);
                         chooseParams = FightStatus.ChooseAction;
                         recorder.Push(chooseParams);
-                        ui.ChangeButtons(StandartList, StandartList.Count);
+                        ui.GetInfo(StandartList, StandartList.Count);
                     }
                 }           
             }
@@ -1181,40 +1181,40 @@ namespace KashTaskWPF.Adapters
             {
                 case FightStatus.ChooseAction:
                     {
-                        ui.ChangeButtons(StandartList, StandartList.Count);
+                        ui.GetInfo(StandartList, StandartList.Count);
                         ui.GetInfoEnemies(enemies);
                         ui.GetInfoCharacter(parent.game.hero);
-                        InfoAboutCurrentConditions(CHOOSEACTION);
+                        ui.InfoAboutCurrentConditions(CHOOSEACTION);
                     }
                     break;
                 case FightStatus.ChooseTarget:
                     {
-                        InfoAboutCurrentConditions(CHOOSETARGET);
-                        ui.ChangeButtons(EnemyNamesToList(), enemies.Count);
+                        ui.InfoAboutCurrentConditions(CHOOSETARGET);
+                        ui.GetInfo(EnemyNamesToList(), enemies.Count);
                         ui.GetInfoEnemies(enemies);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
                     break;
                 case FightStatus.ChoosePower:
                     {
-                        InfoAboutCurrentConditions(CHOOSEPOWER);
-                        ui.ChangeButtons(PowerToList(), 5);
+                        ui.InfoAboutCurrentConditions(CHOOSEPOWER);
+                        ui.GetInfo(PowerToList(), 5);
                         ui.GetInfoEnemies(enemies);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
                     break;
                 case FightStatus.ChooseSpell:
                     {
-                        InfoAboutCurrentConditions(CHOOSESPELL);
-                        ui.ChangeButtons(SpellNamesToList(), spells.Count);
+                        ui.InfoAboutCurrentConditions(CHOOSESPELL);
+                        ui.GetInfo(SpellNamesToList(), spells.Count);
                         ui.GetInfoEnemies(enemies);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
                     break;
                 case FightStatus.ChooseArtifact:
                     {
-                        InfoAboutCurrentConditions(CHOOSEARTIFACT);
-                        ui.ChangeButtons(ArtifactNamesToList(), artifacts.Count);
+                        ui.InfoAboutCurrentConditions(CHOOSEARTIFACT);
+                        ui.GetInfo(ArtifactNamesToList(), artifacts.Count);
                         ui.GetInfoEnemies(enemies);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
@@ -1224,17 +1224,6 @@ namespace KashTaskWPF.Adapters
                 default:
                     break;
             }
-        }
-        
-        public void InfoAboutCurrentConditions(string text)
-        {
-            ui.ChangeText(text);
-        }
-        
-        public void UpdateFight(List<Character> enemies, Character hero)
-        {
-            ui.GetInfoEnemies(enemies);
-            ui.GetInfoCharacter(hero);
         }
 
         public void CheckStandartList()
@@ -1258,21 +1247,21 @@ namespace KashTaskWPF.Adapters
                     art = whoIsOnDuty.Inventory[rnd.Next(0, whoIsOnDuty.Inventory.Count)];
                     whoIsOnDuty.UseArtifact(art, parent.game.hero);
                     ABOUTENEMYPUNCHES = "Против вас использовали артефакт: " + art.NAME + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
-                    InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
+                    ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
 
                 }
                 else
                 {
                     whoIsOnDuty.Hit(parent.game.hero);
                     ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + " \nУдар нанес: " + whoIsOnDuty.Name + '\n';
-                    InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
+                    ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
                 }
             }
             else
             {
                 whoIsOnDuty.Hit(parent.game.hero);
                 ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли 15 баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
-                InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
+                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
 
             }
             ui.GetInfoCharacter(parent.game.hero);

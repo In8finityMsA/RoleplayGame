@@ -129,13 +129,9 @@ namespace game
             get => health;            
             set
             {
-                if (StateHealth != StateHealth.DEAD)
+                if (value >= health)
                 {
-                    if (value < 0)
-                    {
-                        health = 0;
-                    }
-                    else if (value > maxHealth)
+                    if (value >= maxHealth)
                     {
                         health = maxHealth;
                     }
@@ -143,9 +139,26 @@ namespace game
                     {
                         health = value;
                     }
-
                     ManageState();
                 }
+                else
+                {
+                    if (!statesDynamic.ContainsKey(State.ARMOR))
+                    {
+                        if (StateHealth != StateHealth.DEAD)
+                        {
+                            if (value < 0)
+                            {
+                                health = 0;
+                            }
+                            else
+                            {
+                                health = value;
+                            }                
+                            ManageState();
+                        }
+                    }
+                }                        
             }
         }
 
