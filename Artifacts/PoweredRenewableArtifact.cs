@@ -25,7 +25,7 @@ namespace KashTaskWPF.Artifacts
             {
                 if (value < 0)
                 {
-                    throw new NegativeChargeException("Charge can't be less than 0.");
+                    charge = 0;
                 }
                 charge = value;
             }
