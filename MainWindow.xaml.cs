@@ -117,7 +117,7 @@ namespace KashTaskWPF
 
         public void ChangeImage(string source)
         {
-            MainBitmapImage.UriSource = new System.Uri(source);
+            MainImage.Source = new BitmapImage(new Uri(@source, UriKind.Relative));
         }
         
         public void StartFight()

@@ -63,7 +63,7 @@ namespace KashTaskWPF.Adapters
             }
         }
 
-        public void ChangeStage(int stageIndex)
+        private void ChangeStage(int stageIndex)
         {
             if (stageIndex < stages.Count)
             {
@@ -77,7 +77,7 @@ namespace KashTaskWPF.Adapters
             if (stage != null)
             {
                 if (stage.Text != null) ui.ChangeText(stage.Text);
-                if (stage.Image != null) ui.ChangeImage(stage.Image);
+                if (stage.Image != null) ui.ChangeImage("Resources\\" + stage.Image);
                 if (stage.Answers.Count >= 1 && stage.Answers[0].Equals(textboxKeyword))
                 {
                     ui.ChangeNumberOfButtons(1);
@@ -109,26 +109,37 @@ namespace KashTaskWPF.Adapters
             {
                 case "fight":
                 {          
-                    if (actionsWords.Length < 3) 
+                    if (actionsWords.Length < 4) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
                     
-                    ui.StartFight();
-                    List<FightPlan> fightplans = game.fightPlans;
-                    Fighter fighter = new Fighter(this, fightplans[0]);
-                    fightplans.RemoveAt(0);
-
-                    if (Int32.TryParse(actionsWords[1], out fightWinStage) && Int32.TryParse(actionsWords[2], out fightRunStage))
+                    if (Int32.TryParse(actionsWords[1], out var fightPlanIndex) &&
+                        fightPlanIndex < game.fightPlans.Count)
                     {
-                        fightRunStage -= indexingFix; fightWinStage -= indexingFix;
+                        Fighter fighter = new Fighter(this, game.fightPlans[fightPlanIndex]);
+                        ui.StartFight();
+                        ui.ChangeAdapter(fighter);
+                    }
+                    else throw new ArgumentException($"There is no fight plan with specified index - {actionsWords[1]}" +
+                                                     $"Stage: {previousStageIndex}");
+                    
+
+                    if (Int32.TryParse(actionsWords[2], out fightWinStage) &&
+                        Int32.TryParse(actionsWords[3], out fightRunStage))
+                    {
+                        fightRunStage -= indexingFix;
+                        fightWinStage -= indexingFix;
                         if (fightWinStage >= stages.Count || fightRunStage >= stages.Count)
                         {
-                            throw new ArgumentException($"There is no stage with one or both specified IDs - {actionsWords[1]}, {actionsWords[2]}. " +
-                                                        $"StageIndex:{previousStageIndex}");
+                            throw new ArgumentException(
+                                $"There is no stage with one or both specified IDs - {actionsWords[2]}, {actionsWords[3]}. " +
+                                $"StageIndex:{previousStageIndex}");
                         }
                     }
-                    else throw new ArgumentException($"One or both stage IDs are incorrect (not integers) - {actionsWords[1]}, {actionsWords[2]}. " +
-                                                     $"StageIndex:{previousStageIndex}");
-                    ui.ChangeAdapter(fighter);
+                    else
+                        throw new ArgumentException(
+                            $"One or both stage IDs are incorrect (not integers) - {actionsWords[2]}, {actionsWords[3]}. " +
+                            $"StageIndex:{previousStageIndex}");
+                    
                     break;
                 }
                 case "set":
@@ -362,7 +373,7 @@ namespace KashTaskWPF.Adapters
             
         }
 
-        public Stage GetCurrentStage()
+        private Stage GetCurrentStage()
         {
             if (currentStageIndex < stages.Count)
             {
@@ -399,9 +410,9 @@ namespace KashTaskWPF.Adapters
             public string Text { get; set; }
             public List<string> Answers { get; set; }
             public Dictionary<string, List<string>> Actions { get; set; }
-            public List<int> Next { get; set; }
             
             public string Image { get; set; }
+            public List<int> Next { get; set; }
         }
         
     }
