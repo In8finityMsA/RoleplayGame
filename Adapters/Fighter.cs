@@ -193,6 +193,7 @@ namespace KashTaskWPF.Adapters
                                 }
                                 else if (enemiesPlusHero.Count == 1)
                                 {
+                                    parent.game.hero.Experience += plan.EXP;
                                     parent.EndFight(FightResult.WON);
                                 }
                             }
@@ -320,6 +321,7 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (enemiesPlusHero.Count == 1)
                     {
+                        parent.game.hero.Experience += plan.EXP;
                         parent.EndFight(FightResult.WON);
                     }
                 }
@@ -360,6 +362,7 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (enemiesPlusHero.Count == 1)
                     {
+                        parent.game.hero.Experience += plan.EXP;
                         parent.EndFight(FightResult.WON);
                     }
                 }
@@ -387,6 +390,7 @@ namespace KashTaskWPF.Adapters
                             //tell UI about murder?
                             if (enemiesPlusHero.Count == 1)
                             {
+                                parent.game.hero.Experience += plan.EXP;
                                 parent.EndFight(FightResult.WON);
                                 return;
                             }
@@ -441,6 +445,7 @@ namespace KashTaskWPF.Adapters
                                     //tell UI about murder?
                                     if (enemiesPlusHero.Count == 1)
                                     {
+                                        parent.game.hero.Experience += plan.EXP;
                                         parent.EndFight(FightResult.WON);
                                         return;
                                     }
@@ -544,6 +549,7 @@ namespace KashTaskWPF.Adapters
                                     //tell UI about murder?
                                     if (enemiesPlusHero.Count == 1)
                                     {
+                                        parent.game.hero.Experience += plan.EXP;
                                         parent.EndFight(FightResult.WON);
                                         return;
                                     }
@@ -644,6 +650,7 @@ namespace KashTaskWPF.Adapters
                                 //tell UI about murder?
                                 if (enemiesPlusHero.Count == 1)
                                 {
+                                    parent.game.hero.Experience += plan.EXP;
                                     parent.EndFight(FightResult.WON);
                                     return;
                                 }
@@ -696,6 +703,7 @@ namespace KashTaskWPF.Adapters
                                 //tell UI about murder?
                                 if (enemiesPlusHero.Count == 1)
                                 {
+                                    parent.game.hero.Experience += plan.EXP;
                                     parent.EndFight(FightResult.WON);
                                     return;
                                 }
@@ -792,6 +800,7 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (enemiesPlusHero.Count == 1)
                     {
+                        parent.game.hero.Experience += plan.EXP;
                         parent.EndFight(FightResult.WON);
                     }
                 }

@@ -30,8 +30,8 @@ namespace KashTaskWPF
             
             List<string> words2 = new List<string>() { "Пацаны, смарите, йюху-ху, #@*%!", "#@*%%и #@*##a!"};
             List<string> answers2 = new List<string>() { "Ну ты и дикий!", "..." };
-            FightPlan f1 = new FightPlan(new List<Character>() { hydra }, answers1, words1);
-            FightPlan f2 = new FightPlan(new List<Character>() { goblin }, answers2, words2);
+            FightPlan f1 = new FightPlan(new List<Character>() { hydra }, answers1, words1, 100);
+            FightPlan f2 = new FightPlan(new List<Character>() { goblin }, answers2, words2, 100);
             fightPlans.Add(f2);
             fightPlans.Add(f1);           
         }        
