@@ -978,7 +978,7 @@ namespace KashTaskWPF.Adapters
                 whoIsOnDuty.Hit(parent.game.hero);
                 if (!parent.game.hero.StatesDynamic.ContainsKey(State.ARMOR))
                 {
-                    ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли" + whoIsOnDuty.HitPower + " баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
+                    ABOUTENEMYPUNCHES = "Вас ударили! Вы потеряли " + whoIsOnDuty.HitPower + " баллов здоровья! \nОсталось: " + parent.game.hero.Health.ToString() + "\nУдар нанес: " + whoIsOnDuty.Name + '\n';
                 }
                 else
                 {
