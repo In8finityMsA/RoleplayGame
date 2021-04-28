@@ -13,6 +13,7 @@ using KashTaskWPF.Artifacts;
 using KashTaskWPF.Spells;
 using static game.Character;
 using static KashTaskWPF.Spells.Spell;
+using System.Windows;
 
 namespace KashTaskWPF.Adapters
 {
@@ -39,14 +40,15 @@ namespace KashTaskWPF.Adapters
 
         private List<Character> enemiesPlusHero = new List<Character>();
         List<KeyValuePair<Type, Spell>> spells;
-        List<Artifact> artifacts;    
+        List<Artifact> artifacts;
+        List<string> variants = new List<string>();
 
         Stack<FightStatus> recorder = new Stack<FightStatus>();
 
         //in normal cases
         private string CHOOSETARGET = "Вы можете выбрать цель, на которую хотите направить свое действие!";
         private string CHOOSEACTION = "Выберите действие, которое хотите направить на врагов!";
-        private string CHOOSEPOWER = "Выберите силу действия";
+        private string CHOOSEPOWER = "Выберите силу действия. Если вы введете слишком большое число, а у вас нет таких мощностей, то будет использован весь ваш заряд.";
         private string CHOOSESPELL = "Выберите заклинание!";
         private string CHOOSEARTIFACT = "Выберите артефакт!";
 
@@ -67,11 +69,12 @@ namespace KashTaskWPF.Adapters
         private string YOUDECIDEDTOINTERDIAL = "Вы решили прервать диалог!";
         private string YOUAREPARALIZEDCANNOTHIT = "Вы не можете двигаться, и не можете наносить удары.";
         private string CONVERSATION = "";
+        private string YOUAREKIND = "Вы подружились с гидрой и она пообещала снять заклятие!";
         
 
 
         List<string> words;
-        List<string> answers;
+        List<List<string>> answers;
 
 
         private string ABOUTENEMYPUNCHES = "";
@@ -268,6 +271,24 @@ namespace KashTaskWPF.Adapters
                         break;
                     case 4:  //TALK
                         {
+                            //if (words.Count == 0)
+                            //{
+                            //    PROBLEM = NOWORDS;
+                            //    ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
+                            //    PROBLEM = "";
+                            //    chooseParams = FightStatus.ChooseAction;
+                            //    ui.GetInfo(StandartList, StandartList.Count);
+                            //}
+                            //else
+                            //{
+
+                            //    ui.InfoAboutCurrentConditions(CONVERSATION + words[0]);
+                            //    ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
+
+                            //    chooseParams = FightStatus.ChooseWords;
+                            //    recorder.Push(chooseParams);
+                            //}
+
                             if (words.Count == 0)
                             {
                                 PROBLEM = NOWORDS;
@@ -280,11 +301,15 @@ namespace KashTaskWPF.Adapters
                             {
 
                                 ui.InfoAboutCurrentConditions(CONVERSATION + words[0]);
-                                ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
-                                
+                                //variants = null;
+                                variants = new List<string>(answers[0]);
+                                variants.Add(EXIT);
+                                ui.GetInfo(variants, variants.Count);
+
                                 chooseParams = FightStatus.ChooseWords;
                                 recorder.Push(chooseParams);
                             }
+
                         }
                         break;
                     case 5: //RUN
@@ -307,7 +332,7 @@ namespace KashTaskWPF.Adapters
                     chooseParams = FightStatus.ChoosePower;
                     recorder.Push(chooseParams);
                     ui.DisplayTextBox();
-                    ui.GetInfo(new List<string>() { "Введите мощность" }, 1);
+                    ui.GetInfo(new List<string>() { ENTER }, 1);
                 }
                 else
                 {
@@ -347,7 +372,7 @@ namespace KashTaskWPF.Adapters
                         chooseParams = FightStatus.ChoosePower;
                         recorder.Push(chooseParams);
                         ui.DisplayTextBox();
-                        ui.GetInfo(new List<string>() { "Введите мощность" }, 1);
+                        ui.GetInfo(new List<string>() { ENTER }, 1);
                     }                  
                 }
                 else
@@ -740,39 +765,83 @@ namespace KashTaskWPF.Adapters
             else if (chooseParams == FightStatus.ChooseWords)//CHOOSEWORDS
             {
                 index += 1;
-                switch (index)
-                {
-                    case 1:
-                        {
-                            CONVERSATION += (words[0] + '\n' + answers[0] + '\n');
-                            ui.InfoAboutCurrentConditions(CONVERSATION);
-                            words.RemoveAt(0);
-                            answers.RemoveAt(0);
-                            if (words.Count == 0)
-                            {
-                                chooseParams = FightStatus.ChooseAction;
-                                ui.InfoAboutCurrentConditions(CONVERSATION + '\n' + NOWORDS + '\n' + CHOOSEACTION);
-                                ui.GetInfo(StandartList, StandartList.Count);
-                            }
-                            else
-                            {
-                                chooseParams = FightStatus.ChooseWords;
-                                ui.InfoAboutCurrentConditions(CONVERSATION + words[0]);
-                                ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
-                                InitNewRecorder();
-                            }
-                            break;
-                        }
+                //switch (index)
+                //{
+                //    case 1:
+                //        {
+                //            CONVERSATION += (words[0] + '\n' + answers[0] + '\n');
+                //            ui.InfoAboutCurrentConditions(CONVERSATION);
+                //            words.RemoveAt(0);
+                //            answers.RemoveAt(0);
+                //            if (words.Count == 0)
+                //            {
+                //                chooseParams = FightStatus.ChooseAction;
+                //                ui.InfoAboutCurrentConditions(CONVERSATION + '\n' + NOWORDS + '\n' + CHOOSEACTION);
 
-                    case 2:
-                        {
-                            PROBLEM = YOUDECIDEDTOINTERDIAL;
-                            ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
-                            PROBLEM = "";
-                            chooseParams = FightStatus.ChooseAction;
-                            ui.GetInfo(StandartList, StandartList.Count);
-                            break;
-                        }
+                //                ui.GetInfo(StandartList, StandartList.Count);
+                //            }
+                //            else
+                //            {
+                //                chooseParams = FightStatus.ChooseWords;
+                //                ui.InfoAboutCurrentConditions(CONVERSATION + words[0]);
+                //                ui.GetInfo(new List<string>() { answers[0], EXIT }, 2);
+                //                InitNewRecorder();
+                //            }
+                //            break;
+                //        }
+
+                //    case 2:
+                //        {
+                //            PROBLEM = YOUDECIDEDTOINTERDIAL;
+                //            ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
+                //            PROBLEM = "";
+                //            chooseParams = FightStatus.ChooseAction;
+                //            ui.GetInfo(StandartList, StandartList.Count);
+                //            break;
+                //        }
+                //}
+                if (index == variants.Count)
+                {
+                    PROBLEM = YOUDECIDEDTOINTERDIAL;
+                    ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
+                    PROBLEM = "";
+                    chooseParams = FightStatus.ChooseAction;
+                    ui.GetInfo(StandartList, StandartList.Count);
+                }
+                else if (variants.Count == 2)
+                {
+                    CONVERSATION += (words[0] + '\n' + answers[0][0] + '\n');
+                    ui.InfoAboutCurrentConditions(CONVERSATION);
+                    words.RemoveAt(0);
+                    answers.RemoveAt(0);
+                    if (words.Count == 0)
+                    {
+                        chooseParams = FightStatus.ChooseAction;
+                        ui.InfoAboutCurrentConditions(CONVERSATION + '\n' + NOWORDS + '\n' + CHOOSEACTION);
+                        ui.GetInfo(StandartList, StandartList.Count);
+                    }
+                    else
+                    {
+                        chooseParams = FightStatus.ChooseWords;
+                        ui.InfoAboutCurrentConditions(CONVERSATION + words[0]);
+                        variants = new List<string>(answers[0]);
+                        variants.Add(EXIT);
+                        ui.GetInfo(variants, variants.Count);
+                        //InitNewRecorder();
+                    }
+                }
+                else if (index == 1)
+                {
+                    MessageBox.Show(YOUAREKIND); 
+                    parent.EndFight(FightResult.WON);
+                }
+                else if (index == 2)
+                {
+                    chooseParams = FightStatus.ChooseAction;
+                    ui.InfoAboutCurrentConditions(CHOOSEACTION);
+                    ui.GetInfo(StandartList, StandartList.Count);
+                    words.RemoveAt(0);
+                    InitNewRecorder();
                 }
             }
             else if (chooseParams == FightStatus.ChoosePower)//CHOOSEPOWER
@@ -847,7 +916,7 @@ namespace KashTaskWPF.Adapters
                     {
                         ui.InfoAboutCurrentConditions(CHOOSEPOWER);
                         ui.DisplayTextBox();
-                        ui.GetInfo(new List<string>() { "Введите мощность" }, 1);
+                        ui.GetInfo(new List<string>() { ENTER }, 1);
                         ui.GetInfoEnemies(enemiesPlusHero);
                         ui.GetInfoCharacter(parent.game.hero);
                     }
