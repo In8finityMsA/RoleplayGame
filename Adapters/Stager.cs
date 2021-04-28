@@ -63,7 +63,7 @@ namespace KashTaskWPF.Adapters
             }
         }
 
-        public void ChangeStage(int stageIndex)
+        private void ChangeStage(int stageIndex)
         {
             if (stageIndex < stages.Count)
             {
@@ -77,7 +77,7 @@ namespace KashTaskWPF.Adapters
             if (stage != null)
             {
                 if (stage.Text != null) ui.ChangeText(stage.Text);
-                if (stage.Image != null) ui.ChangeImage(stage.Image);
+                if (stage.Image != null) ui.ChangeImage("Resources\\" + stage.Image);
                 if (stage.Answers.Count >= 1 && stage.Answers[0].Equals(textboxKeyword))
                 {
                     ui.ChangeNumberOfButtons(1);
@@ -373,7 +373,7 @@ namespace KashTaskWPF.Adapters
             
         }
 
-        public Stage GetCurrentStage()
+        private Stage GetCurrentStage()
         {
             if (currentStageIndex < stages.Count)
             {
