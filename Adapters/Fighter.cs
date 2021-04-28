@@ -59,6 +59,7 @@ namespace KashTaskWPF.Adapters
         private string YOUCANNOTEMOVEORTALK = "У вас плохо со здровьем. Вы либо не можете говорить, либо не можете двигаться. А для данного заклинания это важно.";
         private string PROBLEM = "";
         private string ENTER = "Ввести!";
+        private string POWERRANOUT = "У этого артефакта закончилась мощность!";
 
         //dialog
         private string NOWORDS = "С вами не хотят говорить!";
@@ -66,6 +67,8 @@ namespace KashTaskWPF.Adapters
         private string YOUDECIDEDTOINTERDIAL = "Вы решили прервать диалог!";
         private string YOUAREPARALIZEDCANNOTHIT = "Вы не можете двигаться, и не можете наносить удары.";
         private string CONVERSATION = "";
+        
+
 
         List<string> words;
         List<string> answers;
@@ -327,12 +330,23 @@ namespace KashTaskWPF.Adapters
 
                 if (artifact is IMagicPowered)
                 {
-                 
-                    ui.InfoAboutCurrentConditions(CHOOSEPOWER);
-                    chooseParams = FightStatus.ChoosePower;
-                    recorder.Push(chooseParams);
-                    ui.DisplayTextBox();
-                    ui.GetInfo(new List<string>() { "Введите мощность" }, 1);
+
+                    if (((PoweredRenewableArtifact)artifact).Charge == 0)
+                    {
+                        PROBLEM = POWERRANOUT;
+                        ui.InfoAboutCurrentConditions(PROBLEM + '\n' + CHOOSEACTION);
+                        PROBLEM = "";
+                        chooseParams = FightStatus.ChooseAction;
+                        ui.GetInfo(StandartList, StandartList.Count);
+                    }
+                    else
+                    {
+                        ui.InfoAboutCurrentConditions(CHOOSEPOWER);
+                        chooseParams = FightStatus.ChoosePower;
+                        recorder.Push(chooseParams);
+                        ui.DisplayTextBox();
+                        ui.GetInfo(new List<string>() { "Введите мощность" }, 1);
+                    }                  
                 }
                 else
                 {

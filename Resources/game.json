@@ -24,22 +24,22 @@
         "Человек",
         "Гном",
         "Эльф",
-		"Орк",
-		"Гоблин"
-      ],
+		    "Орк",
+		    "Гоблин"
+     ],
 	  "Actions": {
         "0" : [ "set Race Race HUMAN" ],
         "1" : [ "set Race Race GNOME" ],
         "2" : [ "set Race Race ELF" ],
         "3" : [ "set Race Race ORC" ],
         "4" : [ "set Race Race GOBLIN" ]
-      },
+     },
       "Next": [
         4,
-		4,
-		4,
-		4,
-		4
+		    4,
+		    4,
+		    4,
+		    4
       ]
     },
 	{
