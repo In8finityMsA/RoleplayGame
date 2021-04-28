@@ -116,7 +116,7 @@ namespace game
             get => age;
             set  
             {
-                if (value < 0)
+                if (value <= 0)
                 {
                     throw new ArgumentException("Age cannot be less than zero.");
                 }
