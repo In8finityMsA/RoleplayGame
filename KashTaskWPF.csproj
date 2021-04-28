@@ -28,6 +28,22 @@
       <Content Include="Resources\game.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Remove="Resources\lair.png" />
+      <Content Include="Resources\lair.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\swamp.png" />
+      <Content Include="Resources\swamp.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\hydra.png" />
+      <Content Include="Resources\hydra.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\dwarf.png" />
+      <Content Include="Resources\dwarf.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
