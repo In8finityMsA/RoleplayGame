@@ -25,7 +25,7 @@ namespace KashTaskWPF.Adapters
         public Game game;
         private MainWindow ui;
         private const string FILENAME = @"Resources/game.json";
-        private const byte indexingFix = 1; //To comply with 0 indexing
+        private const byte indexingFix = 0; //To comply with 0 indexing
         private const string textboxKeyword = "<TEXTBOX>"; //Magic word from json for displaying textbox instead of buttons
         public Stager(MainWindow window)
         {
@@ -76,7 +76,8 @@ namespace KashTaskWPF.Adapters
         {
             if (stage != null)
             {
-                ui.ChangeText(stage.Text);
+                if (stage.Text != null) ui.ChangeText(stage.Text);
+                if (stage.Image != null) ui.ChangeImage(stage.Image);
                 if (stage.Answers.Count >= 1 && stage.Answers[0].Equals(textboxKeyword))
                 {
                     ui.ChangeNumberOfButtons(1);
@@ -399,6 +400,8 @@ namespace KashTaskWPF.Adapters
             public List<string> Answers { get; set; }
             public Dictionary<string, List<string>> Actions { get; set; }
             public List<int> Next { get; set; }
+            
+            public string Image { get; set; }
         }
         
     }

@@ -42,7 +42,7 @@
         </Grid.RowDefinitions>
         <Image x:Name="MainImage" Grid.Row="0" Grid.Column="1" >
             <Image.Source>
-                <BitmapImage UriSource="Resources\belka.png"></BitmapImage>
+                <BitmapImage x:Name="MainBitmapImage" UriSource="Resources\belka.png"></BitmapImage>
             </Image.Source>
         </Image>
         <Border x:Name="MainTextBorder" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="5"
