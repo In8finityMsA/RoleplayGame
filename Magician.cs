@@ -68,7 +68,6 @@ namespace game
             }
         }
 
-
         public void ForgetSpell(Type type) 
         {
             base.CheckIfDeadTryAct();
@@ -178,8 +177,18 @@ namespace game
         public override string ToString()
         {
             return base.ToString() + "\n" +
-                "Mana: " + Mana + "\n" + "Maximal mana: " + MaxMana + "\n" +
-                "Spells: " + String.Join(", ", spells.Keys);
+                "Мана: " + Mana + "\n" + "Максимальная мана: " + MaxMana + "\n" +
+                "Заклинания: " + GetSpellsNames();
+        }
+
+        private string GetSpellsNames()
+        {
+            string str = "";
+            foreach (var item in spells.Keys)
+            {
+                str += item.Name + " ";
+            }
+            return str;
         }
 
         public void ChargeArtifact(PoweredRenewableArtifact artifact, int power)
