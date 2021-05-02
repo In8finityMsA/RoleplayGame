@@ -19,7 +19,7 @@ namespace KashTaskWPF.Adapters
 {
     public enum FightResult
     {
-        WON, DIED, RAN
+        WON, DIED, RAN, NEGOTIATED
     }
     public enum FightStatus
     {

@@ -131,9 +131,9 @@
 		"Противоядие"
       ],
 	  "Actions": {
-        "0": [ "learn KashTaskWPF.Spells.AddHealth" ],
-		"1": [ "learn KashTaskWPF.Spells.Revive" ],
-		"2": [ "learn KashTaskWPF.Spells.Antidote" ]
+        "0": [ "learn AddHealth" ],
+		"1": [ "learn Revive" ],
+		"2": [ "learn Antidote" ]
       },
 	  "Next": [
         10,
@@ -162,7 +162,7 @@
         "Нет"
       ],
 	  "Actions": {
-		"0": [ "get KashTaskWPF.Artifacts.FrogLegDecoct" ]
+		"0": [ "get FrogLegDecoct" ]
       },
 	  "Next": [
         12,
@@ -200,7 +200,7 @@
       "Text": "Особенно наглый гоблин заметил вас. Вы вступаете в бой с Особенно Наглым Гоблином.",
 	  "Answers": [ ],
 	  "Actions": {
-        "0": [ "fight 0 15 15" ]
+        "0": [ "fight 0 goblin.png 15 15 15" ]
       },
 	  "Image" : "goblin.png",
 	  "Next": [
@@ -226,7 +226,7 @@
       "Text": "Это - живая вода. Эффект - восстанавливает здоровье.",
 	  "Answers": [ ],
 	  "Actions": {
-		"0": [ "get KashTaskWPF.Artifacts.LivingWater 10" ]
+		"0": [ "get LivingWater 10" ]
       },
 	  "Next": [
 	    18
@@ -293,7 +293,7 @@
         "Нет."
       ],
 	  "Actions": {
-		"0": [ "get KashTaskWPF.Artifacts.PoisonedSpit 20" ]
+		"0": [ "get PoisonedSpit 20" ]
       },
 	  "Image" : "swamp.png",
 	  "Next": [
@@ -351,7 +351,7 @@
       "Text": "Молодец,  #@$$##! Я тогда тебя не только пропущу, но и подарок сделаю! Бутылка с мертвой водой - восстановит тебе ману.",
 	  "Answers": [ ],
 	  "Actions": {
-		"0": [ "get KashTaskWPF.Artifacts.DeadWater 10" ]
+		"0": [ "get DeadWater 10" ]
       },
 	  "Next": [
 		28
@@ -437,7 +437,7 @@
       "Text": "Вы взяли Посох Молний.",
 	  "Answers": [ ],
 	  "Actions": {
-		"0": [ "get KashTaskWPF.Artifacts.Thunder 20" ]
+		"0": [ "get Thunder 20" ]
       },
 	  "Next": [
 		36
@@ -448,7 +448,7 @@
       "Text": "Вы взяли Глаз Василиска.",
 	  "Answers": [ ],
 	  "Actions": {
-		"0": [ "get KashTaskWPF.Artifacts.VasiliskEye" ]
+		"0": [ "get VasiliskEye" ]
       },
 	  "Next": [
 		36
@@ -485,7 +485,7 @@
       "Text": "ШСССС! ЧТО ЭТО? КТО ПРИССШЕЛ К НАМ?!",
 	  "Answers": [ ],
 	  "Actions": {
-        "0": [ "fight 1 41 37" ]
+        "0": [ "fight 1 hydra.png 41 37 40" ]
       },
 	  "Image" : "hydra.png",
 	  "Next": [
@@ -496,9 +496,7 @@
       "ID": 39,
       "Text": "[применено сравнение по опыту, вы не опытнее, чем Дварфич] Да чё ты говоришь! Ну я сам хотел #@#@$ть этих склизких змеюк, но что-то пошло не так. Пойду-ка я отсюда.",
 	  "Answers": [ ],
-	  "Actions": {
-        "0": [ "end" ]
-      },
+	  "Actions": { },
 	  "Next": [
 		36
       ]

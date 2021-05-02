@@ -17,16 +17,25 @@ namespace KashTaskWPF.Adapters
         private int currentStageIndex;
         private int previousStageIndex;
         
-        private int fightWinStage;
-        private int fightRunStage;
+        private int fightWonStage;
+        private int fightRanStage;
+        private int fightNegotiatedStage;
 
-        private string lastUserInput;
+        private string lastUserTextInput;
 
         public Game game;
         private MainWindow ui;
         private const string FILENAME = @"Resources/game.json";
         private const byte indexingFix = 0; //To comply with 0 indexing
-        private const string textboxKeyword = "<TEXTBOX>"; //Magic word from json for displaying textbox instead of buttons
+        private const string TEXTBOX_KEYWORD = "<TEXTBOX>"; //Magic word from json for displaying textbox instead of buttons
+
+        //Fight result messages
+        private const string WON_MESSAGE = "Об этой битве будут слагать легенды!";
+        private const string RAN_MESSAGE = "Иногда лучше отступить, чтобы напасть вновь.";
+        private const string DIED_MESSAGE = "Вы погибли... Не расстраивайтесь, попробуйте снова :)";
+        private const string NEGOTIATED_MESSAGE = "Зачем махать кулаками, если можно поговорить.";
+
+        private const string NEXT_MESSAGE = "Далее";
         public Stager(MainWindow window)
         {
             ui = window;
@@ -49,7 +58,7 @@ namespace KashTaskWPF.Adapters
             if (currentStage != null && currentStage.Next.Count > answerIndex)
             {
                 previousStageIndex = currentStageIndex;
-                lastUserInput = ui.GetUserInputText();
+                lastUserTextInput = ui.GetUserInputText();
                 ChangeStage(currentStage.Next[answerIndex] - indexingFix);
                 
                 if (currentStage.Actions.ContainsKey(answerIndex.ToString()))
@@ -57,7 +66,6 @@ namespace KashTaskWPF.Adapters
                     foreach (var action in currentStage.Actions[answerIndex.ToString()])
                     {
                         DoAction(action);
-                        Console.WriteLine("Action");
                     }
                 }
             }
@@ -78,16 +86,16 @@ namespace KashTaskWPF.Adapters
             {
                 if (stage.Text != null) ui.ChangeText(stage.Text);
                 if (stage.Image != null) ui.ChangeImage("Resources\\" + stage.Image);
-                if (stage.Answers.Count >= 1 && stage.Answers[0].Equals(textboxKeyword))
+                if (stage.Answers.Count >= 1 && stage.Answers[0].Equals(TEXTBOX_KEYWORD))
                 {
                     ui.ChangeNumberOfButtons(1);
-                    ui.ChangeButtonsText(new List<string> {"Далее"});
+                    ui.ChangeButtonsText(new List<string> {NEXT_MESSAGE});
                     ui.DisplayTextBox();
                 }
                 else if (stage.Answers.Count == 0)
                 {
                     ui.ChangeNumberOfButtons(1);
-                    ui.ChangeButtonsText(new List<string> {"Далее"});
+                    ui.ChangeButtonsText(new List<string> {NEXT_MESSAGE});
                     ui.HideTextBox();
                 }
                 else
@@ -107,9 +115,9 @@ namespace KashTaskWPF.Adapters
             Console.WriteLine(command);
             switch (command)
             {
-                case "fight":
+                case "fight": //fight <fightplan index> <image> <win stage id> <lose stage id> [negotiate stage id]
                 {          
-                    if (actionsWords.Length < 4) 
+                    if (actionsWords.Length < 6) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
                     
                     if (Int32.TryParse(actionsWords[1], out var fightPlanIndex) &&
@@ -118,31 +126,33 @@ namespace KashTaskWPF.Adapters
                         Fighter fighter = new Fighter(this, game.fightPlans[fightPlanIndex]);
                         ui.StartFight();
                         ui.ChangeAdapter(fighter);
+                        ui.ChangeImage("Resources\\" + actionsWords[2]);
                     }
                     else throw new ArgumentException($"There is no fight plan with specified index - {actionsWords[1]}" +
                                                      $"Stage: {previousStageIndex}");
                     
-
-                    if (Int32.TryParse(actionsWords[2], out fightWinStage) &&
-                        Int32.TryParse(actionsWords[3], out fightRunStage))
+                    if (Int32.TryParse(actionsWords[3], out fightWonStage) &&
+                        Int32.TryParse(actionsWords[4], out fightRanStage) &&
+                        Int32.TryParse(actionsWords[5], out fightNegotiatedStage))
                     {
-                        fightRunStage -= indexingFix;
-                        fightWinStage -= indexingFix;
-                        if (fightWinStage >= stages.Count || fightRunStage >= stages.Count)
+                        fightRanStage -= indexingFix;
+                        fightWonStage -= indexingFix;
+                        fightNegotiatedStage -= indexingFix;
+                        if (fightWonStage >= stages.Count || fightRanStage >= stages.Count || fightNegotiatedStage >= stages.Count)
                         {
                             throw new ArgumentException(
-                                $"There is no stage with one or both specified IDs - {actionsWords[2]}, {actionsWords[3]}. " +
+                                $"There is no stage with one or both specified IDs - {actionsWords[3]}, {actionsWords[4]}, {actionsWords[5]}. " +
                                 $"StageIndex:{previousStageIndex}");
                         }
                     }
                     else
                         throw new ArgumentException(
-                            $"One or both stage IDs are incorrect (not integers) - {actionsWords[2]}, {actionsWords[3]}. " +
+                            $"One or both stage IDs are incorrect (not integers) - {actionsWords[3]}, {actionsWords[4]}, {actionsWords[5]}. " +
                             $"StageIndex:{previousStageIndex}");
                     
                     break;
                 }
-                case "set":
+                case "set": //set <property name> <property type> <value>
                 {
                     if (actionsWords.Length < 4) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
@@ -159,7 +169,7 @@ namespace KashTaskWPF.Adapters
                                                     $"StageIndex:{previousStageIndex}");
                     }
 
-                    string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? lastUserInput : actionsWords[3];
+                    string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? lastUserTextInput : actionsWords[3];
                     try
                     {
                         switch (actionsWords[2])
@@ -206,7 +216,7 @@ namespace KashTaskWPF.Adapters
                     }
                     catch (Exception ex) when (ex is TargetInvocationException || ex is FormatException)
                     {
-                        if (actionsWords[3].Equals(textboxKeyword))
+                        if (actionsWords[3].Equals(TEXTBOX_KEYWORD))
                         {
                             ChangeStage(previousStageIndex);
                             MessageBox.Show("Некорректный ввод, попробуйте снова.");
@@ -220,12 +230,12 @@ namespace KashTaskWPF.Adapters
 
                     break;
                 }
-                case "get":
+                case "get": //get <artifact class name>
                 {
                     if (actionsWords.Length < 2) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
                     
-                    object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
+                    object createdObject = GetObjectFromString("KashTaskWPF.Artifacts." + actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
 
                     if (createdObject is Artifact)
                     {
@@ -239,7 +249,7 @@ namespace KashTaskWPF.Adapters
                     if (actionsWords.Length < 2) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
 
-                    object createdObject = GetObjectFromString(actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
+                    object createdObject = GetObjectFromString("KashTaskWPF.Spells." + actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
 
                     if (createdObject is Spell)
                     {
@@ -255,7 +265,7 @@ namespace KashTaskWPF.Adapters
                     
                     break; 
                 }
-                case "damage": // наносит урон игроку
+                case "damage": // damage <value>  наносит урон игроку
                 {
                     if (actionsWords.Length < 2) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
@@ -267,7 +277,7 @@ namespace KashTaskWPF.Adapters
                     
                     break; 
                 }
-                case "getexp": //дать игроку опыт
+                case "getexp": // getexp <value>  дать игроку опыт
                 {
                     if (actionsWords.Length < 2) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
@@ -280,13 +290,13 @@ namespace KashTaskWPF.Adapters
                     break; 
                 }
                 case "camp": break; // то самое окно, где можно учить спеллы и открыть инвентарь
-                case "compexp": //сравнивает экспу игрока и гнома 
+                case "compexp": // compexp <win stage id> <lose stage id>  сравнивает экспу игрока и гнома 
                 {
                     //Make compare with number supplied by action?
                     if (actionsWords.Length < 3) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
                     
-                    string stageIndexString = game.hero.CompareTo(/* change */ game.Gnom) >= 0 ? actionsWords[1] : actionsWords[2];
+                    string stageIndexString = game.hero.CompareTo(game.Gnom) >= 0 ? actionsWords[1] : actionsWords[2];
 
                     if (Int32.TryParse(stageIndexString, out var stageIndex))
                     {
@@ -296,10 +306,9 @@ namespace KashTaskWPF.Adapters
                     
                     break; 
                 }
-                case "end":  //конец игры
+                case "end": //конец игры
                 {
                     EndGame();
-                    
                     break;
                 }
                 default:
@@ -345,21 +354,31 @@ namespace KashTaskWPF.Adapters
             {
                 case FightResult.WON:
                 {
-                    MessageBox.Show("Об этой битве будут слагать легенды!");
-                    ChangeStage(fightWinStage);
+                    MessageBox.Show(WON_MESSAGE);
+                    ChangeStage(fightWonStage);
                     break;
                 }
                 case FightResult.DIED:
                 {
-                    MessageBox.Show("Вы погибли... Не расстраивайтесь, попробуйте снова :)");
+                    MessageBox.Show(DIED_MESSAGE);
                     ChangeStage(previousStageIndex);
                     break;
                 }
                 case FightResult.RAN:
                 {
-                    MessageBox.Show("Иногда лучше отступить, чтобы напасть вновь.");
-                    ChangeStage(fightRunStage);
+                    MessageBox.Show(RAN_MESSAGE);
+                    ChangeStage(fightRanStage);
                     break;
+                }
+                case FightResult.NEGOTIATED:
+                {
+                    MessageBox.Show(NEGOTIATED_MESSAGE);
+                    ChangeStage(fightNegotiatedStage);
+                    break;
+                }
+                default:
+                {
+                    throw new ArgumentException($"Unknown fight result {result}.");
                 }
             }
             
