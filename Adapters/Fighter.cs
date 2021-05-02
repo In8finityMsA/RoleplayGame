@@ -52,6 +52,7 @@ namespace KashTaskWPF.Adapters
         private string CHOOSESPELL = "Выберите заклинание!";
         private string CHOOSEARTIFACT = "Выберите артефакт!";
         private string USEATYOURSELF = "На себя";
+        private string ENEMYISPARALIZED = "Ваш противник парализован и не может нанести удар";
 
         //in abnormal cases
         private string CHOOSEANOTHERACTION = "Выберите другое действие!";
@@ -628,7 +629,12 @@ namespace KashTaskWPF.Adapters
             Random rnd = new Random();
             Character whoIsOnDuty = enemiesPlusHero[rnd.Next(0, enemiesPlusHero.Count - 1)];// -1 not to kill yourself
             Artifact art;
-            
+            if (!whoIsOnDuty.CanMoveNow )
+            {
+                ABOUTENEMYPUNCHES = ENEMYISPARALIZED;
+                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
+                return;
+            }
                 if ((rnd.Next(0, 2) == 0) && (whoIsOnDuty.Inventory.Count != 0))
                 {
                     art = whoIsOnDuty.Inventory[rnd.Next(0, whoIsOnDuty.Inventory.Count)];
