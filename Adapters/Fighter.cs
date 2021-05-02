@@ -453,7 +453,7 @@ namespace KashTaskWPF.Adapters
                 else if (index == 1)
                 {
                     MessageBox.Show(YOUAREKIND); 
-                    parent.EndFight(FightResult.WON);
+                    parent.EndFight(FightResult.NEGOTIATED);
                 }
                 else if (index == 2)
                 {
