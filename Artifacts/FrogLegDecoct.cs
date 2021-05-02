@@ -1,6 +1,4 @@
-﻿using game;
-
-namespace KashTaskWPF.Artifacts
+﻿namespace KashTaskWPF.Artifacts
 {
     class FrogLegDecoct : Artifact
     {

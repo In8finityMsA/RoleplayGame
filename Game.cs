@@ -1,5 +1,4 @@
 ﻿using KashTaskWPF.Artifacts;
-using game;
 using KashTaskWPF.Adapters;
 using System.Collections.Generic;
 using KashTaskWPF.Spells;
@@ -14,7 +13,7 @@ namespace KashTaskWPF
         
         public Game()
         {
-            this.hero = new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 1000, 0, 1000);
+            this.hero = new Magician("Me", Race.HUMAN, Sex.FEMALE, 17, 45, 0, 1000);
             //hero can learn spells to be born with
             CreateFightPlanList();
         }

@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KashTaskWPF;
+using KashTaskWPF.Interface;
 using KashTaskWPF.Spells;
 
-namespace game
+namespace KashTaskWPF
 {
     public class Magician : Character
     {
@@ -18,6 +20,14 @@ namespace game
         {
             this.maxMana = maxMana;
             this.mana = maxMana;
+        }
+
+        public Magician(Magician other): base(other)
+        {
+            mana = other.mana;
+            maxMana = other.maxMana;
+            spells = other.spells.ToDictionary(entry => entry.Key,
+                entry => entry.Value);//just copy
         }
 
         public double Mana

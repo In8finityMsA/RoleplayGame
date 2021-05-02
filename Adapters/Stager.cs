@@ -6,7 +6,6 @@ using System.Text.Json;
 using System.Windows;
 using KashTaskWPF.Artifacts;
 using KashTaskWPF.Adapters;
-using game;
 using KashTaskWPF.Spells;
 
 namespace KashTaskWPF.Adapters
@@ -16,8 +15,11 @@ namespace KashTaskWPF.Adapters
         private List<Stage> stages;
         private int currentStageIndex;
         private int previousStageIndex;
+
+        private Magician heroSave;
         
         private int fightWonStage;
+        private int fightDiedStage;
         private int fightRanStage;
         private int fightNegotiatedStage;
 
@@ -119,8 +121,9 @@ namespace KashTaskWPF.Adapters
             Console.WriteLine(command);
             switch (command)
             {
-                case "fight": //fight <fightplan index> <image> <win stage id> <lose stage id> [negotiate stage id]
-                {          
+                case "fight": //fight <fightplan index> <image> <won stage id> <died stage id> <ran stage id> <negotiated stage id>
+                {
+                    heroSave = new Magician(game.hero); //saves hero to restore if died
                     if (actionsWords.Length < 6) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
                     
@@ -136,8 +139,9 @@ namespace KashTaskWPF.Adapters
                                                      $"Stage: {previousStageIndex}");
                     
                     if (Int32.TryParse(actionsWords[3], out fightWonStage) &&
-                        Int32.TryParse(actionsWords[4], out fightRanStage) &&
-                        Int32.TryParse(actionsWords[5], out fightNegotiatedStage))
+                        Int32.TryParse(actionsWords[4], out fightDiedStage) &&
+                        Int32.TryParse(actionsWords[5], out fightRanStage) &&
+                        Int32.TryParse(actionsWords[6], out fightNegotiatedStage))
                     {
                         fightRanStage -= indexingFix;
                         fightWonStage -= indexingFix;
@@ -366,7 +370,8 @@ namespace KashTaskWPF.Adapters
                 case FightResult.DIED:
                 {
                     MessageBox.Show(DIED_MESSAGE);
-                    stageIndex = previousStageIndex;
+                    game.hero = heroSave;
+                    stageIndex = fightDiedStage;
                     break;
                 }
                 case FightResult.RAN:
@@ -387,6 +392,8 @@ namespace KashTaskWPF.Adapters
                 }
             }
             
+            game.hero.StatesDynamic.Clear();
+            game.hero.ActionsOnStep = null;
             ui.EndFight(result);
             ChangeStage(stageIndex);
             ui.ChangeAdapter(this);

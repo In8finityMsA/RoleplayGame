@@ -1,5 +1,4 @@
 ﻿using KashTaskWPF.Artifacts;
-using game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,5 +30,6 @@ namespace KashTaskWPF.Artifacts
                 target.Health -= (int) Size;
             }
         }
+        
     }
 }

@@ -1,5 +1,5 @@
-﻿using game;
-using System;
+﻿using System;
+using KashTaskWPF.Interface;
 
 namespace KashTaskWPF.Artifacts
 {

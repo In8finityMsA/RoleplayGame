@@ -1,4 +1,4 @@
-﻿using game;
+﻿using KashTaskWPF.Interface;
 
 namespace KashTaskWPF.Spells
 {

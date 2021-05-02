@@ -1,4 +1,4 @@
-﻿namespace game
+﻿namespace KashTaskWPF.Interface
 {
     public interface IMagicPowered : IMagic
     {

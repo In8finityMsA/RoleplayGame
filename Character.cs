@@ -1,12 +1,11 @@
-﻿using KashTaskWPF.Artifacts;
-using KashTaskWPF.States;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using KashTaskWPF.Artifacts;
+using KashTaskWPF.Interface;
+using KashTaskWPF.States;
 
-namespace game
+namespace KashTaskWPF
 {
     public enum StateHealth
     {
@@ -27,22 +26,6 @@ namespace game
     {
         MALE, FEMALE
     }
-
-
-    //public class StateForSteps
-    //{
-    //    private int counter;
-    //    public readonly State state;
-    //    public StateForSteps(State state, int counter)
-    //    {
-    //        this.state = state;
-    //        this.counter = counter;
-    //    }
-    //    public void Step()
-    //    {
-
-    //    }
-    //}
 
     public class DeadTryToActException: Exception
     {
@@ -93,7 +76,18 @@ namespace game
             health = maxHealth;
             StateHealth = StateHealth.NORMAL;
             Experience = experience;
-        }       
+        }
+
+        public Character(Character other) : this(other.Name, other.Race, other.Sex, other.Age, other.MaxHealth, other.Experience)
+        {
+            health = other.Health;
+            ManageState();
+            
+            inventory = other.inventory.Select( item => (Artifact)item.Clone() ).ToList();
+            HitPower = other.HitPower;
+            canMoveNow = other.canMoveNow;
+            canSpeakNow = other.canSpeakNow;
+        }
         
         public int ID { get => id; }
         public string Name { get => name; set => name = value; }
@@ -188,7 +182,6 @@ namespace game
 
         public bool AddStateD(AbstractState state)
         {
-            CheckIfDeadTryAct();//?
             State stateType = state.State;
             try
             {
@@ -220,8 +213,6 @@ namespace game
 
         public bool RemoveStateD(State state)
         {
-            CheckIfDeadTryAct();//?
-
             try
             {
                 AbstractState toRemove = statesDynamic[state];

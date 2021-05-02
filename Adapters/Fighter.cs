@@ -1,5 +1,4 @@
-﻿using game;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,9 +10,10 @@ using KashTaskWPF.Adapters;
 using KashTaskWPF;
 using KashTaskWPF.Artifacts;
 using KashTaskWPF.Spells;
-using static game.Character;
+using static KashTaskWPF.Character;
 using static KashTaskWPF.Spells.Spell;
 using System.Windows;
+using KashTaskWPF.Interface;
 
 namespace KashTaskWPF.Adapters
 {
@@ -497,17 +497,29 @@ namespace KashTaskWPF.Adapters
             }
         }
 
-        private void AfterPunchesCheck()
+        private bool HeroAliveCheck()
+        {
+            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+            {
+                enemiesPlusHero.Remove(parent.game.hero);
+                parent.EndFight(FightResult.DIED);
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool EnemyAliveCheck()
         {
             if (target.StateHealth == StateHealth.DEAD)
             {
                 if (target == parent.game.hero)
                 {
-                    parent.EndFight(FightResult.DIED);
+                    HeroAliveCheck();
                 }
                 else
                 {
-                    StepHappened -= target.EventHandler;//unsubscribe
+                    StepHappened -= target.EventHandler; //unsubscribe
                     enemiesPlusHero.Remove(target);
                     ui.GetInfoEnemies(enemiesPlusHero);
                     //tell UI about murder?
@@ -515,19 +527,12 @@ namespace KashTaskWPF.Adapters
                     {
                         parent.game.hero.Experience += plan.EXP;
                         parent.EndFight(FightResult.WON);
-                        return;
+                        return false;
                     }
                 }
             }
-            else
-            {
-                YourEnemyReaction();
-                if (parent.game.hero.StateHealth == StateHealth.DEAD)
-                {
-                    parent.EndFight(FightResult.DIED);
-                    return;
-                }
-            }
+
+            return true;
         }
 
         private void ActionsInArtifactAndSpellAndHit()
@@ -536,9 +541,19 @@ namespace KashTaskWPF.Adapters
 
             InfoAboutPeople();
 
-            AfterPunchesCheck();
-
+            if (!HeroAliveCheck() || !EnemyAliveCheck())
+            {
+                return;
+            }
+            
+            YourEnemyReaction();
+            
             StepHappened();
+            if (!HeroAliveCheck() || !EnemyAliveCheck())
+            {
+                return;
+            }
+            
             InfoAboutPeople();
 
             recorder = new Stack<FightStatus>();
@@ -632,29 +647,30 @@ namespace KashTaskWPF.Adapters
             if (!whoIsOnDuty.CanMoveNow )
             {
                 ABOUTENEMYPUNCHES = ENEMYISPARALIZED;
-                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
+                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES +'\n');
                 return;
             }
-                if ((rnd.Next(0, 2) == 0) && (whoIsOnDuty.Inventory.Count != 0))
+            
+            if ((rnd.Next(0, 2) == 0) && (whoIsOnDuty.Inventory.Count != 0))
+            {
+                art = whoIsOnDuty.Inventory[rnd.Next(0, whoIsOnDuty.Inventory.Count)];
+
+                whoIsOnDuty.UseArtifact(art, parent.game.hero);
+
+                ABOUTENEMYPUNCHES = THEYUSEDARTIFACT + " " + art.NAME + '\n' + WHOHITED + " " + whoIsOnDuty.Name + '\n';
+            }
+            else
+            {
+                whoIsOnDuty.Hit(parent.game.hero);
+                if (!parent.game.hero.StatesDynamic.ContainsKey(State.ARMOR))
                 {
-                    art = whoIsOnDuty.Inventory[rnd.Next(0, whoIsOnDuty.Inventory.Count)];
-
-                    whoIsOnDuty.UseArtifact(art, parent.game.hero);
-
-                    ABOUTENEMYPUNCHES = THEYUSEDARTIFACT + " " + art.NAME + '\n' + WHOHITED + " " + whoIsOnDuty.Name + '\n';
+                    ABOUTENEMYPUNCHES = THEYMANAGEDTOHIT + '\n' + YOULOSTHEALTHPOINTS + " " + whoIsOnDuty.HitPower + '\n' +  WHOHITED + " " + whoIsOnDuty.Name + '\n';
                 }
                 else
                 {
-                    whoIsOnDuty.Hit(parent.game.hero);
-                    if (!parent.game.hero.StatesDynamic.ContainsKey(State.ARMOR))
-                    {
-                        ABOUTENEMYPUNCHES = THEYMANAGEDTOHIT + '\n' + YOULOSTHEALTHPOINTS + " " + whoIsOnDuty.HitPower + '\n' +  WHOHITED + " " + whoIsOnDuty.Name + '\n';
-                    }
-                    else
-                    {
-                        ABOUTENEMYPUNCHES = THEYWANTEDHITBUTARMOR + '\n'+ WHOUNSUCCEDHIT + " " + whoIsOnDuty.Name + '\n';
-                    }
+                    ABOUTENEMYPUNCHES = THEYWANTEDHITBUTARMOR + '\n'+ WHOUNSUCCEDHIT + " " + whoIsOnDuty.Name + '\n';
                 }
+            }
             ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
             InfoAboutPeople();
         }

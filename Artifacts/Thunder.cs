@@ -1,6 +1,4 @@
-﻿using game;
-
-namespace KashTaskWPF.Artifacts
+﻿namespace KashTaskWPF.Artifacts
 {
     public sealed class Thunder : PoweredRenewableArtifact
     {

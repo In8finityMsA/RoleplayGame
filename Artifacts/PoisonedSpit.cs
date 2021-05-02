@@ -1,5 +1,4 @@
-﻿using game;
-using KashTaskWPF.States;
+﻿using KashTaskWPF.States;
 
 namespace KashTaskWPF.Artifacts
 {
@@ -17,6 +16,7 @@ namespace KashTaskWPF.Artifacts
         public PoisonedSpit(int charge): base(charge, "Ядовитая слюна")
         {
             this.steps = PERIOD;
+            this.periodicDamage = PERIODIC_DAMAGE;
         }
         protected sealed override void ActionsWithState(Character target)
         {

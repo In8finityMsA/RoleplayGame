@@ -1,6 +1,4 @@
-﻿using game;
-
-namespace KashTaskWPF.Spells
+﻿namespace KashTaskWPF.Spells
 {
     class Revive : Spell
     {

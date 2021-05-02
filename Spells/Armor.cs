@@ -1,10 +1,10 @@
-﻿using game;
-using KashTaskWPF.States;
+﻿using KashTaskWPF.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KashTaskWPF.Interface;
 
 namespace KashTaskWPF.Spells
 {

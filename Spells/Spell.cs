@@ -1,9 +1,9 @@
 ﻿using System;
-using game;
+using KashTaskWPF.Interface;
 
 namespace KashTaskWPF.Spells
 {
-    public abstract class Spell : IMagic
+    public abstract class Spell : IMagic, ICloneable
     {        
         protected Spell(double minManaCost, bool hasMotionalComponent, bool hasVerbalComponent)
         {
@@ -63,6 +63,11 @@ namespace KashTaskWPF.Spells
                 : base(message)
             {
             }
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }
