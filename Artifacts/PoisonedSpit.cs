@@ -5,19 +5,22 @@ namespace KashTaskWPF.Artifacts
 {
     public sealed class PoisonedSpit : PoweredRenewableArtifact
     {
-        private const int period = 2;
+        private const int PERIOD = 2;
+        private const double PERIODIC_DAMAGE = 5.0;
         public readonly int steps;
-        public PoisonedSpit(int charge, int steps = period) : base(charge, "Ядовитая слюна")
+        public readonly double periodicDamage;
+        public PoisonedSpit(int charge, int steps = PERIOD, double periodicDamage = PERIODIC_DAMAGE) : base(charge, "Ядовитая слюна")
         {
             this.steps = steps;
+            this.periodicDamage = periodicDamage;
         }
         public PoisonedSpit(int charge): base(charge, "Ядовитая слюна")
         {
-            this.steps = period;
+            this.steps = PERIOD;
         }
         protected sealed override void ActionsWithState(Character target)
         {
-            PoisonedState stateToAdd = new PoisonedState(target, steps);
+            PoisonedState stateToAdd = new PoisonedState(target, steps, periodicDamage);
             target.AddStateD(stateToAdd);
         }
         public sealed override double ConsumptionPerPower => 1;

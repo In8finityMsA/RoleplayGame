@@ -10,18 +10,17 @@ namespace KashTaskWPF.States
     class ArmorState : AbstractState
     {
         public ArmorState(Character carrier, int counter) : base(carrier, State.ARMOR, counter) { }
-       
-        public override void Step()
+
+        protected override void ActionOnAdd()
         {
-            if (counter > 0)
-            {
-                counter--;
-                //TODO
-            }
-            else
-            {
-                carrier.RemoveStateD(State);
-            }
+        }
+        
+        protected override void ActionOnRemove()
+        {
+        }
+
+        protected override void ActionOnTick()
+        {
         }
     }
 }

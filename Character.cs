@@ -61,18 +61,9 @@ namespace game
         private int age;
         private double health;
         private StateHealth stateHealth;
-
-        /// 
-        ///
-        ///
+        
         private Dictionary<State, AbstractState> statesDynamic = new Dictionary<State, AbstractState>();
-        /// 
-        /// 
-        /// 
 
-
-
-        private HashSet<State> states = new HashSet<State>();
         private double maxHealth;
         private int experience;
 
@@ -189,34 +180,25 @@ namespace game
                 experience = value;
             }
         }
-
-        public HashSet<State> States { get => states; }
-
-        //
-        //
-        //
+        
         public Dictionary<State, AbstractState> StatesDynamic { get => statesDynamic; }
-        //
-        //
-        //
 
         public delegate void OnStepActions();
         public OnStepActions ActionsOnStep;
 
-        public bool AddStateD(AbstractState istat)
+        public bool AddStateD(AbstractState state)
         {
             CheckIfDeadTryAct();//?
-            State state = istat.State;
-            AbstractState toChange;
+            State stateType = state.State;
             try
             {
-                toChange = statesDynamic[state];
-                if (toChange.Counter < istat.Counter)
+                AbstractState toChange = statesDynamic[stateType];
+                if (toChange.Counter < state.Counter)
                 {
-                    statesDynamic[state] = istat;
+                    statesDynamic[stateType] = state;
 
-                    ActionsOnStep -= toChange.Step;//unsubscryption
-                    ActionsOnStep += istat.Step;//subscription
+                    ActionsOnStep -= toChange.Step;//unsubscription
+                    ActionsOnStep += state.Step;//subscription
                     return true;
                 }
                 else
@@ -226,11 +208,11 @@ namespace game
             }
             catch (Exception)
             {
-                statesDynamic[state] = istat;
+                statesDynamic[stateType] = state;
 
 
                 //
-                ActionsOnStep += istat.Step; //subscription
+                ActionsOnStep += state.Step; //subscription
                 //
                 return true;
             }
@@ -240,10 +222,9 @@ namespace game
         {
             CheckIfDeadTryAct();//?
 
-            AbstractState toRemove;
             try
             {
-                toRemove = statesDynamic[state];
+                AbstractState toRemove = statesDynamic[state];
                 ActionsOnStep -= toRemove.Step;//unsubscription
                 statesDynamic.Remove(state);
                 return true;
@@ -256,33 +237,12 @@ namespace game
 
         
 
-        public void EventHandler()//when step was made
+        public void EventHandler() //when step was made
         {
             if (ActionsOnStep != null)
             {
                 ActionsOnStep();
             }          
-        }
-
-
-        public bool AddState(State state)
-        {
-            CheckIfDeadTryAct();
-            if (state == State.PARALIZED)
-            {
-                CanMoveNow = false;
-            }
-            return states.Add(state);
-        }
-            
-        public bool RemoveState(State state)
-        {
-            CheckIfDeadTryAct();
-            if (state == State.PARALIZED)
-            {
-                CanMoveNow = true;
-            }
-            return states.Remove(state);
         }
 
         public bool CanSpeakNow { get => canSpeakNow; set => canSpeakNow = value; }
@@ -439,7 +399,10 @@ namespace game
 
         public void Hit(Character target)
         {
-            target.Health -= HitPower;
+            if (canMoveNow)
+            {
+                target.Health -= HitPower;
+            }
         }
     }  
 }

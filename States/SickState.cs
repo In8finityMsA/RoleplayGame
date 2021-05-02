@@ -10,18 +10,17 @@ namespace KashTaskWPF.States
     public class SickState : AbstractState
     {
         public SickState(Character carrier, int counter) : base(carrier, State.SICK, counter) { }
-        
-        public override void Step()
+
+        protected override void ActionOnAdd()
         {
-            if (counter > 0)
-            {
-                counter--;
-                //TODO
-            }
-            else
-            {
-                carrier.RemoveStateD(State);
-            }
+        }
+        
+        protected override void ActionOnRemove()
+        {
+        }
+
+        protected override void ActionOnTick()
+        {
         }
     }
 }

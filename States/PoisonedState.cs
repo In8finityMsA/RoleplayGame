@@ -9,19 +9,25 @@ namespace KashTaskWPF.States
 {
     public class PoisonedState : AbstractState
     {
-        public PoisonedState(Character carrier, int counter) : base(carrier, State.POISONED, counter) { }
+        private double periodicDamage;
 
-        public override void Step()
+        public PoisonedState(Character carrier, int counter, double periodicDamage) : base(carrier, State.POISONED,
+            counter)
         {
-            if (counter > 0)
-            {
-                counter--;
-                //TODO
-            }
-            else
-            {
-                carrier.RemoveStateD(State);
-            }
+            this.periodicDamage = periodicDamage;
+        }
+
+        protected override void ActionOnAdd()
+        {
+        }
+        
+        protected override void ActionOnRemove()
+        {
+        }
+
+        protected override void ActionOnTick()
+        {
+            carrier.Health -= periodicDamage;
         }
     }
 }

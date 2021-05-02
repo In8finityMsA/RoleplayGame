@@ -78,6 +78,10 @@ namespace KashTaskWPF.Adapters
                 currentStageIndex = stageIndex;
                 DisplayStage(GetCurrentStage());
             }
+            else
+            {
+                throw new ArgumentException($"Stage index is out of range - {stageIndex}. Stages count: {stages.Count}.");
+            }
         }
 
         private void DisplayStage(Stage stage)
@@ -350,30 +354,31 @@ namespace KashTaskWPF.Adapters
 
         public void EndFight(FightResult result)
         {
+            int stageIndex = 0;
             switch (result)
             {
                 case FightResult.WON:
                 {
                     MessageBox.Show(WON_MESSAGE);
-                    ChangeStage(fightWonStage);
+                    stageIndex = fightWonStage;
                     break;
                 }
                 case FightResult.DIED:
                 {
                     MessageBox.Show(DIED_MESSAGE);
-                    ChangeStage(previousStageIndex);
+                    stageIndex = previousStageIndex;
                     break;
                 }
                 case FightResult.RAN:
                 {
                     MessageBox.Show(RAN_MESSAGE);
-                    ChangeStage(fightRanStage);
+                    stageIndex = fightRanStage;
                     break;
                 }
                 case FightResult.NEGOTIATED:
                 {
                     MessageBox.Show(NEGOTIATED_MESSAGE);
-                    ChangeStage(fightNegotiatedStage);
+                    stageIndex = fightNegotiatedStage;
                     break;
                 }
                 default:
@@ -383,6 +388,7 @@ namespace KashTaskWPF.Adapters
             }
             
             ui.EndFight(result);
+            ChangeStage(stageIndex);
             ui.ChangeAdapter(this);
 
         }
