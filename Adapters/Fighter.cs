@@ -648,8 +648,8 @@ namespace KashTaskWPF.Adapters
             Artifact art;
             if (!whoIsOnDuty.CanMoveNow )
             {
-                ABOUTENEMYPUNCHES = ENEMYISPARALIZED;
-                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES +'\n');
+                ABOUTENEMYPUNCHES = ENEMYISPARALIZED + '\n';
+                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
                 return;
             }
             
