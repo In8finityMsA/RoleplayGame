@@ -10,7 +10,7 @@ namespace KashTaskWPF.Spells
 {
     class Armor : AddStateSpell, IMagicPowered
     {
-        private const double MANA_COST = 10;
+        private const double MANA_COST = 50;
 
         public Armor() : base(MANA_COST, false, false) 
         {
