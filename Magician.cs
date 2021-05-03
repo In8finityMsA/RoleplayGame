@@ -27,7 +27,13 @@ namespace KashTaskWPF
             mana = other.mana;
             maxMana = other.maxMana;
             spells = other.spells.ToDictionary(entry => entry.Key,
-                entry => entry.Value);//just copy
+                entry => entry.Value); //just copy
+        }
+
+        public Magician(Character character, double maxMana) : base(character)
+        {
+            this.maxMana = maxMana;
+            this.mana = maxMana;
         }
 
         public double Mana

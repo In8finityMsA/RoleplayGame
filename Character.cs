@@ -57,15 +57,13 @@ namespace KashTaskWPF
 
 
 
-        private readonly List<Artifact> inventory = new List<Artifact>();        
-
-        public Character(string name, Race race, Sex sex) : this(name, race, sex, 0, 100, 0) { }
+        private readonly List<Artifact> inventory = new List<Artifact>();
 
         public Character(string name, Race race, Sex sex, int age) : this(name, race, sex, age, 100, 0) { }
 
         public Character(string name, Race race, Sex sex, int age, double maxHealth) : this(name, race, sex, age, maxHealth, 0) { }
 
-        public Character(string name, Race race, Sex sex, int age, double maxHealth, int experience)
+        public Character(string name, Race race, Sex sex, int age = 1, double maxHealth = 100, int experience = 0)
         {
             this.id = ++unique_ID;
             this.name = name;
@@ -83,7 +81,7 @@ namespace KashTaskWPF
             health = other.Health;
             ManageState();
             
-            inventory = other.inventory.Select( item => (Artifact)item.Clone() ).ToList();
+            inventory = other.inventory.Select( item => (Artifact)item.Clone() ).ToList(); //just copy
             HitPower = other.HitPower;
             canMoveNow = other.canMoveNow;
             canSpeakNow = other.canSpeakNow;

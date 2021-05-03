@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -90,8 +91,8 @@ namespace KashTaskWPF.Adapters
 
 
         private string ABOUTENEMYPUNCHES = "";
-        
-        private MainWindow ui = KashTaskWPF.MainWindow.mainwindow;
+
+        private MainWindow ui;
 
         private FightAction whatNow;
         private FightStatus chooseParams = FightStatus.ChooseAction;
@@ -116,6 +117,7 @@ namespace KashTaskWPF.Adapters
 
             this.parent = parent;
             this.plan = plan;
+            this.ui = parent.ui;
             
             spells = ((Magician)parent.game.hero).Spells.ToList<KeyValuePair<Type, Spell>>();
             artifacts = parent.game.hero.Inventory;

@@ -8,7 +8,12 @@ namespace KashTaskWPF.Adapters
 {
     public class FightPlan
     {
-        public FightPlan() { }
+        public FightPlan()
+        {
+            EnemyList = new List<Character>();
+            yourWord = new List<List<string>>();
+            enemiesWord = new List<string>();
+        }
         public FightPlan(List<Character> EnemyList, List<List<string>> yourWord, List<string> enemiesWord, int exp)
         {
             this.EnemyList = EnemyList;

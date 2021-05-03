@@ -18,6 +18,7 @@ namespace KashTaskWPF.Adapters
 
         private Magician heroSave;
         
+        //Used when a fight has ended
         private int fightWonStage;
         private int fightDiedStage;
         private int fightRanStage;
@@ -26,9 +27,9 @@ namespace KashTaskWPF.Adapters
         private string lastUserTextInput;
 
         public Game game;
-        private MainWindow ui;
+        internal MainWindow ui;
         private const string FILENAME = @"Resources/game.json";
-        private const byte indexingFix = 0; //To comply with 0 indexing
+        //private const byte indexingFix = 0; //To comply with 0 indexing
         private const string TEXTBOX_KEYWORD = "<TEXTBOX>"; //Magic word from json for displaying textbox instead of buttons
 
         //Fight result messages
@@ -61,7 +62,7 @@ namespace KashTaskWPF.Adapters
             {
                 previousStageIndex = currentStageIndex;
                 lastUserTextInput = ui.GetUserInputText();
-                ChangeStage(currentStage.Next[answerIndex] - indexingFix);
+                ChangeStage(currentStage.Next[answerIndex]);
                 
                 if (currentStage.Actions.ContainsKey(answerIndex.ToString()))
                 {
@@ -125,13 +126,14 @@ namespace KashTaskWPF.Adapters
                 {
                     heroSave = new Magician(game.hero); //saves hero to restore if died
                     if (actionsWords.Length < 6) 
-                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex: {previousStageIndex}");
                     
                     if (Int32.TryParse(actionsWords[1], out var fightPlanIndex) &&
                         fightPlanIndex < game.fightPlans.Count)
                     {
                         Fighter fighter = new Fighter(this, game.fightPlans[fightPlanIndex]);
-                        ui.StartFight();
+                        JsonParseFight("Resources\\fight1.json");
+                        ui.ShowFightInfo();
                         ui.ChangeAdapter(fighter);
                         ui.ChangeImage("Resources\\" + actionsWords[2]);
                     }
@@ -143,126 +145,50 @@ namespace KashTaskWPF.Adapters
                         Int32.TryParse(actionsWords[5], out fightRanStage) &&
                         Int32.TryParse(actionsWords[6], out fightNegotiatedStage))
                     {
-                        fightRanStage -= indexingFix;
-                        fightWonStage -= indexingFix;
-                        fightNegotiatedStage -= indexingFix;
                         if (fightWonStage >= stages.Count || fightRanStage >= stages.Count || fightNegotiatedStage >= stages.Count)
                         {
-                            throw new ArgumentException(
-                                $"There is no stage with one or both specified IDs - {actionsWords[3]}, {actionsWords[4]}, {actionsWords[5]}. " +
-                                $"StageIndex:{previousStageIndex}");
+                            throw new ArgumentException($"There is no stage with one or both specified IDs - " +
+                                                        $"{actionsWords[3]}, {actionsWords[4]}, {actionsWords[5]}. " +
+                                                        $"StageIndex:{previousStageIndex}");
                         }
                     }
                     else
-                        throw new ArgumentException(
-                            $"One or both stage IDs are incorrect (not integers) - {actionsWords[3]}, {actionsWords[4]}, {actionsWords[5]}. " +
-                            $"StageIndex:{previousStageIndex}");
+                        throw new ArgumentException($"One or both stage IDs are incorrect (not integers) - " +
+                                                    $"{actionsWords[3]}, {actionsWords[4]}, {actionsWords[5]}. " +
+                                                    $"StageIndex:{previousStageIndex}");
                     
                     break;
                 }
                 case "set": //set <property name> <property type> <value>
                 {
-                    if (actionsWords.Length < 4) 
-                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
-                    
-                    var property = game.hero.GetType().GetProperty(actionsWords[1]);
-                    if (property == null)
-                    {
-                        throw new ArgumentException($"There is no property with specified name - {actionsWords[1]}" +
-                                                    $"StageIndex:{previousStageIndex}");
-                    }
-                    if (!property.CanWrite)
-                    {
-                        throw new ArgumentException($"Specified property is readonly - {actionsWords[1]}" +
-                                                    $"StageIndex:{previousStageIndex}");
-                    }
-
-                    string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? lastUserTextInput : actionsWords[3];
-                    try
-                    {
-                        switch (actionsWords[2])
-                        {
-                            case "bool":
-                            {
-                                var value = Boolean.Parse(stringValue);
-                                property.SetValue(game.hero, value);
-                                break;
-                            }
-                            case "string":
-                            {
-                                property.SetValue(game.hero, stringValue);
-                                break;
-                            }
-                            case "int":
-                            {
-                                var value = Int32.Parse(stringValue);
-                                property.SetValue(game.hero, value);
-                                break;
-                            }
-                            case "Race":
-                            {
-                                var value = Enum.Parse<Race>(stringValue);
-                                property.SetValue(game.hero, value);
-                                break;
-                            }
-                            case "Sex":
-                            {
-                                var value = Enum.Parse<Sex>(stringValue);
-                                property.SetValue(game.hero, value);
-                                break;
-                            }
-                            default:
-                                throw new ArgumentException(
-                                    $"Specified property type is not supported - {actionsWords[2]}" +
-                                    $"StageIndex:{previousStageIndex}");
-                        }
-                    }
-                    catch (ArgumentNullException ex)
-                    {
-                        throw new ArgumentException($"Specified value is null" +
-                                                    $"StageIndex:{previousStageIndex}");
-                    }
-                    catch (Exception ex) when (ex is TargetInvocationException || ex is FormatException)
-                    {
-                        if (actionsWords[3].Equals(TEXTBOX_KEYWORD))
-                        {
-                            ChangeStage(previousStageIndex);
-                            MessageBox.Show("Некорректный ввод, попробуйте снова.");
-                        }
-                        else
-                        {
-                            throw new ArgumentException($"Specified value is incorrect - {actionsWords[3]}" +
-                                                        $"StageIndex:{previousStageIndex}");
-                        }
-                    }
-
+                    SetPropertyAction(actionsWords);
                     break;
                 }
                 case "get": //get <artifact class name>
                 {
                     if (actionsWords.Length < 2) 
-                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex: {previousStageIndex}");
+
+                    Artifact artifact = ArtifactFromString(actionsWords[1],
+                        GameUtils.SubArray(actionsWords, 2, actionsWords.Length - 2));
+                    if (artifact != null)
+                        game.hero.PickUpArtifact(artifact);
+                    else
+                        throw new ArgumentException($"Constructed type is not an artifact. StageIndex: {previousStageIndex}");
                     
-                    object createdObject = GetObjectFromString("KashTaskWPF.Artifacts." + actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
-
-                    if (createdObject is Artifact)
-                    {
-                        game.hero.PickUpArtifact(createdObject as Artifact);
-                    }
-
                     break;
                 }
                 case "learn":
                 {
                     if (actionsWords.Length < 2) 
-                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex: {previousStageIndex}");
 
-                    object createdObject = GetObjectFromString("KashTaskWPF.Spells." + actionsWords[1], SubArray(actionsWords, 2, actionsWords.Length - 2));
-
-                    if (createdObject is Spell)
-                    {
-                        game.hero.LearnSpell(createdObject as Spell);
-                    }
+                    Spell spell = SpellFromString(actionsWords[1],
+                        GameUtils.SubArray(actionsWords, 2, actionsWords.Length - 2));
+                    if (spell != null)
+                        game.hero.LearnSpell(spell);
+                    else
+                        throw new ArgumentException($"Constructed type is not a spell. StageIndex: {previousStageIndex}");
                     
                     break;
                 }
@@ -270,13 +196,12 @@ namespace KashTaskWPF.Adapters
                 case "repeat": //метод о выписывании инфы по персонажу выписывает инфу в окно
                 { 
                     ui.ChangeText(ui.MainText.Text + "\n" + game.hero.ToString());
-                    
                     break; 
                 }
                 case "damage": // damage <value>  наносит урон игроку
                 {
                     if (actionsWords.Length < 2) 
-                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex: {previousStageIndex}");
                     
                     if (Int32.TryParse(actionsWords[1], out var amountDamage))
                     {
@@ -288,7 +213,7 @@ namespace KashTaskWPF.Adapters
                 case "getexp": // getexp <value>  дать игроку опыт
                 {
                     if (actionsWords.Length < 2) 
-                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex: {previousStageIndex}");
                     
                     if (Int32.TryParse(actionsWords[1], out var amountExp))
                     {
@@ -297,18 +222,16 @@ namespace KashTaskWPF.Adapters
                     
                     break; 
                 }
-                case "camp": break; // то самое окно, где можно учить спеллы и открыть инвентарь
                 case "compexp": // compexp <win stage id> <lose stage id>  сравнивает экспу игрока и гнома 
                 {
                     //Make compare with number supplied by action?
                     if (actionsWords.Length < 3) 
-                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex:{previousStageIndex}");
+                        throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex: {previousStageIndex}");
                     
                     string stageIndexString = game.hero.CompareTo(game.Gnom) >= 0 ? actionsWords[1] : actionsWords[2];
 
                     if (Int32.TryParse(stageIndexString, out var stageIndex))
                     {
-                        stageIndex -= indexingFix;
                         ChangeStage(stageIndex);    
                     }
                     
@@ -325,36 +248,7 @@ namespace KashTaskWPF.Adapters
             }
         }
 
-        private object GetObjectFromString(string className, string[] parameters)
-        {
-            Type type = Type.GetType(className);
-            if (type == null)
-            {
-                throw new ArgumentException($"Type with specified name wasn't found - {className}. " +
-                                                 $"StageIndex:{previousStageIndex}");
-            }
-                    
-            object createdObject = null;
-            try
-            {
-                if (parameters.Length > 0)
-                {
-                    createdObject = Activator.CreateInstance(type, new object[] {Int32.Parse(parameters[0])});
-                }
-                else
-                {
-                    createdObject = Activator.CreateInstance(type);
-                }
-            }
-            catch (Exception e)
-            {
-                throw new ArgumentException($"Cannot construct specified type - {className}. " +
-                                            $"Parameters: {parameters}. " +
-                                            $"StageIndex: {previousStageIndex}");
-            }
-
-            return createdObject;
-        }
+        
 
         public void EndFight(FightResult result)
         {
@@ -394,15 +288,15 @@ namespace KashTaskWPF.Adapters
             
             game.hero.StatesDynamic.Clear();
             game.hero.ActionsOnStep = null;
-            ui.EndFight(result);
+            ui.HideFightInfo();
             ChangeStage(stageIndex);
             ui.ChangeAdapter(this);
 
         }
 
-        private void EndGame() //TODO:
+        private void EndGame()
         {
-            
+            MessageBox.Show("Спасибо, что прошли нашу игру до конца. Хорошего дня :)");
         }
 
         private Stage GetCurrentStage()
@@ -414,29 +308,218 @@ namespace KashTaskWPF.Adapters
 
             return null;
         }
-            
+
+        private void SetPropertyAction(string[] actionsWords)
+        {
+            if (actionsWords.Length < 4) 
+                throw new ArgumentException($"Not enough parameters for set action. StageIndex:{previousStageIndex}");
+                    
+            var property = game.hero.GetType().GetProperty(actionsWords[1]);
+            if (property == null)
+            {
+                throw new ArgumentException($"There is no property with specified name - {actionsWords[1]}" +
+                                            $"StageIndex:{previousStageIndex}");
+            }
+            if (!property.CanWrite)
+            {
+                throw new ArgumentException($"Specified property is readonly - {actionsWords[1]}" +
+                                            $"StageIndex:{previousStageIndex}");
+            }
+
+            string stringValue = actionsWords[3].Equals("<TEXTBOX>") ? lastUserTextInput : actionsWords[3];
+            try
+            {
+                switch (actionsWords[2])
+                {
+                    case "bool":
+                    {
+                        var value = Boolean.Parse(stringValue);
+                        property.SetValue(game.hero, value);
+                        break;
+                    }
+                    case "string":
+                    {
+                        property.SetValue(game.hero, stringValue);
+                        break;
+                    }
+                    case "int":
+                    {
+                        var value = Int32.Parse(stringValue);
+                        property.SetValue(game.hero, value);
+                        break;
+                    }
+                    case "Race":
+                    {
+                        var value = Enum.Parse<Race>(stringValue);
+                        property.SetValue(game.hero, value);
+                        break;
+                    }
+                    case "Sex":
+                    {
+                        var value = Enum.Parse<Sex>(stringValue);
+                        property.SetValue(game.hero, value);
+                        break;
+                    }
+                    default:
+                        throw new ArgumentException(
+                            $"Specified property type is not supported - {actionsWords[2]}" +
+                            $"StageIndex:{previousStageIndex}");
+                }
+            }
+            catch (ArgumentNullException ex)
+            {
+                throw new ArgumentException($"Specified value is null" +
+                                            $"StageIndex:{previousStageIndex}");
+            }
+            catch (Exception ex) when (ex is TargetInvocationException || ex is FormatException)
+            {
+                if (actionsWords[3].Equals(TEXTBOX_KEYWORD))
+                {
+                    ChangeStage(previousStageIndex);
+                    MessageBox.Show("Некорректный ввод, попробуйте снова.");
+                }
+                else
+                {
+                    throw new ArgumentException($"Specified value is incorrect - {actionsWords[3]}" +
+                                                $"StageIndex:{previousStageIndex}");
+                }
+            }
+        }
+
+        private Artifact ArtifactFromString(string artifactName, string[] parameters)
+        {
+            object createdObject = GameUtils.GetObjectFromString("KashTaskWPF.Artifacts." + artifactName, parameters);
+
+            if (createdObject is Artifact artifact)
+                return artifact;
+
+            return null;
+        }
+        
+        private Spell SpellFromString(string spellName, string[] parameters)
+        {
+            object createdObject = GameUtils.GetObjectFromString("KashTaskWPF.Spells." + spellName, parameters);
+
+            if (createdObject is Spell spell)
+                return spell;
+
+            return null;
+        }
+
         private List<Stage> JsonInit(string filename)
         {
-            var reader = new StreamReader(filename);
-            var jsonString = reader.ReadToEnd();
-            reader.Close();
-            var deserialize = JsonSerializer.Deserialize<List<Stage>>(jsonString);
+            List<Stage> deserialize = null;
+            if (File.Exists(filename))
+            {
+                var reader = new StreamReader(filename);
+                var jsonString = reader.ReadToEnd();
+                reader.Close();
+                deserialize = JsonSerializer.Deserialize<List<Stage>>(jsonString);
+            }
+            else
+            {
+                MessageBox.Show("Файл сюжета не наден. Пожалуйста, убедитесь что в папке Resources находится game.json.");
+                throw new FileNotFoundException($"There is no file with specified name - {filename}.");
+            }
 
             return deserialize;
         }
-        
-        private static T[] SubArray<T>(T[] array, int offset, int length)
+
+        private FightPlan JsonParseFight(string filename)
         {
-            T[] result = new T[length];
-            Array.Copy(array, offset, result, 0, length);
-            return result;
+            FightPlan fightPlan = new FightPlan();
+            
+            var reader = new StreamReader(filename);
+            var jsonString = reader.ReadToEnd();
+            reader.Close();
+            var jsonDocument = JsonDocument.Parse(jsonString);
+            
+            var root = jsonDocument.RootElement;
+            if (root.TryGetProperty("EnemyCharacters", out var enemies))
+            {
+                foreach (JsonElement element in enemies.EnumerateArray())
+                {
+                    var character = JsonParseCharacter(element);
+                    fightPlan.EnemyList.Add(character);
+                }
+            }
+            
+            if (root.TryGetProperty("EnemyMagicians", out var enemiesM))
+            {
+                foreach (JsonElement element in enemies.EnumerateArray())
+                {
+                    var character = JsonParseCharacter(element);
+                    //Mandatory part
+                    double maxMana = element.GetProperty("MaxMana").GetDouble();
+
+                    Magician magician = new Magician(character, maxMana);
+                    
+                    //Spells optional part
+                    if (element.TryGetProperty("Spells", out var propSpells))
+                    {
+                        foreach (var spellElement in propSpells.EnumerateArray())
+                        {
+                            var spellStringArray = spellElement.GetString().Split(' ');
+                            Spell spell = SpellFromString(spellStringArray[0], GameUtils.SubArray(spellStringArray, 1, spellStringArray.Length - 1) );
+                            if (spell != null)
+                                magician.LearnSpell(spell);
+                            else
+                                throw new ArgumentException($"Constructed type is not a spell.");
+                        }
+                    }
+                    fightPlan.EnemyList.Add(character);
+                }
+            }
+            
+            return fightPlan;
+        }
+
+        private Character JsonParseCharacter(JsonElement characterElement)
+        {
+            //Mandatory part
+            string name = characterElement.GetProperty("Name").GetString();
+            Race race = Enum.Parse<Race>(characterElement.GetProperty("Race").GetString());
+            Sex sex = Enum.Parse<Sex>(characterElement.GetProperty("Sex").GetString());
+                    
+            //Optional part
+            int age = 1;
+            int maxHealth = 100;
+            int experience = 0;
+            if (characterElement.TryGetProperty("Age", out var propAge))
+            {
+                age = propAge.GetInt32();
+            }
+            if (characterElement.TryGetProperty("MaxHealth", out var propMaxHealth))
+            {
+                maxHealth = propMaxHealth.GetInt32();
+            }
+            if (characterElement.TryGetProperty("Experience", out var propExp))
+            {
+                experience = propExp.GetInt32();
+            }
+
+            Character character = new Character(name, race, sex, age, maxHealth, experience);
+                    
+            //Inventory optional part
+            if (characterElement.TryGetProperty("Inventory", out var propInventory))
+            {
+                foreach (var itemElement in propInventory.EnumerateArray())
+                {
+                    var itemStringArray = itemElement.GetString().Split(' ');
+                    Artifact artifact = ArtifactFromString(itemStringArray[0], GameUtils.SubArray(itemStringArray, 1, itemStringArray.Length - 1) );
+                    if (artifact != null)
+                        character.PickUpArtifact(artifact);
+                    else
+                        throw new ArgumentException($"Constructed type is not an artifact.");
+                }
+            }
+
+            return character;
         }
         
         public class Stage
         {
-            public Stage()
-            {
-            }
+            public Stage() { }
         
             public int ID { get; set; }
             public string Text { get; set; }

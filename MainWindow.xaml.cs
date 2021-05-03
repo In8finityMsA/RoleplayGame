@@ -23,21 +23,16 @@ namespace KashTaskWPF
     public partial class MainWindow : Window
     {
         IAdapter adapter;
-
-        public static MainWindow mainwindow;
         private int numberOfButtons;
 
         public MainWindow()
         {
             InitializeComponent();
-            mainwindow = this;
+
             numberOfButtons = AnswerPanel.Children.Count;
             adapter = new Stager(this);
 
-            EnemyTextBorder.Visibility = Visibility.Collapsed;
-            HeroTextBorder.Visibility = Visibility.Collapsed;
-            EnemyLabel.Visibility = Visibility.Collapsed;
-            HeroLabel.Visibility = Visibility.Collapsed;
+            HideFightInfo();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -119,7 +114,7 @@ namespace KashTaskWPF
             MainImage.Source = new BitmapImage(new Uri(@source, UriKind.Relative));
         }
         
-        public void StartFight()
+        public void ShowFightInfo()
         {
             EnemyTextBorder.Visibility = Visibility.Visible;
             HeroTextBorder.Visibility = Visibility.Visible;
@@ -127,7 +122,7 @@ namespace KashTaskWPF
             HeroLabel.Visibility = Visibility.Visible;
         }
         
-        public void EndFight(FightResult result)
+        public void HideFightInfo()
         {
             EnemyLabel.Visibility = Visibility.Collapsed;
             HeroLabel.Visibility = Visibility.Collapsed;
