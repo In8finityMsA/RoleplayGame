@@ -25,11 +25,12 @@ namespace KashTaskWPF.Adapters
         private int fightNegotiatedStage;
 
         private string lastUserTextInput;
-
-        public Game game;
+        
+        internal Magician hero;
         internal MainWindow ui;
-        private const string FILENAME = @"Resources/game.json";
-        //private const byte indexingFix = 0; //To comply with 0 indexing
+        private const string FILENAME_PLOT = FOLDER_RESOURCES + "game.json";
+        private const string FILENAME_HERO = FOLDER_RESOURCES + "hero.json";
+        private const string FOLDER_RESOURCES = @"Resources/";
         private const string TEXTBOX_KEYWORD = "<TEXTBOX>"; //Magic word from json for displaying textbox instead of buttons
 
         //Fight result messages
@@ -38,15 +39,24 @@ namespace KashTaskWPF.Adapters
         private const string DIED_MESSAGE = "Вы погибли... Не расстраивайтесь, попробуйте снова :)";
         private const string NEGOTIATED_MESSAGE = "Зачем махать кулаками, если можно поговорить.";
 
+        //Abnoraml sutuations
+        private const string FILE_PLOT_NOT_FOUND =
+            "Файл сюжета не наден. Пожалуйста, убедитесь что в папке Resources находится game.json.";
+        private const string FILE_RESOURCE_NOT_FOUND = "Файл ресурса не наден. " + 
+        "Пожалуйста, убедитесь что в папке с программой существует папка Resources и в ней есть все необходимые файлы.";
+        private const string INVALID_INPUT = "Некорректный ввод. Попробуйте снова.";
+
         private const string NEXT_MESSAGE = "Далее";
+        private const string END_GAME = "Спасибо, что прошли нашу игру до конца. Хорошего дня :)";
         public Stager(MainWindow window)
         {
             ui = window;
-            stages = JsonInit(FILENAME);
+            stages = JsonInit(FILENAME_PLOT);
 
             currentStageIndex = 0;
             DisplayStage(GetCurrentStage());
-            game = new Game();
+            var jsonDocument = JsonDocumentFromFile(FILENAME_HERO);
+            hero = JsonParseMagician(jsonDocument.RootElement);
         }
 
         public void GetInput(int index)
@@ -92,7 +102,8 @@ namespace KashTaskWPF.Adapters
             if (stage != null)
             {
                 if (stage.Text != null) ui.ChangeText(stage.Text);
-                if (stage.Image != null) ui.ChangeImage("Resources\\" + stage.Image);
+                if (stage.Image != null) ChangeImage(FOLDER_RESOURCES + stage.Image);
+                
                 if (stage.Answers.Count >= 1 && stage.Answers[0].Equals(TEXTBOX_KEYWORD))
                 {
                     ui.ChangeNumberOfButtons(1);
@@ -114,6 +125,17 @@ namespace KashTaskWPF.Adapters
             }
         }
 
+        private void ChangeImage(string filename)
+        {
+            if (!File.Exists(filename))
+            {
+                MessageBox.Show(FILE_RESOURCE_NOT_FOUND);
+                throw new FileNotFoundException($"There is no file with specified name - {filename}.");
+            }
+            
+            ui.ChangeImage(filename);
+        }
+
         private void DoAction(string actionName)
         {
             actionName = actionName.Trim();
@@ -122,22 +144,21 @@ namespace KashTaskWPF.Adapters
             Console.WriteLine(command);
             switch (command)
             {
-                case "fight": //fight <fightplan index> <image> <won stage id> <died stage id> <ran stage id> <negotiated stage id>
+                case "fight": //fight <fightplan filename> <image> <won stage id> <died stage id> <ran stage id> <negotiated stage id>
                 {
-                    heroSave = new Magician(game.hero); //saves hero to restore if died
+                    heroSave = new Magician(hero); //saves hero to restore if died
                     if (actionsWords.Length < 6) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex: {previousStageIndex}");
                     
-                    if (Int32.TryParse(actionsWords[1], out var fightPlanIndex) &&
-                        fightPlanIndex < game.fightPlans.Count)
+                    if (File.Exists(FOLDER_RESOURCES + actionsWords[1]))
                     {
-                        Fighter fighter = new Fighter(this, game.fightPlans[fightPlanIndex]);
-                        JsonParseFight("Resources\\fight1.json");
+                        var plan = JsonParseFight(FOLDER_RESOURCES + actionsWords[1]);
+                        Fighter fighter = new Fighter(this, plan);
                         ui.ShowFightInfo();
                         ui.ChangeAdapter(fighter);
-                        ui.ChangeImage("Resources\\" + actionsWords[2]);
+                        ChangeImage(FOLDER_RESOURCES + actionsWords[2]);
                     }
-                    else throw new ArgumentException($"There is no fight plan with specified index - {actionsWords[1]}" +
+                    else throw new ArgumentException($"There is no fight plan with specified filename - {actionsWords[1]}" +
                                                      $"Stage: {previousStageIndex}");
                     
                     if (Int32.TryParse(actionsWords[3], out fightWonStage) &&
@@ -172,7 +193,7 @@ namespace KashTaskWPF.Adapters
                     Artifact artifact = ArtifactFromString(actionsWords[1],
                         GameUtils.SubArray(actionsWords, 2, actionsWords.Length - 2));
                     if (artifact != null)
-                        game.hero.PickUpArtifact(artifact);
+                        hero.PickUpArtifact(artifact);
                     else
                         throw new ArgumentException($"Constructed type is not an artifact. StageIndex: {previousStageIndex}");
                     
@@ -186,7 +207,7 @@ namespace KashTaskWPF.Adapters
                     Spell spell = SpellFromString(actionsWords[1],
                         GameUtils.SubArray(actionsWords, 2, actionsWords.Length - 2));
                     if (spell != null)
-                        game.hero.LearnSpell(spell);
+                        hero.LearnSpell(spell);
                     else
                         throw new ArgumentException($"Constructed type is not a spell. StageIndex: {previousStageIndex}");
                     
@@ -195,7 +216,7 @@ namespace KashTaskWPF.Adapters
                 case "info":
                 case "repeat": //метод о выписывании инфы по персонажу выписывает инфу в окно
                 { 
-                    ui.ChangeText(ui.MainText.Text + "\n" + game.hero.ToString());
+                    ui.ChangeText(ui.MainText.Text + "\n" + hero.ToString());
                     break; 
                 }
                 case "damage": // damage <value>  наносит урон игроку
@@ -205,7 +226,7 @@ namespace KashTaskWPF.Adapters
                     
                     if (Int32.TryParse(actionsWords[1], out var amountDamage))
                     {
-                        game.hero.Health -= amountDamage;
+                        hero.Health -= amountDamage;
                     }
                     
                     break; 
@@ -217,23 +238,27 @@ namespace KashTaskWPF.Adapters
                     
                     if (Int32.TryParse(actionsWords[1], out var amountExp))
                     {
-                        game.hero.Experience += amountExp;
+                        hero.Experience += amountExp;
                     }
                     
                     break; 
                 }
-                case "compexp": // compexp <win stage id> <lose stage id>  сравнивает экспу игрока и гнома 
+                case "compexp": // compexp <character filename> <win stage id> <lose stage id>  сравнивает экспу игрока и гнома 
                 {
                     //Make compare with number supplied by action?
-                    if (actionsWords.Length < 3) 
+                    if (actionsWords.Length < 4) 
                         throw new ArgumentException($"Not enough parameters for {actionName} action. StageIndex: {previousStageIndex}");
-                    
-                    string stageIndexString = game.hero.CompareTo(game.Gnom) >= 0 ? actionsWords[1] : actionsWords[2];
+
+                    var jsonDocument = JsonDocumentFromFile(FOLDER_RESOURCES + actionsWords[1]);
+                    Character characterToCompare = JsonParseCharacter(jsonDocument.RootElement);
+                    string stageIndexString = hero.CompareTo(characterToCompare) >= 0 ? actionsWords[2] : actionsWords[3];
 
                     if (Int32.TryParse(stageIndexString, out var stageIndex))
                     {
-                        ChangeStage(stageIndex);    
+                        ChangeStage(stageIndex);
                     }
+                    else
+                        throw new ArgumentException($"Specified stage id is not a number - {actionsWords[2]}, {actionsWords[3]}");
                     
                     break; 
                 }
@@ -247,9 +272,7 @@ namespace KashTaskWPF.Adapters
                                                 $"StageIndex:{previousStageIndex}");
             }
         }
-
         
-
         public void EndFight(FightResult result)
         {
             int stageIndex = 0;
@@ -264,7 +287,7 @@ namespace KashTaskWPF.Adapters
                 case FightResult.DIED:
                 {
                     MessageBox.Show(DIED_MESSAGE);
-                    game.hero = heroSave;
+                    hero = heroSave;
                     stageIndex = fightDiedStage;
                     break;
                 }
@@ -286,8 +309,8 @@ namespace KashTaskWPF.Adapters
                 }
             }
             
-            game.hero.StatesDynamic.Clear();
-            game.hero.ActionsOnStep = null;
+            hero.StatesDynamic.Clear();
+            hero.ActionsOnStep = null;
             ui.HideFightInfo();
             ChangeStage(stageIndex);
             ui.ChangeAdapter(this);
@@ -296,7 +319,7 @@ namespace KashTaskWPF.Adapters
 
         private void EndGame()
         {
-            MessageBox.Show("Спасибо, что прошли нашу игру до конца. Хорошего дня :)");
+            MessageBox.Show(END_GAME);
         }
 
         private Stage GetCurrentStage()
@@ -314,7 +337,7 @@ namespace KashTaskWPF.Adapters
             if (actionsWords.Length < 4) 
                 throw new ArgumentException($"Not enough parameters for set action. StageIndex:{previousStageIndex}");
                     
-            var property = game.hero.GetType().GetProperty(actionsWords[1]);
+            var property = hero.GetType().GetProperty(actionsWords[1]);
             if (property == null)
             {
                 throw new ArgumentException($"There is no property with specified name - {actionsWords[1]}" +
@@ -334,30 +357,30 @@ namespace KashTaskWPF.Adapters
                     case "bool":
                     {
                         var value = Boolean.Parse(stringValue);
-                        property.SetValue(game.hero, value);
+                        property.SetValue(hero, value);
                         break;
                     }
                     case "string":
                     {
-                        property.SetValue(game.hero, stringValue);
+                        property.SetValue(hero, stringValue);
                         break;
                     }
                     case "int":
                     {
                         var value = Int32.Parse(stringValue);
-                        property.SetValue(game.hero, value);
+                        property.SetValue(hero, value);
                         break;
                     }
                     case "Race":
                     {
                         var value = Enum.Parse<Race>(stringValue);
-                        property.SetValue(game.hero, value);
+                        property.SetValue(hero, value);
                         break;
                     }
                     case "Sex":
                     {
                         var value = Enum.Parse<Sex>(stringValue);
-                        property.SetValue(game.hero, value);
+                        property.SetValue(hero, value);
                         break;
                     }
                     default:
@@ -366,7 +389,7 @@ namespace KashTaskWPF.Adapters
                             $"StageIndex:{previousStageIndex}");
                 }
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
                 throw new ArgumentException($"Specified value is null" +
                                             $"StageIndex:{previousStageIndex}");
@@ -376,7 +399,7 @@ namespace KashTaskWPF.Adapters
                 if (actionsWords[3].Equals(TEXTBOX_KEYWORD))
                 {
                     ChangeStage(previousStageIndex);
-                    MessageBox.Show("Некорректный ввод, попробуйте снова.");
+                    MessageBox.Show(INVALID_INPUT);
                 }
                 else
                 {
@@ -409,31 +432,39 @@ namespace KashTaskWPF.Adapters
         private List<Stage> JsonInit(string filename)
         {
             List<Stage> deserialize = null;
-            if (File.Exists(filename))
+            if (!File.Exists(filename))
             {
-                var reader = new StreamReader(filename);
-                var jsonString = reader.ReadToEnd();
-                reader.Close();
-                deserialize = JsonSerializer.Deserialize<List<Stage>>(jsonString);
-            }
-            else
-            {
-                MessageBox.Show("Файл сюжета не наден. Пожалуйста, убедитесь что в папке Resources находится game.json.");
+                MessageBox.Show(FILE_PLOT_NOT_FOUND);
                 throw new FileNotFoundException($"There is no file with specified name - {filename}.");
             }
 
+            var reader = new StreamReader(filename);
+            var jsonString = reader.ReadToEnd();
+            reader.Close();
+            deserialize = JsonSerializer.Deserialize<List<Stage>>(jsonString);
+            
             return deserialize;
+        }
+
+        private JsonDocument JsonDocumentFromFile(string filename)
+        {
+            if (!File.Exists(filename))
+            {
+                MessageBox.Show(FILE_RESOURCE_NOT_FOUND);
+                throw new FileNotFoundException($"There is no file with specified name - {filename}.");
+            }
+            
+            var reader = new StreamReader(filename);
+            var jsonString = reader.ReadToEnd();
+            reader.Close();
+            return JsonDocument.Parse(jsonString);
         }
 
         private FightPlan JsonParseFight(string filename)
         {
             FightPlan fightPlan = new FightPlan();
             
-            var reader = new StreamReader(filename);
-            var jsonString = reader.ReadToEnd();
-            reader.Close();
-            var jsonDocument = JsonDocument.Parse(jsonString);
-            
+            var jsonDocument = JsonDocumentFromFile(filename);
             var root = jsonDocument.RootElement;
             if (root.TryGetProperty("EnemyCharacters", out var enemies))
             {
@@ -446,29 +477,38 @@ namespace KashTaskWPF.Adapters
             
             if (root.TryGetProperty("EnemyMagicians", out var enemiesM))
             {
-                foreach (JsonElement element in enemies.EnumerateArray())
+                foreach (JsonElement element in enemiesM.EnumerateArray())
                 {
-                    var character = JsonParseCharacter(element);
-                    //Mandatory part
-                    double maxMana = element.GetProperty("MaxMana").GetDouble();
-
-                    Magician magician = new Magician(character, maxMana);
-                    
-                    //Spells optional part
-                    if (element.TryGetProperty("Spells", out var propSpells))
-                    {
-                        foreach (var spellElement in propSpells.EnumerateArray())
-                        {
-                            var spellStringArray = spellElement.GetString().Split(' ');
-                            Spell spell = SpellFromString(spellStringArray[0], GameUtils.SubArray(spellStringArray, 1, spellStringArray.Length - 1) );
-                            if (spell != null)
-                                magician.LearnSpell(spell);
-                            else
-                                throw new ArgumentException($"Constructed type is not a spell.");
-                        }
-                    }
-                    fightPlan.EnemyList.Add(character);
+                    var magician = JsonParseMagician(element);
+                    fightPlan.EnemyList.Add(magician);
                 }
+            }
+
+            if (root.TryGetProperty("EnemyWords", out var enemyWordsElement))
+            {
+                foreach (var word in enemyWordsElement.EnumerateArray())
+                {
+                    fightPlan.enemiesWord.Add(word.GetString());
+                }
+            }
+            
+            if (root.TryGetProperty("HeroWords", out var heroWordsElement))
+            {
+                foreach (var wordArray in heroWordsElement.EnumerateArray())
+                {
+                    List<string> list = new List<string>();
+                    foreach (var word in wordArray.EnumerateArray())
+                    {
+                        list.Add(word.GetString());
+                    }
+
+                    fightPlan.yourWord.Add(list);
+                }
+            }
+
+            if (root.TryGetProperty("EXP", out var exp))
+            {
+                fightPlan.EXP = exp.GetInt32();
             }
             
             return fightPlan;
@@ -482,23 +522,28 @@ namespace KashTaskWPF.Adapters
             Sex sex = Enum.Parse<Sex>(characterElement.GetProperty("Sex").GetString());
                     
             //Optional part
-            int age = 1;
-            int maxHealth = 100;
-            int experience = 0;
+            int age = Character.DEFAULT_AGE;
+            double maxHealth = Character.DEFAULT_MAXHEALTH;
+            int experience = Character.DEFAULT_EXPERIENCE;
+            double hitPower = Character.DEFAULT_HITPOWER;
             if (characterElement.TryGetProperty("Age", out var propAge))
             {
                 age = propAge.GetInt32();
             }
             if (characterElement.TryGetProperty("MaxHealth", out var propMaxHealth))
             {
-                maxHealth = propMaxHealth.GetInt32();
+                maxHealth = propMaxHealth.GetDouble();
             }
             if (characterElement.TryGetProperty("Experience", out var propExp))
             {
                 experience = propExp.GetInt32();
             }
+            if (characterElement.TryGetProperty("HitPower", out var propHitPower))
+            {
+                hitPower = propHitPower.GetDouble();
+            }
 
-            Character character = new Character(name, race, sex, age, maxHealth, experience);
+            Character character = new Character(name, race, sex, age, maxHealth, experience, hitPower);
                     
             //Inventory optional part
             if (characterElement.TryGetProperty("Inventory", out var propInventory))
@@ -516,6 +561,31 @@ namespace KashTaskWPF.Adapters
 
             return character;
         }
+
+        private Magician JsonParseMagician(JsonElement magicianElement)
+        {
+            var character = JsonParseCharacter(magicianElement);
+            //Mandatory part
+            double maxMana = magicianElement.GetProperty("MaxMana").GetDouble();
+
+            Magician magician = new Magician(character, maxMana);
+                    
+            //Spells optional part
+            if (magicianElement.TryGetProperty("Spells", out var propSpells))
+            {
+                foreach (var spellElement in propSpells.EnumerateArray())
+                {
+                    var spellStringArray = spellElement.GetString().Split(' ');
+                    Spell spell = SpellFromString(spellStringArray[0], GameUtils.SubArray(spellStringArray, 1, spellStringArray.Length - 1) );
+                    if (spell != null)
+                        magician.LearnSpell(spell);
+                    else
+                        throw new ArgumentException($"Constructed type is not a spell.");
+                }
+            }
+
+            return magician;
+        }
         
         public class Stage
         {
@@ -525,7 +595,6 @@ namespace KashTaskWPF.Adapters
             public string Text { get; set; }
             public List<string> Answers { get; set; }
             public Dictionary<string, List<string>> Actions { get; set; }
-            
             public string Image { get; set; }
             public List<int> Next { get; set; }
         }

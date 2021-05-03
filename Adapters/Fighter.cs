@@ -119,20 +119,20 @@ namespace KashTaskWPF.Adapters
             this.plan = plan;
             this.ui = parent.ui;
             
-            spells = ((Magician)parent.game.hero).Spells.ToList<KeyValuePair<Type, Spell>>();
-            artifacts = parent.game.hero.Inventory;
+            spells = ((Magician)parent.hero).Spells.ToList<KeyValuePair<Type, Spell>>();
+            artifacts = parent.hero.Inventory;
 
             answers = plan.yourWord;
             words = plan.enemiesWord;
             enemiesPlusHero = plan.EnemyList;
 
-            enemiesPlusHero.Add(parent.game.hero);
+            enemiesPlusHero.Add(parent.hero);
 
             //for ui
             ui.InfoAboutCurrentConditions(CHOOSEACTION);
             ui.GetInfo(StandartList, StandartList.Count);
             ui.GetInfoEnemies(enemiesPlusHero);
-            ui.GetInfoCharacter(parent.game.hero);
+            ui.GetInfoCharacter(parent.hero);
 
             //for event
             SubscribeAllCharactersToStepHappend();         
@@ -162,7 +162,7 @@ namespace KashTaskWPF.Adapters
 
         public List<string> ArtifactNamesToList()
         {
-            artifacts = parent.game.hero.Inventory;
+            artifacts = parent.hero.Inventory;
             List<string> artifactNames = new List<string>();
             for (int i = 0; i < artifacts.Count; i++)
             {
@@ -193,7 +193,7 @@ namespace KashTaskWPF.Adapters
                 {
                     case 1: //HIT
                         {
-                            if (parent.game.hero.CanMoveNow)
+                            if (parent.hero.CanMoveNow)
                             {
                                 if (enemiesPlusHero.Count > 1)
                                 {
@@ -204,7 +204,7 @@ namespace KashTaskWPF.Adapters
                                 }
                                 else if (enemiesPlusHero.Count == 1)
                                 {
-                                    parent.game.hero.Experience += plan.EXP;
+                                    parent.hero.Experience += plan.EXP;
                                     parent.EndFight(FightResult.WON);
                                 }
                             }
@@ -219,7 +219,7 @@ namespace KashTaskWPF.Adapters
                         {                   
                             if (spells.Count >= 1)
                             {                               
-                                if (parent.game.hero.Mana > 0)
+                                if (parent.hero.Mana > 0)
                                 {                            
                                     chooseParams = FightStatus.ChooseSpell;
                                     RememberToComeBack();
@@ -263,7 +263,7 @@ namespace KashTaskWPF.Adapters
                                 chooseParams = FightStatus.ChooseAction;
                                 DrawSpecificSituation(NOWORDS + '\n' + CHOOSEACTION, StandartList);                                                             
                             }
-                            else if (parent.game.hero.CanSpeakNow == false)
+                            else if (parent.hero.CanSpeakNow == false)
                             {
                                 chooseParams = FightStatus.ChooseAction;
                                 DrawSpecificSituation(YOUCANNOTSPEAK + '\n' + CHOOSEACTION, StandartList);
@@ -312,7 +312,7 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (enemiesPlusHero.Count == 1)
                     {
-                        parent.game.hero.Experience += plan.EXP;
+                        parent.hero.Experience += plan.EXP;
                         parent.EndFight(FightResult.WON);
                     }
                 }
@@ -348,7 +348,7 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (enemiesPlusHero.Count == 1)
                     {
-                        parent.game.hero.Experience += plan.EXP;
+                        parent.hero.Experience += plan.EXP;
                         parent.EndFight(FightResult.WON);
                     }
                 }
@@ -359,7 +359,7 @@ namespace KashTaskWPF.Adapters
 
                 if (whatNow == FightAction.HIT)
                 {
-                    parent.game.hero.Hit(target);
+                    parent.hero.Hit(target);
 
                     ActionsInArtifactAndSpellAndHit();
                 }
@@ -369,7 +369,7 @@ namespace KashTaskWPF.Adapters
                     {
                         try
                         {
-                            ((Magician)parent.game.hero).UseSpell(spell, target, power);
+                            ((Magician)parent.hero).UseSpell(spell, target, power);
 
                             ActionsInArtifactAndSpellAndHit();
                         }
@@ -390,7 +390,7 @@ namespace KashTaskWPF.Adapters
                     {
                         try
                         {
-                            ((Magician)parent.game.hero).UseSpell(spell, target);
+                            ((Magician)parent.hero).UseSpell(spell, target);
 
                             ActionsInArtifactAndSpellAndHit();
                         }
@@ -410,13 +410,13 @@ namespace KashTaskWPF.Adapters
                 {
                     if (artifact is IMagicPowered)
                     {
-                        parent.game.hero.UseArtifact((PoweredRenewableArtifact)artifact, target, power);
+                        parent.hero.UseArtifact((PoweredRenewableArtifact)artifact, target, power);
 
                         ActionsInArtifactAndSpellAndHit();
                     }
                     else
                     {
-                        parent.game.hero.UseArtifact(artifact, target);
+                        parent.hero.UseArtifact(artifact, target);
 
                         ActionsInArtifactAndSpellAndHit();
                     }
@@ -488,7 +488,7 @@ namespace KashTaskWPF.Adapters
                     }
                     else if (enemiesPlusHero.Count == 1)
                     {
-                        parent.game.hero.Experience += plan.EXP;
+                        parent.hero.Experience += plan.EXP;
                         parent.EndFight(FightResult.WON);
                     }
                 }
@@ -501,9 +501,9 @@ namespace KashTaskWPF.Adapters
 
         private bool HeroAliveCheck()
         {
-            if (parent.game.hero.StateHealth == StateHealth.DEAD)
+            if (parent.hero.StateHealth == StateHealth.DEAD)
             {
-                enemiesPlusHero.Remove(parent.game.hero);
+                enemiesPlusHero.Remove(parent.hero);
                 parent.EndFight(FightResult.DIED);
                 return false;
             }
@@ -515,7 +515,7 @@ namespace KashTaskWPF.Adapters
         {
             if (target.StateHealth == StateHealth.DEAD)
             {
-                if (target == parent.game.hero)
+                if (target == parent.hero)
                 {
                     HeroAliveCheck();
                 }
@@ -527,7 +527,7 @@ namespace KashTaskWPF.Adapters
                     //tell UI about murder?
                     if (enemiesPlusHero.Count == 1)
                     {
-                        parent.game.hero.Experience += plan.EXP;
+                        parent.hero.Experience += plan.EXP;
                         parent.EndFight(FightResult.WON);
                         return false;
                     }
@@ -637,7 +637,7 @@ namespace KashTaskWPF.Adapters
         
         private void InfoAboutPeople()
         {
-            ui.GetInfoCharacter(parent.game.hero);
+            ui.GetInfoCharacter(parent.hero);
             ui.GetInfoEnemies(enemiesPlusHero);
         }
 
@@ -657,14 +657,14 @@ namespace KashTaskWPF.Adapters
             {
                 art = whoIsOnDuty.Inventory[rnd.Next(0, whoIsOnDuty.Inventory.Count)];
 
-                whoIsOnDuty.UseArtifact(art, parent.game.hero);
+                whoIsOnDuty.UseArtifact(art, parent.hero);
 
                 ABOUTENEMYPUNCHES = THEYUSEDARTIFACT + " " + art.NAME + '\n' + WHOHITED + " " + whoIsOnDuty.Name + '\n';
             }
             else
             {
-                whoIsOnDuty.Hit(parent.game.hero);
-                if (!parent.game.hero.StatesDynamic.ContainsKey(State.ARMOR))
+                whoIsOnDuty.Hit(parent.hero);
+                if (!parent.hero.StatesDynamic.ContainsKey(State.ARMOR))
                 {
                     ABOUTENEMYPUNCHES = THEYMANAGEDTOHIT + '\n' + YOULOSTHEALTHPOINTS + " " + whoIsOnDuty.HitPower + '\n' +  WHOHITED + " " + whoIsOnDuty.Name + '\n';
                 }

@@ -1,0 +1,8 @@
+﻿{
+  "Name": "Me",
+  "Race": "HUMAN",
+  "Sex": "MALE",
+  "HitPower": 15,
+  "MaxHealth": 90,
+  "MaxMana": 100
+}

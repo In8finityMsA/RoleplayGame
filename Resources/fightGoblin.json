@@ -1,0 +1,24 @@
+﻿{
+  "EnemyMagicians" : [],
+  "EnemyCharacters" : [
+    {
+      "Name": "Особенно Наглый Гоблин",
+      "Race": "GOBLIN",
+      "Sex": "MALE",
+      "Age": 200,
+      "MaxHealth": 45,
+      "Experience": 300,
+      "HitPower": 15,
+      "Inventory": []
+    }
+  ],
+  "EnemyWords": [
+    "Пацаны, смарите, йюху-ху, #@*%!",
+    "#@*%%и #@*##a!"
+  ],
+  "HeroWords": [
+    ["Ну ты и дикий!"],
+    ["..." ]
+  ],
+  "EXP": 300
+}

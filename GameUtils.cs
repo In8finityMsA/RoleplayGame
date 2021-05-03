@@ -31,7 +31,7 @@ namespace KashTaskWPF
                     createdObject = Activator.CreateInstance(type);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new ArgumentException($"Cannot construct specified type - {className}. " +
                                             $"Parameters: {parameters}.");

@@ -1,0 +1,9 @@
+﻿{
+  "Name": "Дварфыч",
+  "Race": "GNOME",
+  "Sex": "MALE",
+  "Age": 300,
+  "MaxHealth": 50,
+  "Experience": 250,
+  "Inventory": [ "Thunder 25", "VasiliskEye" ]
+}

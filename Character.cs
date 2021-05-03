@@ -49,21 +49,18 @@ namespace KashTaskWPF
 
         private double maxHealth;
         private int experience;
+        private double hitPower;
 
         private bool canSpeakNow = true;
         private bool canMoveNow = true;
 
-        public readonly double HitPower = 15;
-
-
-
         private readonly List<Artifact> inventory = new List<Artifact>();
-
-        public Character(string name, Race race, Sex sex, int age) : this(name, race, sex, age, 100, 0) { }
-
-        public Character(string name, Race race, Sex sex, int age, double maxHealth) : this(name, race, sex, age, maxHealth, 0) { }
-
-        public Character(string name, Race race, Sex sex, int age = 1, double maxHealth = 100, int experience = 0)
+        
+        public const int DEFAULT_AGE = 1;
+        public const double DEFAULT_MAXHEALTH = 100;
+        public const int DEFAULT_EXPERIENCE = 0;
+        public const double DEFAULT_HITPOWER = 15;
+        public Character(string name, Race race, Sex sex, int age = DEFAULT_AGE, double maxHealth = DEFAULT_MAXHEALTH, int experience = DEFAULT_EXPERIENCE, double hitPower = DEFAULT_HITPOWER)
         {
             this.id = ++unique_ID;
             this.name = name;
@@ -74,6 +71,7 @@ namespace KashTaskWPF
             health = maxHealth;
             StateHealth = StateHealth.NORMAL;
             Experience = experience;
+            HitPower = hitPower;
         }
 
         public Character(Character other) : this(other.Name, other.Race, other.Sex, other.Age, other.MaxHealth, other.Experience)
@@ -170,6 +168,19 @@ namespace KashTaskWPF
                     throw new ArgumentException("Experience cannot be less than 0.");
                 }
                 experience = value;
+            }
+        }
+
+        public double HitPower
+        {
+            get => hitPower;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentException("Hit power cannot be less than 0.");
+                }
+                hitPower = value;
             }
         }
         
@@ -380,8 +391,9 @@ namespace KashTaskWPF
         public override string ToString()
         {
             return "Имя: " + Name + "\n" + "Раса: " + Race + "\n" + "Пол: " + Sex + "\n" +
-            "Возраст: " + Age + "\n" + "Здоровье: " + Health + "\n" + "Опыт: " + Experience + "\n" +
-            "Состояние здоровья: " + StateHealth + "\n" + "Максимальное здоровье: " + MaxHealth + "\n" +
+            "Возраст: " + Age + "\n" + "Сила удара: " + HitPower + '\n' +
+            "Здоровье: " + Health + "\n" + "Состояние здоровья: " + StateHealth + "\n" + "Максимальное здоровье: " + MaxHealth + "\n" +
+            "Опыт: " + Experience + "\n" +
             "Возможность говорить сейчас: " + CanSpeakNow + "\n" +
             "Возможность двигаться сейчас: " + CanMoveNow + "\n" + "Состояния: " + String.Join(", ", statesDynamic.Keys);
         }

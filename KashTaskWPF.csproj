@@ -45,7 +45,23 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Resources\fight1.json" />
-      <Content Include="Resources\fight1.json">
+      <Content Include="Resources\fightHydra.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\whitefield.png" />
+      <Content Include="Resources\whitefield.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\hero.json" />
+      <Content Include="Resources\hero.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\fightGoblin.json" />
+      <Content Include="Resources\fightGoblin.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\gnome.json" />
+      <Content Include="Resources\gnome.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
