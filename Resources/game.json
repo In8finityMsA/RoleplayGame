@@ -399,7 +399,7 @@
         "Я несу жертву Гидре"
       ],
 	  "Actions": {
-        "0": [ "compexp gnome.json 33 39" ]
+        "0": [ "compexp gnome.json 33 34" ]
       },
 	  "Next": [
 		33,
