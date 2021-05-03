@@ -102,7 +102,7 @@ namespace KashTaskWPF.Adapters
         private double power;
         private Artifact artifact;
 
-        public event OnStepActions StepHappened;
+        private event OnStepActions StepHappened;
 
         private void SubscribeAllCharactersToStepHappend()
         {
@@ -648,8 +648,8 @@ namespace KashTaskWPF.Adapters
             Artifact art;
             if (!whoIsOnDuty.CanMoveNow )
             {
-                ABOUTENEMYPUNCHES = ENEMYISPARALIZED;
-                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES +'\n');
+                ABOUTENEMYPUNCHES = ENEMYISPARALIZED + '\n';
+                ui.InfoAboutCurrentConditions(ABOUTENEMYPUNCHES);
                 return;
             }
             
