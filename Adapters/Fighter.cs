@@ -517,7 +517,7 @@ namespace KashTaskWPF.Adapters
             {
                 if (target == parent.hero)
                 {
-                    HeroAliveCheck();
+                    return HeroAliveCheck();
                 }
                 else
                 {

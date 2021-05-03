@@ -320,6 +320,7 @@ namespace KashTaskWPF.Adapters
         private void EndGame()
         {
             MessageBox.Show(END_GAME);
+            ui.Close();
         }
 
         private Stage GetCurrentStage()

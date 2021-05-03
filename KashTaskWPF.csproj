@@ -66,4 +66,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\JetBrainsMonoNL-Medium.ttf" />
+      <Resource Include="Resources\JetBrainsMonoNL-Medium.ttf" />
+    </ItemGroup>
+
 </Project>
