@@ -40,11 +40,11 @@ namespace KashTaskWPF.Adapters
         private List<string> StandartList = new List<string>() { "Удар", "Заклинание", "Артефакт", "Поговорить", "Бежать" };
 
         private List<Character> enemiesPlusHero = new List<Character>();
-        List<KeyValuePair<Type, Spell>> spells;
-        List<Artifact> artifacts;
-        List<string> variants = new List<string>();
+        private List<KeyValuePair<Type, Spell>> spells;
+        private List<Artifact> artifacts;
+        private List<string> variants = new List<string>();
 
-        Stack<FightStatus> recorder = new Stack<FightStatus>();
+        private Stack<FightStatus> recorder = new Stack<FightStatus>();
 
         //in normal cases
         private string CHOOSETARGET = "Вы можете выбрать цель, на которую хотите направить свое действие!";
@@ -104,7 +104,7 @@ namespace KashTaskWPF.Adapters
 
         public event OnStepActions StepHappened;
 
-        public void SubscribeAllCharactersToStepHappend()
+        private void SubscribeAllCharactersToStepHappend()
         {
             foreach (var item in enemiesPlusHero)
             {
@@ -138,7 +138,7 @@ namespace KashTaskWPF.Adapters
             SubscribeAllCharactersToStepHappend();         
         }
 
-        public List<string> EnemyNamesToList()//only enemies, without hero
+        private List<string> EnemyNamesToList()//only enemies, without hero
         {
             List<string> enemiesNames = new List<string>();
 
@@ -150,7 +150,7 @@ namespace KashTaskWPF.Adapters
             return enemiesNames;
         }
 
-        public List<string> SpellNamesToList()
+        private List<string> SpellNamesToList()
         {
             List<string> spellsNames = new List<string>();
             for (int i = 0; i < spells.Count; i++)
@@ -160,7 +160,7 @@ namespace KashTaskWPF.Adapters
             return spellsNames;
         }
 
-        public List<string> ArtifactNamesToList()
+        private List<string> ArtifactNamesToList()
         {
             artifacts = parent.hero.Inventory;
             List<string> artifactNames = new List<string>();
@@ -171,7 +171,7 @@ namespace KashTaskWPF.Adapters
             return artifactNames;
         }
 
-        public void InitNewRecorder()
+        private void InitNewRecorder()
         {
             recorder = new Stack<FightStatus>();
             recorder.Push(FightStatus.ChooseAction);
@@ -641,7 +641,7 @@ namespace KashTaskWPF.Adapters
             ui.GetInfoEnemies(enemiesPlusHero);
         }
 
-        public void YourEnemyReaction()
+        private void YourEnemyReaction()
         {
             Random rnd = new Random();
             Character whoIsOnDuty = enemiesPlusHero[rnd.Next(0, enemiesPlusHero.Count - 1)];// -1 not to kill yourself
