@@ -102,7 +102,7 @@ namespace KashTaskWPF.Adapters
         private double power;
         private Artifact artifact;
 
-        public event OnStepActions StepHappened;
+        private event OnStepActions StepHappened;
 
         private void SubscribeAllCharactersToStepHappend()
         {
